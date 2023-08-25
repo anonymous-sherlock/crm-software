@@ -21,15 +21,15 @@ const Sidebar = ({ children }: SidebarProps) => {
           } relative h-full bg-primary p-5 py-8 duration-300`}
         >
           <div
-            className="absolute -right-3 top-9 h-7 w-7 cursor-pointer rounded-full 
-           border-2 border-primary"
-          ></div>
-          <BiChevronLeft
-            size={26}
-            className={`absolute -right-3 top-9 z-40 w-7 cursor-pointer rounded-full border-2 border-primary
+            className="sticky right-0 top-9 h-7 w-7 cursor-pointer rounded-full ml-auto border-2 border-primary"
+          >
+            <BiChevronLeft
+              size={26}
+              className={`absolute  z-40 w-7 cursor-pointer rounded-full border-2 border-primary
            bg-white text-primary  ${!open && "rotate-180"}`}
-            onClick={() => setOpen(!open)}
-          />
+              onClick={() => setOpen(!open)}
+            />
+          </div>
 
           <div className="flex items-center gap-x-4">
             <Image
@@ -50,7 +50,7 @@ const Sidebar = ({ children }: SidebarProps) => {
               Adscrush
             </h1>
           </div>
-          <ul className="pt-6">
+          <ul className="pb-6 pt-6">
             {Menus.map((Menu, index) => (
               <Link key={index} href={Menu.url}>
                 <li
