@@ -21,7 +21,7 @@ const Sidebar = ({ children }: SidebarProps) => {
           } relative h-full bg-primary p-5 py-8 duration-300`}
         >
           <div
-            className="sticky right-0 top-9 h-7 w-7 cursor-pointer rounded-full ml-auto border-2 border-primary"
+            className="sticky flex items-center justify-center top-9 h-7 w-7 cursor-pointer rounded-full ml-auto border-2 border-primary z-50"
           >
             <BiChevronLeft
               size={26}
