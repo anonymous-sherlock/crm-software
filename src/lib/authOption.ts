@@ -5,6 +5,7 @@ import EmailProvider from "next-auth/providers/email";
 
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { db } from "@/lib/db";
+import { compare } from "bcryptjs";
 
 function getGoogleCredentials(): { clientId: string; clientSecret: string } {
   const clientId = process.env.GOOGLE_CLIENT_ID;
@@ -27,7 +28,9 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   pages: {
-    // signIn: "/auth/login",
+    signIn: "/login",
+    verifyRequest: "/verify-user",
+    newUser: "/verify-user",
   },
   providers: [
     GoogleProvider({
@@ -45,29 +48,37 @@ export const authOptions: NextAuthOptions = {
       },
       from: process.env.EMAIL_FROM,
     }),
- 
+
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        username: {
-          label: "Username:",
+        name: {
+          label: "Full name",
           type: "text",
-          placeholder: "your-cool-username",
+        },
+        email: {
+          label: "email:",
+          type: "email",
+          placeholder: "email",
         },
         password: {
-          label: "Password:",
+          label: "Password",
           type: "password",
-          placeholder: "your-awesome-password",
+          placeholder: "password",
         },
       },
       async authorize(credentials) {
-        const user = { id: "42", name: "abc", password: "abc" };
-
-        if (
-          credentials?.username === user.name &&
-          credentials?.password === user.password
-        ) {
-          return user;
+        const existingUser = await db.user.findUnique({
+          where: {
+            email: credentials?.email,
+          },
+        });
+        const isValidPassword = await compare(
+          credentials?.password as string,
+          existingUser?.password as string
+        );
+        if (isValidPassword) {
+          return existingUser;
         } else {
           return null;
         }
@@ -81,9 +92,8 @@ export const authOptions: NextAuthOptions = {
         session.user.name = token.name;
         session.user.email = token.email;
         session.user.image = token.picture;
-       
+        session.user.role = token.role;
       }
-
       return session;
     },
     async jwt({ token, user }) {
@@ -103,6 +113,7 @@ export const authOptions: NextAuthOptions = {
         name: dbUser.name,
         email: dbUser.email,
         picture: dbUser.image,
+        role: dbUser.role,
       };
     },
     redirect() {
