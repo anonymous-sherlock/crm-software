@@ -68,20 +68,33 @@ export const authOptions: NextAuthOptions = {
         },
       },
       async authorize(credentials) {
-        const existingUser = await db.user.findUnique({
-          where: {
-            email: credentials?.email,
-          },
-        });
-        const isValidPassword = await compare(
-          credentials?.password as string,
-          existingUser?.password as string
-        );
-        if (isValidPassword) {
-          return existingUser;
-        } else {
-          return null;
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Email and password required");
         }
+
+        const user = await db.user.findUnique({
+          where: { email: credentials.email },
+        });
+
+        if (!user) {
+          throw new Error("User not found");
+        }
+
+        if (!user.password) {
+          throw new Error(
+            "You have not signed up using your email. Please try social login."
+          );
+        }
+
+        const isValidPassword = await compare(
+          credentials.password,
+          user.password
+        );
+
+        if (!isValidPassword) {
+          throw new Error("Invalid email or password");
+        }
+        return user;
       },
     }),
   ],
@@ -116,7 +129,7 @@ export const authOptions: NextAuthOptions = {
         role: dbUser.role,
       };
     },
-    redirect() {
+    async redirect() {
       return "/dashboard";
     },
   },

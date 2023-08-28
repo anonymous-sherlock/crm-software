@@ -1,12 +1,10 @@
 import { db } from "@/lib/db";
-import { userSchema } from "@/schemauserSchema";
+import { userSchema } from "@/schema/userSchema";
 import { hash } from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
-import { redirect } from "next/navigation";
-import { signIn } from "next-auth/react";
 
 export async function POST(req: NextRequest, res: NextResponse) {
-  const body = await req.json();
+  const {confirmPassword, ...body} = await req.json();
   const result = userSchema.safeParse(body);
   if (!result.success) {
     const formatted = result.error.format();
@@ -37,7 +35,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
   }
   try {
     const hashPassword = await hash(body.password, 12);
-    const newUser = await db.user.create({
+    const newUser   = await db.user.create({
       data: { ...body, password: hashPassword },
     });
     const { password, emailVerified, ...userCreated } = newUser;

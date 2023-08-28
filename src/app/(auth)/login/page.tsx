@@ -1,4 +1,5 @@
 import AuthForm from "@/components/auth/AuthForm";
+import AuthenticationForm from "@/components/auth/AuthenticationForm";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
 export default function AuthenticationPage() {
   return (
     <>
-      <section className="relative flex justify-center items-center h-full min-h-screen bg-secondary py-10 md:flex-row lg:h-full lg:py-0">
+      <section className="relative flex h-full min-h-screen items-center justify-center bg-secondary py-10 md:flex-row lg:h-full lg:py-0">
         {/* for mobile  */}
         <img
           src="https://source.unsplash.com/random"
@@ -20,7 +21,7 @@ export default function AuthenticationPage() {
         {/* for desktop */}
         <div
           id=""
-          className="self-stretch inset-0 hidden fixed h-screen  w-full items-stretch bg-indigo-600 md:w-1/2 lg:flex xl:w-[50%]"
+          className="fixed inset-0 hidden h-screen w-full  items-stretch self-stretch bg-indigo-600 md:w-1/2 lg:flex xl:w-[50%]"
         >
           <img
             src="https://source.unsplash.com/random"
@@ -33,8 +34,9 @@ export default function AuthenticationPage() {
           </p>
         </div>
 
-        <div className="relative z-40 flex h-full w-full items-center justify-end px-6 max-lg:mx-auto lg:ml-auto md:w-1/2 md:max-w-md lg:max-w-full lg:py-10 lg:px-16 xl:w-[50%] xl:px-12">
-          <AuthForm />
+        <div className="relative z-40 flex h-full w-full items-center justify-end px-6 max-lg:mx-auto md:w-1/2 md:max-w-md lg:ml-auto lg:max-w-full lg:px-16 lg:py-10 xl:w-[50%] xl:px-12">
+          {/* <AuthForm /> */}
+          <AuthenticationForm isRegister={false} />
         </div>
       </section>
     </>

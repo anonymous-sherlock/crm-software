@@ -2,7 +2,7 @@
 import google from "@/assets/social/google.svg";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { userSchema } from "@/schemauserSchema";
+import { userSchema } from "@/schema/userSchema";
 import { useToast } from "@/ui/use-toast";
 import { ArrowLeftToLine, Eye, EyeOff } from "lucide-react";
 import { signIn } from "next-auth/react";

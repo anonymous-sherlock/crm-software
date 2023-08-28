@@ -1,4 +1,5 @@
 import AuthForm from "@/components/auth/AuthForm";
+import AuthenticationForm from "@/components/auth/AuthenticationForm";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -34,7 +35,9 @@ export default function AuthenticationPage() {
         </div>
 
         <div className="relative z-40 flex h-full w-full items-center justify-end px-6 max-lg:mx-auto lg:ml-auto md:w-1/2 md:max-w-md lg:max-w-full lg:py-10 lg:px-16 xl:w-[50%] xl:px-12">
-          <AuthForm isRegister={true} />
+          {/* <AuthForm isRegister={true} /> */}
+          <AuthenticationForm isRegister={true} />
+
         </div>
       </section>
     </>
