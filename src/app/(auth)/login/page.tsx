@@ -1,4 +1,3 @@
-import AuthForm from "@/components/auth/AuthForm";
 import AuthenticationForm from "@/components/auth/AuthenticationForm";
 import { Metadata } from "next";
 
@@ -35,7 +34,6 @@ export default function AuthenticationPage() {
         </div>
 
         <div className="relative z-40 flex h-full w-full items-center justify-end px-6 max-lg:mx-auto md:w-1/2 md:max-w-md lg:ml-auto lg:max-w-full lg:px-16 lg:py-10 xl:w-[50%] xl:px-12">
-          {/* <AuthForm /> */}
           <AuthenticationForm isRegister={false} />
         </div>
       </section>

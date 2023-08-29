@@ -21,10 +21,8 @@ import Spinner from "@/ui/spinner";
 import { newUserResponse } from "@/types";
 import { toast } from "@/ui/use-toast";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
-type Error = {
-  error: string;
-};
 export function FormLog({ isRegister }: AuthFormProps) {
   const [passwordType, setPasswordType] = useState("password");
   const [loading, setLoading] = useState(false);
@@ -69,34 +67,7 @@ export function FormLog({ isRegister }: AuthFormProps) {
         });
       }
     } else {
-      setLoading(true);
-
-      try {
-        const res = await signIn("credentials", {
-          redirect: false,
-          email: values.email,
-          password: values.password,
-        })
-          .then((data) => {
-            console.log(data);
-          })
-          .catch((err) => {
-            toast({
-              variant: "destructive",
-              title: "Error",
-              description: err,
-            });
-          });
-        // Handle the response from signIn if needed
-      } catch (error) {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Error logging in",
-        });
-      } finally {
-        setLoading(false);
-      }
+      handleLogin(values, setLoading);
     }
   }
 
@@ -221,4 +192,42 @@ export function FormLog({ isRegister }: AuthFormProps) {
       </Form>
     </section>
   );
+}
+
+async function handleLogin(
+  values: z.infer<typeof loginFormSchema>,
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>
+) {
+  const router = useRouter(); // Initialize the router
+
+  setLoading(true);
+
+  try {
+    const response = await signIn("credentials", {
+      email: values.email,
+      password: values.password,
+      redirect: false,
+    });
+
+    if (response) {
+      // Check if response is not undefined
+      if (response.error) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: response.error,
+        });
+      } else {
+        router.push("/dashboard");
+      }
+    }
+  } catch (error) {
+    toast({
+      variant: "destructive",
+      title: "Error",
+      description: "Error logging in",
+    });
+  } finally {
+    setLoading(false);
+  }
 }

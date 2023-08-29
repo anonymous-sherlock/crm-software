@@ -77,7 +77,7 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!user) {
-          throw new Error("User not found");
+          throw new Error("User not found with this email");
         }
 
         if (!user.password) {
@@ -129,8 +129,12 @@ export const authOptions: NextAuthOptions = {
         role: dbUser.role,
       };
     },
-    async redirect() {
-      return "/dashboard";
+    async redirect({ url, baseUrl }) {
+      // Allows relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // Allows callback URLs on the same origin
+      else if (new URL(url).origin === baseUrl) return url;
+      return baseUrl;
     },
   },
 };
