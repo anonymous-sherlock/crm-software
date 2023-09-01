@@ -22,8 +22,10 @@ import { newUserResponse } from "@/types";
 import { toast } from "@/ui/use-toast";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { Router } from "lucide-react";
 
 export function FormLog({ isRegister }: AuthFormProps) {
+  const router = useRouter();
   const [passwordType, setPasswordType] = useState("password");
   const [loading, setLoading] = useState(false);
 
@@ -67,7 +69,10 @@ export function FormLog({ isRegister }: AuthFormProps) {
         });
       }
     } else {
-      handleLogin(values, setLoading);
+      const loginResponse = await handleLogin(values, setLoading);
+      if (loginResponse) {
+        router.push("/dashboard");
+      }
     }
   }
 
@@ -198,17 +203,13 @@ async function handleLogin(
   values: z.infer<typeof loginFormSchema>,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>
 ) {
-  const router = useRouter(); // Initialize the router
-
   setLoading(true);
-
   try {
     const response = await signIn("credentials", {
       email: values.email,
       password: values.password,
       redirect: false,
     });
-
     if (response) {
       // Check if response is not undefined
       if (response.error) {
@@ -217,8 +218,9 @@ async function handleLogin(
           title: "Error",
           description: response.error,
         });
+        return null;
       } else {
-        router.push("/dashboard");
+        return true;
       }
     }
   } catch (error) {
@@ -230,4 +232,5 @@ async function handleLogin(
   } finally {
     setLoading(false);
   }
+  return false;
 }

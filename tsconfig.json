@@ -21,6 +21,7 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
+      "@/exceptions/*":["./src/lib/exceptions/*"],
       "@/prisma/*": ["./prisma/*"],
       "@/styles/*": ["./src/styles/*"],
       "@/lib/*": ["./src/lib/*"],
@@ -29,6 +30,7 @@
       "@/assets/*": ["./src/assets/*"],
       "@/config/*": ["./config/*"],
       "@/schema/*": ["./schema/*"],
+      "@/store/*": ["./store/*"],
       "@/constants/*": ["./constants/*"]
     }
   },

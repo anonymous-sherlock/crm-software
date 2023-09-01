@@ -57,3 +57,57 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+/* perfect scrollbar */
+.ps__rail-y > .ps__thumb-y,
+.ps__rail-y > .ps__thumb-y {
+  @apply !w-1.5 !bg-[#DDDDDD] dark:!bg-[#2d334c];
+}
+.ps .ps__rail-x:hover,
+.ps .ps__rail-y:hover,
+.ps .ps__rail-x:focus,
+.ps .ps__rail-y:focus,
+.ps .ps__rail-x.ps--clicking,
+.ps .ps__rail-y.ps--clicking {
+  @apply !opacity-60;
+}
+.ps .ps__rail-x:hover,
+.ps .ps__rail-y:hover,
+.ps .ps__rail-x:focus,
+.ps .ps__rail-y:focus,
+.ps .ps__rail-x.ps--clicking,
+.ps .ps__rail-y.ps--clicking {
+  @apply !bg-transparent;
+}
+
+/* Animations */
+.slide-down-enter-active {
+  @apply transition duration-100 ease-out;
+}
+.slide-down-leave-active {
+  @apply transition duration-75 ease-in;
+}
+.slide-down-enter-from,
+.slide-down-leave-to {
+  @apply scale-95 transform opacity-0;
+}
+.slide-down-enter-to,
+.slide-down-leave-from {
+  @apply scale-100 transform opacity-100;
+}
+
+.modal-fade-enter-active {
+  @apply transition duration-300 ease-out;
+}
+.modal-fade-leave-active {
+  @apply transition duration-200 ease-in;
+}
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  @apply scale-95 transform opacity-0;
+}
+.modal-fade-enter-to,
+.modal-fade-leave-from {
+  @apply scale-100 transform opacity-100;
+}

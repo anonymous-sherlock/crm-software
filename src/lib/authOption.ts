@@ -1,11 +1,12 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import GoogleProvider from "next-auth/providers/google";
 import EmailProvider from "next-auth/providers/email";
+import GoogleProvider from "next-auth/providers/google";
 
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { db } from "@/lib/db";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { compare } from "bcryptjs";
+import { AuthError } from "@/exceptions/authError";
 
 function getGoogleCredentials(): { clientId: string; clientSecret: string } {
   const clientId = process.env.GOOGLE_CLIENT_ID;
@@ -69,7 +70,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Email and password required");
+          throw new AuthError("Email and password required", false);
         }
 
         const user = await db.user.findUnique({
@@ -77,12 +78,13 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!user) {
-          throw new Error("User not found with this email");
+          throw new AuthError("User not found with this email", false);
         }
 
         if (!user.password) {
-          throw new Error(
-            "You have not signed up using your email. Please try social login."
+          throw new AuthError(
+            "You have not signed up using your email. Please try social login.",
+            false
           );
         }
 
@@ -90,9 +92,8 @@ export const authOptions: NextAuthOptions = {
           credentials.password,
           user.password
         );
-
         if (!isValidPassword) {
-          throw new Error("Invalid email or password");
+          throw new AuthError("Invalid email or password", false);
         }
         return user;
       },
