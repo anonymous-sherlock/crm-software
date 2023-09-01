@@ -1,11 +1,11 @@
-import Sidebar from "@/components/layouts/Sidebar";
+import { UserProfileDropdown } from "@/components/UserProfileDropdown";
 
 const Profile = () => {
   return (
-    <Sidebar>
-      <div className="h-screen w-full bg-black text-white"> heelo </div>
-      <div className="h-screen w-full bg-gray-400 text-white"> heelo </div>
-    </Sidebar>
+    <main className="flex h-screen items-center justify-center text-5xl font-bold">
+      {" "}
+      <UserProfileDropdown />
+    </main>
   );
 };
 

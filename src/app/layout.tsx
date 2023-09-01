@@ -2,6 +2,8 @@ import "@/styles/globals.css";
 import { Inter } from "next/font/google";
 import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "@/components/theme-provider";
+import { NextScript } from "next/document";
 
 const inter = Inter({ subsets: ["latin"] });
 
