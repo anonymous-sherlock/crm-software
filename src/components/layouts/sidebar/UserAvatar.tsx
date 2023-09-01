@@ -5,10 +5,16 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { Activity, Settings } from "lucide-react";
 import Link from "next/link";
-
-import { HiOutlineUser } from "react-icons/hi";
+import {
+  Activity,
+  CiCreditCard1,
+  HelpCircle,
+  HiOutlineUser,
+  LifeBuoy,
+  Settings,
+} from "@/components/Icons";
+import { Separator } from "@/components/ui/separator";
 
 const UserAvatar = () => {
   return (
@@ -53,8 +59,17 @@ const UserAvatar = () => {
               href="#"
               className="m-1 flex items-center justify-start gap-2 rounded-sm p-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
             >
-              <HiOutlineUser size={24} />
+              <HiOutlineUser size={16} className="mr-2 text-gray-400" />
               Profile
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="#"
+              className="m-1 flex items-center justify-start gap-2 rounded-sm p-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
+            >
+              <CiCreditCard1 size={16} className="mr-2 text-gray-400"/>
+              Billing
             </Link>
           </li>
           <li>
@@ -62,21 +77,43 @@ const UserAvatar = () => {
               href="#"
               className="m-1 flex items-center justify-start gap-2 rounded-sm p-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white "
             >
-              <Settings />
-              Account Settings
+              <Settings size={16} className="mr-2 text-gray-400"/>
+              Settings
             </Link>
           </li>
           <li>
             <Link
               href="#"
-              className="m-1 flex items-center justify-start gap-2 rounded-sm border-b p-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white "
+              className="m-1 flex items-center justify-start gap-2 rounded-sm p-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white "
             >
-              <Activity size={24} />
+              <Activity size={16} className="mr-2 text-gray-400" />
               Activity Log
             </Link>
           </li>
+          <Separator className="my-1" />
           <li>
-          <SignOutButton iconSize={16} className="text-gray-400 mr-2" > Log out </SignOutButton>
+            <Link
+              href="#"
+              className="m-1 flex items-center justify-start gap-2 rounded-sm p-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white "
+            >
+              <LifeBuoy size={16} className="mr-2 text-gray-400" />
+              Support
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="#"
+              className="m-1 flex items-center justify-start gap-2 rounded-sm p-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white "
+            >
+              <HelpCircle size={16} className="mr-2 text-gray-400" />
+              Help
+            </Link>
+          </li>
+          <Separator className="my-1" />
+          <li className="mx-1">
+            <SignOutButton iconSize={16} className="p-2 w-full text-gray-400">
+              Log out
+            </SignOutButton>
           </li>
         </ul>
       </HoverCardContent>

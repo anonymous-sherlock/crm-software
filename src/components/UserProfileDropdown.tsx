@@ -12,9 +12,14 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LifeBuoy, Settings } from "lucide-react";
-import { CiCreditCard1 } from "react-icons/ci";
-import { HiOutlineUser } from "react-icons/hi";
+import {
+  Activity,
+  CiCreditCard1,
+  HelpCircle,
+  HiOutlineUser,
+  LifeBuoy,
+  Settings,
+} from "@/components/Icons";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import SignOutButton from "./ui/SignOutButton";
 
@@ -23,7 +28,7 @@ export function UserProfileDropdown() {
     <DropdownMenu>
       <DropdownMenuTrigger
         asChild
-        className="flex cursor-pointer items-center justify-start ring-slate-300 focus:ring-2"
+        className="flex cursor-pointer items-center justify-start ring-slate-400 duration-200 hover:ring-2 focus:ring-4"
       >
         <Avatar className="">
           <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
@@ -66,24 +71,10 @@ export function UserProfileDropdown() {
             Settings
             <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
           </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem>Team</DropdownMenuItem>
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>Invite users</DropdownMenuSubTrigger>
-            <DropdownMenuPortal>
-              <DropdownMenuSubContent>
-                <DropdownMenuItem>Email</DropdownMenuItem>
-                <DropdownMenuItem>Message</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>More...</DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuPortal>
-          </DropdownMenuSub>
           <DropdownMenuItem>
-            New Team
-            <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
+            <Activity size={16} className="mr-2 text-gray-400" />
+            Activity Log
+            <DropdownMenuShortcut>⇧⌘L</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
@@ -91,13 +82,16 @@ export function UserProfileDropdown() {
           <LifeBuoy size={16} className="mr-2 text-gray-400" />
           Support
         </DropdownMenuItem>
+        <DropdownMenuItem>
+          <HelpCircle size={16} className="mr-2 text-gray-400" />
+          Help
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          <SignOutButton iconSize={16} className="mr-2 text-gray-400">
-            {" "}
-            Log out{" "}
+          <SignOutButton iconSize={16} className="w-full p-1 text-gray-400">
+            Log out
+            <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
           </SignOutButton>
-          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
