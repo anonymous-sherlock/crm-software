@@ -21,7 +21,7 @@ const UserAvatar = () => {
     <HoverCard>
       {/* user image */}
       <HoverCardTrigger asChild>
-        <div className="flex items-center justify-start gap-2 border-y p-4">
+        <div className="flex items-center justify-start gap-2 border-y p-4 cursor-pointer">
           <Avatar>
             <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
             <AvatarFallback>CN</AvatarFallback>
