@@ -13,7 +13,7 @@ export default withAuth(
 
     const isLoginPage = req.nextUrl.pathname.startsWith("/login");
     const isRegisterPage = req.nextUrl.pathname.startsWith("/register");
-    const sensitiveRoutes = ["/dashboard"];
+    const sensitiveRoutes = ["/dashboard", "/app/"];
 
     if (isAuth && (isLoginPage || isRegisterPage)) {
       return NextResponse.redirect(new URL("/dashboard", req.url));
@@ -39,5 +39,11 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ["/", "/login","/register", "/dashboard/:path*", "/api/:path*"],
+  matcher: [
+    "/app/:path*",
+    "/login",
+    "/register",
+    "/dashboard/:path*",
+    "/api/:path*",
+  ],
 };

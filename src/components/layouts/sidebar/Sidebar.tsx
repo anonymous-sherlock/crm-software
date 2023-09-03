@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 import SubMenu from "./SubMenu";
 // * React icons
+import { subMenusList } from "@/constants/MenuItems";
 import useNavbarStore from "@/store/index";
 import { ArrowLeftToLine } from "lucide-react";
 import Image from "next/image";
@@ -12,14 +13,9 @@ import { usePathname } from "next/navigation";
 import { AiOutlineAppstore } from "react-icons/ai";
 import { BsPerson } from "react-icons/bs";
 import { HiOutlineDatabase } from "react-icons/hi";
-import { RiBuilding3Line } from "react-icons/ri";
 import { SlSettings } from "react-icons/sl";
-import { TbReportAnalytics } from "react-icons/tb";
 import { useMediaQuery } from "react-responsive";
-import { Avatar } from "@/components/ui/avatar";
-import { AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import UserAvatar from "./UserAvatar";
-import { subMenusList } from "@/constants/MenuItems";
 
 const Sidebar = () => {
   const isTabletMid = useMediaQuery({ query: "(max-width: 768px)" });
@@ -79,8 +75,6 @@ const Sidebar = () => {
         },
       };
 
-
-
   return (
     <aside className="sticky top-0 z-[99] h-screen">
       <div
@@ -94,8 +88,8 @@ const Sidebar = () => {
         variants={Nav_animation}
         initial={{ x: isTabletMid ? -250 : 0 }}
         animate={open ? "open" : "closed"}
-        className=" text-gray fixed top-0  z-[999] flex-1 h-screen w-[16rem]  max-w-[16rem] 
-            overflow-hidden bg-white dark:bg-gray-700 shadow-xl
+        className=" text-gray fixed top-0  z-[999] h-screen w-[16rem] max-w-[16rem]  flex-1 
+            overflow-hidden bg-white shadow-xl dark:bg-gray-700
          md:relative "
       >
         <div className="mx-3 flex items-center gap-2.5 border-b border-slate-300 py-3  font-medium">
@@ -112,7 +106,7 @@ const Sidebar = () => {
         </div>
 
         <div className="flex h-screen flex-col">
-          <ul className="flex h-[70%] flex-col gap-1 overflow-x-hidden whitespace-pre px-2.5  py-5 text-[0.9rem] font-medium scrollbar-thin scrollbar-track-white scrollbar-rounded-2 scrollbar-thumb-slate-100 md:h-[68%]">
+          <ul className="scrollbar-rounded-2 flex h-[70%] flex-col gap-1 overflow-x-hidden whitespace-pre  px-2.5 py-5 text-[0.9rem] font-medium scrollbar-thin scrollbar-track-white scrollbar-thumb-slate-100 md:h-[68%]">
             <li>
               <Link href={"/"} className="link">
                 <AiOutlineAppstore size={23} className="min-w-max" />
@@ -151,21 +145,21 @@ const Sidebar = () => {
               </Link>
             </li>
           </ul>
-          <div className="relative z-50 flex w-full justify-end mt-auto mb-14	flex-col whitespace-pre text-sm font-medium">
-             {/* collapse button */}
-             <motion.div
+          <div className="relative z-50 mb-14 mt-auto flex w-full flex-col	justify-end whitespace-pre text-sm font-medium">
+            {/* collapse button */}
+            <motion.div
               onClick={() => {
                 setOpen(!open);
               }}
               transition={{ duration: 0 }}
-              className="m-2 flex justify-end h-fit w-fit cursor-pointer self-end rounded-md border-2 border-gray-50 bg-secondary  p-2 ring-zinc-300 duration-300 hover:ring-2 focus:ring-2 md:block"
+              className="m-2 flex h-fit w-fit cursor-pointer justify-end self-end rounded-md border-2 border-gray-50 bg-secondary  p-2 ring-zinc-300 duration-300 hover:ring-2 focus:ring-2 md:block"
             >
               <ArrowLeftToLine
                 size={25}
                 className={`${!open && "rotate-180"}`}
               />
             </motion.div>
-           <UserAvatar />
+            <UserAvatar />
             {open && (
               <div className="flex items-center justify-between border-y border-slate-300 p-4">
                 <div>
@@ -177,7 +171,6 @@ const Sidebar = () => {
                 </p>
               </div>
             )}
-          
           </div>
         </div>
       </motion.div>

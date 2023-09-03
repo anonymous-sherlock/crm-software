@@ -220,6 +220,11 @@ async function handleLogin(
         });
         return null;
       } else {
+        toast({
+          variant: "success",
+          title: "Login Successful",
+          description: "Loging into your account",
+        });
         return true;
       }
     }

@@ -1,6 +1,5 @@
 import { Header } from "@/components/layouts/header/Header";
 import Sidebar from "@/components/layouts/sidebar/Sidebar";
-import { NextScript } from "next/document";
 
 export default function RootLayout({
   children,
