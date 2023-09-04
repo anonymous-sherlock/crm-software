@@ -4,20 +4,20 @@ import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 import SubMenu from "./SubMenu";
 // * React icons
-import { subMenusList } from "@/constants/MenuItems";
+import { Menus, subMenusList } from "@/constants/MenuItems";
 import useNavbarStore from "@/store/index";
 import { ArrowLeftToLine } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AiOutlineAppstore } from "react-icons/ai";
-import { BsPerson } from "react-icons/bs";
-import { HiOutlineDatabase } from "react-icons/hi";
 import { SlSettings } from "react-icons/sl";
 import { useMediaQuery } from "react-responsive";
-import UserAvatar from "./UserAvatar";
 
-const Sidebar = () => {
+interface props {
+  children: React.ReactNode;
+}
+
+const Sidebar = ({ children }: props) => {
   const isTabletMid = useMediaQuery({ query: "(max-width: 768px)" });
   const { open, setOpen, setIsTabletMid } = useNavbarStore();
 
@@ -107,24 +107,15 @@ const Sidebar = () => {
 
         <div className="flex h-screen flex-col">
           <ul className="scrollbar-rounded-2 flex h-[70%] flex-col gap-1 overflow-x-hidden whitespace-pre  px-2.5 py-5 text-[0.9rem] font-medium scrollbar-thin scrollbar-track-white scrollbar-thumb-slate-100 md:h-[68%]">
-            <li>
-              <Link href={"/"} className="link">
-                <AiOutlineAppstore size={23} className="min-w-max" />
-                All Apps
-              </Link>
-            </li>
-            <li>
-              <Link href={"/authentication"} className="link">
-                <BsPerson size={23} className="min-w-max" />
-                Authentication
-              </Link>
-            </li>
-            <li>
-              <Link href={"/stroage"} className="link">
-                <HiOutlineDatabase size={23} className="min-w-max" />
-                Stroage
-              </Link>
-            </li>
+          {Menus.map((menu, index) => (
+                       <li key={index} className="hover:bg-gray-100 text-primary rounded-lg">
+                       <Link href={menu.url} className="link cursor-pointer">
+                         <menu.icon size={23} className="min-w-max" />
+                         {menu.label}
+                       </Link>
+                     </li>
+          )
+          )}
 
             {(open || isTabletMid) && (
               <div className="border-y border-slate-300 py-5 ">
@@ -138,7 +129,7 @@ const Sidebar = () => {
                 ))}
               </div>
             )}
-            <li>
+            <li className="hover:bg-gray-100 text-primary rounded-lg">
               <Link href={"/settings"} className="link">
                 <SlSettings size={23} className="min-w-max" />
                 Settings
@@ -159,7 +150,7 @@ const Sidebar = () => {
                 className={`${!open && "rotate-180"}`}
               />
             </motion.div>
-            <UserAvatar />
+            {children}
             {open && (
               <div className="flex items-center justify-between border-y border-slate-300 p-4">
                 <div>

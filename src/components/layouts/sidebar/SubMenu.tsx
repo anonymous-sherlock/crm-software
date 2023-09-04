@@ -16,7 +16,7 @@ const SubMenu: React.FC<SubMenuProps> = ({ data }) => {
   return (
     <>
       <li
-        className={`link ${pathname.includes(data.name) && "text-blue-600"}`}
+        className={`link ${pathname.includes(data.name) && "text-blue-600" ,"hover:bg-gray-100 text-primary rounded-lg"}`}
         onClick={() => setSubMenuOpen(!subMenuOpen)}
       >
         <data.icon size={23} className="min-w-max" />

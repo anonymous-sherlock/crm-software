@@ -7,9 +7,11 @@ export function cn(...inputs: ClassValue[]) {
 
 // generate inticials from name
 export function generateInitialFromName(fullName: string) {
-  if (fullName.trim().length === 0) {
+  if(!fullName){
     return "N/A";
+
   }
+
   // Check if the fullName is not empty and is a string
   if (typeof fullName === "string" && fullName.trim().length > 0) {
     // Split the fullName into an array of words
@@ -36,4 +38,9 @@ export function isMacOs() {
   if (typeof window === "undefined") return false;
 
   return window.navigator.userAgent.includes("Mac");
+}
+
+
+export function getProductCategories(){
+  
 }

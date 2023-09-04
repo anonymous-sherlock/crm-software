@@ -1,17 +1,4 @@
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+"use server"
 import {
   Activity,
   CiCreditCard1,
@@ -20,10 +7,26 @@ import {
   LifeBuoy,
   Settings,
 } from "@/components/Icons";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 import SignOutButton from "./ui/SignOutButton";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { UserAvatar } from "./user/UserAvatar";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/authOption";
+import { generateInitialFromName } from "@/lib/utils";
 
-export function UserProfileDropdown() {
+export async function UserProfileDropdown() {
+  const session = await getServerSession(authOptions);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -31,25 +34,22 @@ export function UserProfileDropdown() {
         className="flex cursor-pointer items-center justify-start ring-slate-400 duration-200 hover:ring-2 focus:ring-4"
       >
         <Avatar className="">
-          <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+          <AvatarImage src={session?.user.image as string} alt={session?.user.name as string} />
           <AvatarFallback className="bg-slate-200 text-base font-medium">
-            CN
+            {generateInitialFromName(session?.user.name as string)}
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>
           <div className="flex items-center justify-start gap-2">
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
+            <UserAvatar />
             <div>
               <span className="block text-xs text-gray-900 dark:text-white">
-                Bonnie Green
+                {session?.user.name}
               </span>
               <span className="block truncate text-sm font-medium text-gray-500 dark:text-gray-400">
-                name@adscrush.com
+                {session?.user.email}
               </span>
             </div>
           </div>

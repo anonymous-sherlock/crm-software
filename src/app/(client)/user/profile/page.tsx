@@ -1,10 +1,10 @@
 import { UserProfileDropdown } from "@/components/UserProfileDropdown";
+import { ProfileForm } from "@/components/profile/ProfileForm";
 
 const Profile = () => {
   return (
-    <main className="flex h-screen items-center justify-center text-5xl font-bold">
-      {" "}
-      <UserProfileDropdown />
+    <main className="flex ">
+      <ProfileForm />
     </main>
   );
 };

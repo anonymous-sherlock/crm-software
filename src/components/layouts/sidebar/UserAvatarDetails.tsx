@@ -1,3 +1,4 @@
+"use server";
 import SignOutButton from "@/components/ui/SignOutButton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -15,23 +16,34 @@ import {
   Settings,
 } from "@/components/Icons";
 import { Separator } from "@/components/ui/separator";
+import { UserAvatar } from "@/components/user/UserAvatar";
+import { generateInitialFromName } from "@/lib/utils";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/authOption";
 
-const UserAvatar = () => {
+const UserAvatarDetails = async () => {
+  const session = await getServerSession(authOptions);
+
   return (
     <HoverCard>
       {/* user image */}
       <HoverCardTrigger asChild>
-        <div className="flex items-center justify-start gap-2 border-y p-4 cursor-pointer">
+        <div className="flex cursor-pointer items-center justify-start gap-2 border-y p-4">
           <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarImage
+              src={session?.user.image as string}
+              alt={session?.user.name as string}
+            />
+            <AvatarFallback>
+              {generateInitialFromName(session?.user.name as string)}
+            </AvatarFallback>
           </Avatar>
           <span>
             <span className="block text-sm text-gray-900 dark:text-white">
-              Bonnie Green
+              {session?.user.name}
             </span>
             <span className="block truncate  text-sm text-gray-500 dark:text-gray-400">
-              name@adscrush.com
+              {session?.user.email}
             </span>
           </span>
         </div>
@@ -39,16 +51,13 @@ const UserAvatar = () => {
       <HoverCardContent className="m-0 w-fit p-0" side="right">
         <div className="">
           <div className="flex items-center justify-start gap-2 border-y p-4">
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
+            <UserAvatar />
             <div>
               <span className="block text-sm text-gray-900 dark:text-white">
-                Bonnie Green
+              {session?.user.name}
               </span>
               <span className="block truncate  text-sm text-gray-500 dark:text-gray-400">
-                name@adscrush.com
+              {session?.user.email}
               </span>
             </div>
           </div>
@@ -68,7 +77,7 @@ const UserAvatar = () => {
               href="#"
               className="m-1 flex items-center justify-start gap-2 rounded-sm p-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
             >
-              <CiCreditCard1 size={16} className="mr-2 text-gray-400"/>
+              <CiCreditCard1 size={16} className="mr-2 text-gray-400" />
               Billing
             </Link>
           </li>
@@ -77,7 +86,7 @@ const UserAvatar = () => {
               href="#"
               className="m-1 flex items-center justify-start gap-2 rounded-sm p-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white "
             >
-              <Settings size={16} className="mr-2 text-gray-400"/>
+              <Settings size={16} className="mr-2 text-gray-400" />
               Settings
             </Link>
           </li>
@@ -111,7 +120,7 @@ const UserAvatar = () => {
           </li>
           <Separator className="my-1" />
           <li className="mx-1">
-            <SignOutButton iconSize={16} className="p-2 w-full text-gray-400">
+            <SignOutButton iconSize={16} className="w-full p-2 text-gray-400">
               Log out
             </SignOutButton>
           </li>
@@ -121,4 +130,4 @@ const UserAvatar = () => {
   );
 };
 
-export default UserAvatar;
+export default UserAvatarDetails;

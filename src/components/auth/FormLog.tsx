@@ -22,7 +22,6 @@ import { newUserResponse } from "@/types";
 import { toast } from "@/ui/use-toast";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Router } from "lucide-react";
 
 export function FormLog({ isRegister }: AuthFormProps) {
   const router = useRouter();

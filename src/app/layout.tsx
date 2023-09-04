@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
-import { NextScript } from "next/document";
+import { SidebarLayout } from "@/components/layouts/SidebarLayout";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        {children}
+        <SidebarLayout> {children}</SidebarLayout>
         <Toaster />
       </body>
     </html>

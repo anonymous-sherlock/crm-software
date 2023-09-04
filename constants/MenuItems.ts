@@ -1,20 +1,18 @@
 import { SubMenuTypes } from "@/types";
-import { FaCircleUser } from "react-icons/fa6";
-import { IoSettings } from "react-icons/io5";
+import { BsPerson } from "react-icons/bs";
 import { MdDashboard, MdLeaderboard } from "react-icons/md";
 import { PiFilesDuotone } from "react-icons/pi";
 import { RiBuilding3Line } from "react-icons/ri";
 import { TbReportAnalytics } from "react-icons/tb";
 
 export const Menus = [
-  { title: "Dashboard", icon: MdDashboard, url: "/dashboard" },
-  { title: "Leads", icon: MdLeaderboard, url: "/leads" },
-  { title: "Offers ", icon: PiFilesDuotone, url: "/offers", gap: true },
-  { title: "Setting", icon: IoSettings, url: "/profile/settings" },
+  { label: "Dashboard", icon: MdDashboard, url: "/dashboard" },
+  { label: "Leads", icon: MdLeaderboard, url: "/leads" },
+  { label: "Offers ", icon: PiFilesDuotone, url: "/offers", gap: true },
   {
-    title: "Accounts",
-    icon: FaCircleUser,
-    url: "/profile",
+    label: "Profile",
+    icon: BsPerson,
+    url: "/user/profile",
     gap: true,
   },
 ];
@@ -32,7 +30,7 @@ export const subMenusList: SubMenuTypes[] = [
       {
         id: "2",
         label: "New Products",
-        url: "/products-new",
+        url: "/products/add",
       },
     ],
   },

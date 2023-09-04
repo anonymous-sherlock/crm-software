@@ -1,8 +1,9 @@
+import { NotificationsForm } from "@/components/profile/NotificationForm";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      User Setting
+    <main className="flex">
+    <NotificationsForm />
     </main>
   );
 }

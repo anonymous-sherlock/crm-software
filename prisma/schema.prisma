@@ -38,6 +38,23 @@ model Session {
   @@index([userId], map: "Session_userId_fkey")
 }
 
+model Product {
+  id          String         @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  ownerId     String // This field represents the ID of the user who owns the product
+  owner       User           @relation(fields: [ownerId], references: [id])
+  images      ProductImage[]
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  url       String // This field stores the image URL
+  productId String // This field represents the ID of the product associated with the image
+  product   Product @relation(fields: [productId], references: [id])
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -48,6 +65,7 @@ model User {
   password      String?
   accounts      Account[]
   sessions      Session[]
+  products      Product[]
 }
 
 model VerificationToken {
