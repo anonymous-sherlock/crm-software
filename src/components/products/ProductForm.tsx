@@ -13,9 +13,20 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
+import { productCategories } from "@/constants/index";
+import { cn } from "@/lib/utils";
+import { productFormSchema } from "@/schema/productSchema";
 import { Textarea } from "@/ui/textarea";
+import { useForm } from "react-hook-form";
 import { Card, CardContent, CardTitle } from "../ui/card";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "../ui/command";
 import {
   Select,
   SelectContent,
@@ -24,29 +35,15 @@ import {
   SelectValue,
 } from "../ui/select";
 import DragAndDrop from "./DragnDrop";
-import { cn } from "@/lib/utils";
-
-const productFormSchema = z.object({
-  productName: z.string().min(2, {
-    message: "Product Name must be at least 2 characters.",
-  }),
-  productPrice: z.string(),
-  productDescription: z.string().optional(),
-  productCategory: z.string().min(1, {
-    message: "Product Category is required.",
-  }),
-  images: z.array(z.string().url()), // Array of image URLs
-});
 
 export function ProductForm() {
   const form = useForm<z.infer<typeof productFormSchema>>({
     resolver: zodResolver(productFormSchema),
     defaultValues: {
       productName: "",
-      productPrice: undefined,
+      productPrice: "",
       productDescription: "",
-      productCategory: "",
-      images: undefined,
+      productImages: [],
     },
   });
 
@@ -62,36 +59,89 @@ export function ProductForm() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
+            method="post"
             className="grid grid-cols-5 items-start gap-6 space-y-4"
           >
-            <div className="col-span-3 w-full">
+            <div className="col-span-3 flex w-full flex-col gap-6">
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="productName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Product Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Nutra Bay" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {/* product price */}
+                <FormField
+                  control={form.control}
+                  name="productPrice"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Product Price</FormLabel>
+                      <FormControl>
+                        <Input placeholder="1,999" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* product category */}
               <FormField
                 control={form.control}
-                name="productName"
+                name="productCategory"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Product Name</FormLabel>
+                    <FormLabel>Product Category</FormLabel>
                     <FormControl>
-                      <Input placeholder="Nutra Bay" {...field} />
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger id="framework">
+                          <SelectValue placeholder="Select a category" />
+                        </SelectTrigger>
+                        <SelectContent position="popper">
+                          <Command className="m-0 h-full w-full p-0">
+                            <CommandInput placeholder="Search..." />
+                            <CommandList>
+                              <CommandEmpty>No results found.</CommandEmpty>
+                              <CommandGroup heading="Categories">
+                                {productCategories.map((cat, index) => (
+                                  <CommandItem
+                                    className="my-2 p-0"
+                                    key={index}
+                                    value={cat}
+                                    onSelect={() => {
+                                      form.setValue("productCategory", cat);
+                                    }}
+                                  >
+                                    <SelectItem
+                                      value={cat}
+                                      className="cursor-pointer"
+                                    >
+                                      {cat}
+                                    </SelectItem>
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              {/* product price */}
-              <FormField
-                control={form.control}
-                name="productPrice"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Product Price</FormLabel>
-                    <FormControl>
-                      <Input placeholder="1,999" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
               {/* product description */}
               <FormField
                 control={form.control}
@@ -110,33 +160,22 @@ export function ProductForm() {
                   </FormItem>
                 )}
               />
-              {/* product category */}
+            </div>
+            <div className="col-span-2 mt-[0_!important] ">
+              {/* <h3 className="mb-4 text-lg capitalize">Add Product Images</h3> */}
               <FormField
                 control={form.control}
-                name="productCategory"
+                name="productImages"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Product Category</FormLabel>
+                    <FormLabel>Add Product Images</FormLabel>
                     <FormControl>
-                      <Select>
-                        <SelectTrigger id="framework">
-                          <SelectValue placeholder="Select" />
-                        </SelectTrigger>
-                        <SelectContent position="popper">
-                          <SelectItem value="next">Next.js</SelectItem>
-                          <SelectItem value="sveltekit">SvelteKit</SelectItem>
-                          <SelectItem value="astro">Astro</SelectItem>
-                          <SelectItem value="nuxt">Nuxt.js</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <DragAndDrop {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-            </div>
-            <div className="col-span-2">
-              <DragAndDrop />
             </div>
             <Button type="submit">Add Product</Button>
           </form>

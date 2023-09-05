@@ -38,10 +38,6 @@ const Sidebar = ({ children }: props) => {
     }
   }, [isTabletMid]);
 
-  useEffect(() => {
-    isTabletMid && setOpen(false);
-  }, [pathname]);
-
   const Nav_animation = isTabletMid
     ? {
         open: {

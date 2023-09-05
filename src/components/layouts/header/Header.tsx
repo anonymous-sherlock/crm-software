@@ -13,7 +13,7 @@ export async function Header() {
 
   return (
     <React.Fragment>
-      <nav className="sticky left-0 top-0  w-full justify-between border-gray-200 bg-white/95 backdrop-blur-sm before:shadow-[-2px_3px_90px_-20px_rgb(0_0_0_/_25%)] dark:bg-gray-900">
+      <nav className="sticky z-50 left-0 top-0  w-full justify-between border-gray-200 bg-white/95 backdrop-blur-sm before:shadow-[-2px_3px_90px_-20px_rgb(0_0_0_/_25%)] dark:bg-gray-900">
         <div className="mx-auto flex max-w-screen-xl flex-wrap items-center justify-between p-2 md:p-4">
           <ToggleSidebar />
           <Search />

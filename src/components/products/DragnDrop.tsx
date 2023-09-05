@@ -6,6 +6,8 @@ import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import DummyUploadImg from "@/assets/upload.png";
+import { getFileExtension } from "@/lib/helpers";
+import { ACCEPTED_IMAGE_EXTENSIONS } from "@/schema/productSchema";
 
 interface DragAndDropProps {}
 
@@ -15,11 +17,12 @@ const DragAndDrop: React.ForwardRefRenderFunction<any, DragAndDropProps> = (
 ) => {
   const [dragActive, setDragActive] = useState<boolean>(false);
   const inputRef = useRef<any>(null);
-  const [files, setFiles] = useState<any>([]);
+  const [files, setFiles] = useState<File[]>([]);
   const {
     register,
     setValue,
     getValues,
+    clearErrors,
     setError,
     trigger,
     getFieldState,
@@ -27,17 +30,35 @@ const DragAndDrop: React.ForwardRefRenderFunction<any, DragAndDropProps> = (
   } = useFormContext();
 
   useEffect(() => {
-    console.log("files: ", files);
-    setValue("images", files);
-    console.log("files", getValues());
-  }, [files]);
+    // When files change, clear errors for "productImages"
+    clearErrors("productImages");
+    console.log(files);
+    setValue("productImages", files);
+  }, [files, setError, setValue]);
 
-  function handleChange(e: any) {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
-    console.log("File has been added");
     if (e.target.files && e.target.files[0]) {
       for (let i = 0; i < e.target.files["length"]; i++) {
-        setFiles((prevState: any) => [...prevState, e.target.files[i]]);
+        const file = e.target.files[i];
+        watch("productImages");
+        if (!file) {
+          return;
+        }
+        const fileExtension = getFileExtension(file.name).toLowerCase();
+        if (ACCEPTED_IMAGE_EXTENSIONS.includes(fileExtension)) {
+          // Check if the file extension is in the accepted extensions array
+          setFiles((prevState: File[]) => [...prevState, file]);
+      
+        } else {
+          // Handle non-accepted file extensions (show an error, ignore, etc.)
+          // For now, we'll just log a message and set an error
+          console.log(`Ignoring file with invalid extension: ${file.name}`);
+          setError("productImages", {
+            type: "validate",
+            message: `File ${file.name} are not allowed to upload! only .jpg, .jpeg, .png and .webp are acceptable.`,
+          });
+        }
       }
     }
   }
@@ -46,21 +67,27 @@ const DragAndDrop: React.ForwardRefRenderFunction<any, DragAndDropProps> = (
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    console.log(getFieldState("gallerySingleImage").invalid);
 
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      for (let i = 0; i < e.dataTransfer.files["length"]; i++) {
-        watch("gallerySingleImage");
-        setValue("gallerySingleImage", e.dataTransfer.files[i]);
-        await trigger("gallerySingleImage");
-
-        if (!getFieldState("gallerySingleImage").invalid) {
-          console.log(e.dataTransfer.files[i]);
-          setFiles((prevState: any) => [...prevState, e.dataTransfer.files[i]]);
+      for (let i = 0; i < e.dataTransfer.files.length; i++) {
+        const file = e.dataTransfer.files[i];
+        watch("productImages");
+        // Check if the file is an image before adding it
+        // clearErrors("productImages");
+        setValue("productImages", [...files, file]);
+        await trigger("productImages");
+        if (!getFieldState("productImages").invalid) {
+          console.log(file);
+          setFiles((prevState: any) => [...prevState, file]);
+        } else {
+          // Handle non-image files (show an error, ignore, etc.)
+          // For now, we'll just log a message
+          console.log(`Ignoring non-image file: ${file.name}`);
         }
       }
     }
   }
+
   function handleDragLeave(e: any) {
     e.preventDefault();
     e.stopPropagation();
@@ -93,12 +120,7 @@ const DragAndDrop: React.ForwardRefRenderFunction<any, DragAndDropProps> = (
 
   return (
     <div className="flex flex-col items-center justify-center ">
-      {getFieldState("gallerySingleImage").invalid && (
-        <div>
-          <p>{getFieldState("gallerySingleImage").error?.message}</p>
-        </div>
-      )}
-      {files.length < 0 && (
+      {!(files.length > 0) && (
         <div
           className={cn(
             "w-full cursor-pointer rounded-lg border-2 border-dashed bg-gray-100 p-2",
@@ -143,30 +165,31 @@ const DragAndDrop: React.ForwardRefRenderFunction<any, DragAndDropProps> = (
         onChange={handleChange}
         accept="image/*"
       />
-      <div className="grid w-full grid-cols-3 gap-4 p-3 ">
-        {files.map((file: any, idx: any) => (
-          <div
-            key={idx}
-            className="group relative w-full rounded-md bg-gray-100 pb-[100%]"
-          >
-            <Image
-              width={400}
-              height={400}
-              src={URL.createObjectURL(file)}
-              alt="cover"
-              className="absolute h-full w-full object-cover"
-            />
-            <span
-              className={cn(
-                "absolute right-0 top-2 hidden h-8 w-8 -translate-y-1/2 translate-x-1/2 cursor-pointer items-center justify-center rounded-full bg-destructive group-hover:flex"
-              )}
-              onClick={() => removeFile(file.name, idx)}
+      {files.length > 0 && (
+        <div className="grid w-full grid-cols-3 gap-4 rounded-md border-2 border-solid bg-gray-200 p-2 ">
+          {files.map((file: any, idx: any) => (
+            <div
+              key={idx}
+              className="bg-gray-black group relative w-full rounded-md"
+              style={{ width: "100%", height: "100px" }}
             >
-              <Trash width={"50%"} color="white" />
-            </span>
-          </div>
-        ))}
-        {files.length > 0 && (
+              <Image
+                width={50}
+                height={50}
+                src={URL.createObjectURL(file)}
+                alt="cover"
+                className="absolute h-full w-full object-cover transition-transform duration-300"
+              />
+              <span
+                className={cn(
+                  "absolute right-0 top-2 hidden h-6 w-6 -translate-y-1/2 translate-x-1/2 cursor-pointer items-center justify-center rounded-full bg-destructive duration-300 group-hover:flex"
+                )}
+                onClick={() => removeFile(file.name, idx)}
+              >
+                <Trash width={"50%"} color="white" />
+              </span>
+            </div>
+          ))}
           <div
             className={cn(
               "flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed bg-gray-100 p-2 duration-300 hover:border-primary",
@@ -187,8 +210,8 @@ const DragAndDrop: React.ForwardRefRenderFunction<any, DragAndDropProps> = (
             />
             Upload
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
