@@ -35,8 +35,12 @@ import {
   SelectValue,
 } from "../ui/select";
 import DragAndDrop from "./DragnDrop";
+import axios from "axios";
+import { useImageFileStore } from "@/store/index";
 
 export function ProductForm() {
+  const { files} = useImageFileStore();
+
   const form = useForm<z.infer<typeof productFormSchema>>({
     resolver: zodResolver(productFormSchema),
     defaultValues: {
@@ -49,7 +53,30 @@ export function ProductForm() {
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof productFormSchema>) {
-    console.log(values);
+
+    const data = values;
+    console.log(values.productImages);
+    const formData = new FormData();
+    function appendIfDefined(key: string, value: any) {
+      if (value !== undefined) {
+        formData.append(key, value as string);
+      }
+    }
+    appendIfDefined("productName", data.productName);
+    appendIfDefined("productPrice", data.productPrice);
+    appendIfDefined("productCategory", data.productCategory);
+    appendIfDefined("productDescription", data.productDescription);
+    files.forEach((image) => {
+      formData.append("productImages", image as File);
+    });
+
+    console.log(data);
+    axios
+      .post("/api/products/add", formData, {})
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((err) => console.error(err));
   }
 
   return (
@@ -170,7 +197,7 @@ export function ProductForm() {
                   <FormItem>
                     <FormLabel>Add Product Images</FormLabel>
                     <FormControl>
-                      <DragAndDrop {...field} />
+                      <DragAndDrop />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

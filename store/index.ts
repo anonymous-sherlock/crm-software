@@ -16,5 +16,12 @@ const useNavbarStore = create<NavbarState>((set) => ({
 
 export default useNavbarStore;
 
-
-// submenu state
+//Image Files array
+type ImageFileStore = {
+  files: File[];
+  setFiles: (newFiles: File[]) => void;
+};
+export const useImageFileStore = create<ImageFileStore>((set) => ({
+  files: [],
+  setFiles: (newFiles) => set({ files: newFiles }),
+}));

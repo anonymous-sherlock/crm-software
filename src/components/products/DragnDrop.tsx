@@ -8,6 +8,7 @@ import { useFormContext } from "react-hook-form";
 import DummyUploadImg from "@/assets/upload.png";
 import { getFileExtension } from "@/lib/helpers";
 import { ACCEPTED_IMAGE_EXTENSIONS } from "@/schema/productSchema";
+import { useImageFileStore } from "@/store/index";
 
 interface DragAndDropProps {}
 
@@ -17,7 +18,8 @@ const DragAndDrop: React.ForwardRefRenderFunction<any, DragAndDropProps> = (
 ) => {
   const [dragActive, setDragActive] = useState<boolean>(false);
   const inputRef = useRef<any>(null);
-  const [files, setFiles] = useState<File[]>([]);
+  const { files, setFiles } = useImageFileStore();
+
   const {
     register,
     setValue,
@@ -32,8 +34,8 @@ const DragAndDrop: React.ForwardRefRenderFunction<any, DragAndDropProps> = (
   useEffect(() => {
     // When files change, clear errors for "productImages"
     clearErrors("productImages");
-    console.log(files);
     setValue("productImages", files);
+    console.log(files);
   }, [files, setError, setValue]);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -48,8 +50,7 @@ const DragAndDrop: React.ForwardRefRenderFunction<any, DragAndDropProps> = (
         const fileExtension = getFileExtension(file.name).toLowerCase();
         if (ACCEPTED_IMAGE_EXTENSIONS.includes(fileExtension)) {
           // Check if the file extension is in the accepted extensions array
-          setFiles((prevState: File[]) => [...prevState, file]);
-      
+          setFiles([...files, file]);
         } else {
           // Handle non-accepted file extensions (show an error, ignore, etc.)
           // For now, we'll just log a message and set an error
@@ -77,8 +78,7 @@ const DragAndDrop: React.ForwardRefRenderFunction<any, DragAndDropProps> = (
         setValue("productImages", [...files, file]);
         await trigger("productImages");
         if (!getFieldState("productImages").invalid) {
-          console.log(file);
-          setFiles((prevState: any) => [...prevState, file]);
+          setFiles([...files, file]);
         } else {
           // Handle non-image files (show an error, ignore, etc.)
           // For now, we'll just log a message
