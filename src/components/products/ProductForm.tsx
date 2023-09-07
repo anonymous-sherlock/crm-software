@@ -22,7 +22,7 @@ import axios from "axios";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Card, CardContent, CardTitle } from "../ui/card";
+import { Card, CardContent, CardTitle } from "@/ui/card";
 import {
   Command,
   CommandEmpty,
@@ -30,11 +30,11 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "../ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { toast } from "../ui/use-toast";
+} from "@/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/ui/popover";
+import { toast } from "@/ui/use-toast";
 import DragAndDrop from "./DragnDrop";
-import Spinner from "../ui/spinner";
+import Spinner from "@/ui/spinner";
 
 export function ProductForm() {
   const [open, setOpen] = useState(false);
@@ -54,6 +54,7 @@ export function ProductForm() {
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof productFormSchema>) {
+    setLoading(true);
     const data = values;
     const formData = new FormData();
     function appendIfDefined(key: string, value: any) {
@@ -75,11 +76,17 @@ export function ProductForm() {
       .then((response) => {
         toast({
           variant: "success",
-          title: "User Created",
+          title: "Product created",
           description: response.data.message,
         });
+        if (response.data.success) {
+          setLoading(false);
+        }
       })
-      .catch((err) => console.error(err));
+      .catch((err) => console.error(err))
+      .finally(() => {
+        setLoading(false);
+      });
   }
 
   return (
@@ -244,10 +251,14 @@ export function ProductForm() {
                 )}
               />
             </div>
-            <Button type="submit" disabled={loading}>
+            <Button
+              type="submit"
+              disabled={loading}
+              className={cn("w-full col-span-1")}
+            >
               {loading ? (
                 <>
-                  <Spinner /> "Adding Product..."
+                  <Spinner /> Adding Product...
                 </>
               ) : (
                 "Add Product"

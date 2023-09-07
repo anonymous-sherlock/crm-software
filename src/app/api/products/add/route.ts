@@ -3,58 +3,62 @@ import { parsePrice } from "@/lib/helpers";
 import { uploadImage } from "@/lib/helpers/fileUpload";
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+
 export async function POST(req: NextRequest, res: NextResponse) {
-  const body = await req.formData();
-  const token = await getToken({ req });
-  const productName = body.get("productName");
-  const productPrice = body.get("productPrice");
-  const productDescription = body.get("productDescription");
-  const productCategory = body.get("productCategory");
-  const productImages = body.getAll("productImages") as File[];
+  try {
+    const token = await getToken({ req });
 
-  const uploadedImages = [];
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-  if (!token) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  for (const image of productImages) {
-    // upload image
-    const imgPath = await uploadImage(image, "user");
-    console.log(imgPath);
-    uploadedImages.push(imgPath);
-  }
-  const price = parsePrice(productPrice as string);
-  const newProduct = await db.product.create({
-    data: {
-      name: productName as string,
-      description: productDescription as string,
-      price: price,
-      owner: {
-        connect: {
-          id: token.id,
+    const formData = await req.formData();
+    const productName = String(formData.get("productName") || "");
+    const productPrice = String(formData.get("productPrice") || "");
+    const productDescription = String(formData.get("productDescription") || "");
+    const productQuantity = formData.get("productQuantity");
+    const productCategory = String(formData.get("productCategory") || "");
+    const productImages = formData.getAll("productImages") as File[];
+
+    const uploadedImages: string[] = [];
+
+    console.log(formData);
+
+    for (const image of productImages) {
+      const imgPath = await uploadImage(image, "user");
+      console.log(imgPath);
+      uploadedImages.push(imgPath as string);
+    }
+
+    const price = parsePrice(productPrice);
+    const newProduct = await db.product.create({
+      data: {
+        name: productName,
+        description: productDescription,
+        price,
+        quantity: Number(productQuantity),
+        owner: {
+          connect: {
+            id: token.id,
+          },
         },
       },
-    },
-  });
+    });
 
-  if (body) {
     return NextResponse.json(
       {
         success: true,
-        message: `${
-          productName !== null || undefined || "" ? productName + " " : ""
-        }created successfully`,
+        message: `${productName ? productName + " " : ""}created successfully`,
         productImages: uploadedImages,
         product: newProduct,
       },
       { status: 201 }
     );
-  } else {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

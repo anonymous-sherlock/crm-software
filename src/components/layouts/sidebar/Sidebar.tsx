@@ -4,12 +4,12 @@ import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 import SubMenu from "./SubMenu";
 // * React icons
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Menus, subMenusList } from "@/constants/MenuItems";
 import useNavbarStore from "@/store/index";
 import { ArrowLeftToLine } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { SlSettings } from "react-icons/sl";
 import { useMediaQuery } from "react-responsive";
 
@@ -28,15 +28,6 @@ const Sidebar = ({ children }: props) => {
   }, [isTabletMid, setIsTabletMid, setOpen]);
 
   const sidebarRef = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
-
-  useEffect(() => {
-    if (isTabletMid) {
-      setOpen(false);
-    } else {
-      setOpen(true);
-    }
-  }, [isTabletMid]);
 
   const Nav_animation = isTabletMid
     ? {
@@ -101,36 +92,40 @@ const Sidebar = ({ children }: props) => {
           )}
         </div>
 
-        <div className="flex h-screen flex-col">
-          <ul className="scrollbar-rounded-2 flex h-[70%] flex-col gap-1 overflow-x-hidden whitespace-pre  px-2.5 py-5 text-[0.9rem] font-medium scrollbar-thin scrollbar-track-white scrollbar-thumb-slate-100 md:h-[68%]">
-          {Menus.map((menu, index) => (
-                       <li key={index} className="hover:bg-gray-100 text-primary rounded-lg">
-                       <Link href={menu.url} className="link cursor-pointer">
-                         <menu.icon size={23} className="min-w-max" />
-                         {menu.label}
-                       </Link>
-                     </li>
-          )
-          )}
+        <div className="flex h-screen flex-col ">
+          <ul className="flex h-[70%] flex-col gap-1 overflow-x-hidden whitespace-pre  py-5 text-[0.9rem] font-medium md:h-[68%]">
+            <ScrollArea className="h-full w-full border-none px-2.5">
+              {Menus.map((menu, index) => (
+                <li
+                  key={index}
+                  className="hover:bg-gray-100 text-primary rounded-lg"
+                >
+                  <Link href={menu.url} className="link cursor-pointer">
+                    <menu.icon size={23} className="min-w-max" />
+                    {menu.label}
+                  </Link>
+                </li>
+              ))}
 
-            {(open || isTabletMid) && (
-              <div className="border-y border-slate-300 py-5 ">
-                <small className="mb-2 inline-block pl-3 text-slate-500">
-                  Products
-                </small>
-                {subMenusList?.map((menu) => (
-                  <div key={menu.name} className="flex flex-col gap-1">
-                    <SubMenu data={menu} />
-                  </div>
-                ))}
-              </div>
-            )}
-            <li className="hover:bg-gray-100 text-primary rounded-lg">
-              <Link href={"/settings"} className="link">
-                <SlSettings size={23} className="min-w-max" />
-                Settings
-              </Link>
-            </li>
+              {(open || isTabletMid) && (
+                <div className="border-y border-slate-300 py-5 ">
+                  <small className="mb-2 inline-block pl-3 text-slate-500">
+                    Products
+                  </small>
+                  {subMenusList?.map((menu) => (
+                    <div key={menu.name} className="flex flex-col gap-1">
+                      <SubMenu data={menu} />
+                    </div>
+                  ))}
+                </div>
+              )}
+              <li className="hover:bg-gray-100 text-primary rounded-lg">
+                <Link href={"/settings"} className="link">
+                  <SlSettings size={23} className="min-w-max" />
+                  Settings
+                </Link>
+              </li>
+            </ScrollArea>
           </ul>
           <div className="relative z-50 mb-14 mt-auto flex w-full flex-col	justify-end whitespace-pre text-sm font-medium">
             {/* collapse button */}

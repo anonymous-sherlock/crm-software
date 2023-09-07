@@ -39,25 +39,25 @@ model Session {
 }
 
 model Product {
-  id            String         @id @default(cuid())
-  name          String
-  description   String?
-  price         Float
-  stockQuantity Int?
-  ownerId       String
-  owner         User           @relation(fields: [ownerId], references: [id])
-  images        ProductImage[]
+  productId   String         @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  quantity    Int
+  ownerId     String
+  owner       User           @relation(fields: [ownerId], references: [id])
+  images      ProductImage[]
 
   @@index([ownerId], map: "Product_ownerId_fkey")
 }
 
 model ProductImage {
-  id        String  @id @default(cuid())
-  url       String
-  productId String
-  product   Product @relation(fields: [productId], references: [id])
+  id             String  @id @default(cuid())
+  url            String
+  productImageId String
+  product        Product @relation(fields: [productImageId], references: [productId])
 
-  @@index([productId], map: "ProductImage_productId_fkey")
+  @@index([productImageId], map: "ProductImage_productId_fkey")
 }
 
 model User {

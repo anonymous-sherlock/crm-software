@@ -25,7 +25,18 @@ export const productFormSchema = z.object({
     })
     .nonempty({
       message: "Product price is required.",
-    }),
+    })
+    .refine(
+      (value) => {
+        // Remove commas (thousands separators) if they exist
+        const sanitizedValue = value.replace(/,/g, "");
+        // Validate that the sanitized value contains only numeric characters and optional decimal points
+        return /^[\d.]+$/.test(sanitizedValue);
+      },
+      {
+        message: "Product price must be in this format only 1,999 or 1999.",
+      }
+    ),
 
   productDescription: z.string().optional(),
   productCategory: z
@@ -38,10 +49,13 @@ export const productFormSchema = z.object({
   productQuantity: z
     .string({
       required_error:
-        "Product quantity is required. Enter -1 unlimited quantity",
+        "Product quantity is required. Enter -1 unlimited stock quantity",
     })
-    .regex(/^\d+$/, {
-      message: "Product quantity can have number like 46 ",
+    .refine((value) => value !== "0", {
+      message: "Product quantity cannot be empty or 0.",
+    })
+    .refine((value) => value === "-1" || /^\d+$/.test(value), {
+      message: "Product quantity must be a valid number or -1 for unlimited.",
     }),
 
   productImages: z
