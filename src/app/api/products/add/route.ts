@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { parsePrice } from "@/lib/helpers";
 import { uploadImage } from "@/lib/helpers/fileUpload";
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
@@ -27,11 +28,12 @@ export async function POST(req: NextRequest, res: NextResponse) {
     console.log(imgPath);
     uploadedImages.push(imgPath);
   }
+  const price = parsePrice(productPrice as string);
   const newProduct = await db.product.create({
     data: {
       name: productName as string,
       description: productDescription as string,
-      price: Number(productPrice),
+      price: price,
       owner: {
         connect: {
           id: token.id,
@@ -39,12 +41,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
       },
     },
   });
-  // const usersProduct = db.user.findUnique({
-  //   select: {
-  //     id: token.id as string,
-  //     where: {},
-  //   },
-  // });
+
   if (body) {
     return NextResponse.json(
       {

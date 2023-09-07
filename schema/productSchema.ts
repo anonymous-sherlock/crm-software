@@ -26,6 +26,7 @@ export const productFormSchema = z.object({
     .nonempty({
       message: "Product price is required.",
     }),
+
   productDescription: z.string().optional(),
   productCategory: z
     .string({
@@ -34,6 +35,15 @@ export const productFormSchema = z.object({
     .refine((value) => !!value, {
       message: "Product category is required.",
     }),
+  productQuantity: z
+    .string({
+      required_error:
+        "Product quantity is required. Enter -1 unlimited quantity",
+    })
+    .regex(/^\d+$/, {
+      message: "Product quantity can have number like 46 ",
+    }),
+
   productImages: z
     .array(singleImageSchema)
     .refine((files) => files.length > 0, {
@@ -63,4 +73,4 @@ export const productFormSchema = z.object({
     ),
 });
 
-export const ACCEPTED_IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "webp","svg"];
+export const ACCEPTED_IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "webp", "svg"];

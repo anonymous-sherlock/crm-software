@@ -16,7 +16,11 @@ import { Input } from "@/components/ui/input";
 import { productCategories } from "@/constants/index";
 import { cn } from "@/lib/utils";
 import { productFormSchema } from "@/schema/productSchema";
+import { useImageFileStore } from "@/store/index";
 import { Textarea } from "@/ui/textarea";
+import axios from "axios";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Card, CardContent, CardTitle } from "../ui/card";
 import {
@@ -27,35 +31,30 @@ import {
   CommandItem,
   CommandList,
 } from "../ui/command";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { toast } from "../ui/use-toast";
 import DragAndDrop from "./DragnDrop";
-import axios from "axios";
-import { useImageFileStore } from "@/store/index";
+import Spinner from "../ui/spinner";
 
 export function ProductForm() {
-  const { files} = useImageFileStore();
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
+  const { files } = useImageFileStore();
   const form = useForm<z.infer<typeof productFormSchema>>({
     resolver: zodResolver(productFormSchema),
     defaultValues: {
       productName: "",
       productPrice: "",
       productDescription: "",
+      productQuantity: "",
       productImages: [],
     },
   });
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof productFormSchema>) {
-
     const data = values;
-    console.log(values.productImages);
     const formData = new FormData();
     function appendIfDefined(key: string, value: any) {
       if (value !== undefined) {
@@ -65,16 +64,20 @@ export function ProductForm() {
     appendIfDefined("productName", data.productName);
     appendIfDefined("productPrice", data.productPrice);
     appendIfDefined("productCategory", data.productCategory);
+    appendIfDefined("productQuantity", data.productQuantity);
     appendIfDefined("productDescription", data.productDescription);
     files.forEach((image) => {
       formData.append("productImages", image as File);
     });
 
-    console.log(data);
     axios
       .post("/api/products/add", formData, {})
       .then((response) => {
-        console.log(response);
+        toast({
+          variant: "success",
+          title: "User Created",
+          description: response.data.message,
+        });
       })
       .catch((err) => console.error(err));
   }
@@ -119,56 +122,93 @@ export function ProductForm() {
                   )}
                 />
               </div>
-
-              {/* product category */}
-              <FormField
-                control={form.control}
-                name="productCategory"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Product Category</FormLabel>
-                    <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <SelectTrigger id="framework">
-                          <SelectValue placeholder="Select a category" />
-                        </SelectTrigger>
-                        <SelectContent position="popper">
-                          <Command className="m-0 h-full w-full p-0">
-                            <CommandInput placeholder="Search..." />
-                            <CommandList>
-                              <CommandEmpty>No results found.</CommandEmpty>
-                              <CommandGroup heading="Categories">
-                                {productCategories.map((cat, index) => (
-                                  <CommandItem
-                                    className="my-2 p-0"
-                                    key={index}
-                                    value={cat}
-                                    onSelect={() => {
-                                      form.setValue("productCategory", cat);
-                                    }}
-                                  >
-                                    <SelectItem
+              <div className="grid grid-cols-2 gap-4">
+                {/* product category */}
+                <FormField
+                  control={form.control}
+                  name="productCategory"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Product Category</FormLabel>
+                      <FormControl>
+                        <Popover open={open} onOpenChange={setOpen}>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant="outline"
+                                role="combobox"
+                                aria-expanded={open}
+                                className={cn(
+                                  "w-full justify-between",
+                                  !field.value && "text-muted-foreground"
+                                )}
+                              >
+                                {field.value
+                                  ? field.value
+                                  : "Select a Category"}
+                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent
+                            className="w-full p-0"
+                            style={{ maxWidth: "100%", width: "100%" }}
+                          >
+                            <Command className="m-0 h-full w-full p-0">
+                              <CommandInput placeholder="Search..." />
+                              <CommandList>
+                                <CommandEmpty>No results found.</CommandEmpty>
+                                <CommandGroup heading="Categories">
+                                  {productCategories.map((cat, index) => (
+                                    <CommandItem
+                                      className="my-2  cursor-pointer"
+                                      key={index}
                                       value={cat}
-                                      className="cursor-pointer"
+                                      onSelect={() => {
+                                        form.setValue("productCategory", cat);
+                                        form.clearErrors("productCategory");
+                                        setOpen(false);
+                                      }}
                                     >
+                                      <Check
+                                        className={cn(
+                                          "mr-2 h-4 w-4",
+                                          cat === field.value
+                                            ? "opacity-100"
+                                            : "opacity-0"
+                                        )}
+                                      />
                                       {cat}
-                                    </SelectItem>
-                                  </CommandItem>
-                                ))}
-                              </CommandGroup>
-                            </CommandList>
-                          </Command>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {/* product Quantity */}
+                <FormField
+                  control={form.control}
+                  name="productQuantity"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Product Quantity</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="-1 for unlimited stocks"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               {/* product description */}
               <FormField
                 control={form.control}
@@ -204,7 +244,15 @@ export function ProductForm() {
                 )}
               />
             </div>
-            <Button type="submit">Add Product</Button>
+            <Button type="submit" disabled={loading}>
+              {loading ? (
+                <>
+                  <Spinner /> "Adding Product..."
+                </>
+              ) : (
+                "Add Product"
+              )}
+            </Button>
           </form>
         </Form>
       </CardContent>
