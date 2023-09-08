@@ -13,11 +13,11 @@ export default withAuth(
 
     const isLoginPage = req.nextUrl.pathname.startsWith("/login");
     const isRegisterPage = req.nextUrl.pathname.startsWith("/register");
-    const isApiRoute = req.nextUrl.pathname.startsWith('/api');
+    const isApiRoute = req.nextUrl.pathname.startsWith("/api");
 
-    const unprotectedRoutes = ["/login", "/register",];
+    const unprotectedRoutes = ["/login", "/register"];
 
-    if (isAuth && (isLoginPage || isRegisterPage|| pathname === "/")) {
+    if (isAuth && (isLoginPage || isRegisterPage || pathname === "/")) {
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }
 
