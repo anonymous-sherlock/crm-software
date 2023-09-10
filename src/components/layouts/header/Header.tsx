@@ -2,14 +2,13 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import React from "react";
 
 import Notification from "@/components/Notification";
-import { UserProfileDropdown } from "@/components/UserProfileDropdown";
-import { authOptions } from "@/lib/authOption";
-import { getServerSession } from "next-auth";
+import { UserAccountNav } from "@/components/UserAccountNav";
+import { getAuthSession } from "@/lib/authOption";
 import Search from "./Search";
 import ToggleSidebar from "./ToggleSidebar";
 
 export async function Header() {
-  const session = await getServerSession(authOptions);
+  const session = await getAuthSession()
 
   return (
     <React.Fragment>
@@ -22,7 +21,7 @@ export async function Header() {
             <Notification />
             <ThemeToggle />
 
-            {session && <UserProfileDropdown />}
+            {session?.user && <UserAccountNav user={session.user} />}
           </div>
         </div>
       </nav>

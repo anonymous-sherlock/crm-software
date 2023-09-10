@@ -1,4 +1,3 @@
-"use server"
 import {
   Activity,
   CiCreditCard1,
@@ -15,18 +14,19 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { generateInitialFromName } from "@/lib/utils";
+import { User } from "next-auth";
 import SignOutButton from "./ui/SignOutButton";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { UserAvatar } from "./user/UserAvatar";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/authOption";
-import { generateInitialFromName } from "@/lib/utils";
 
-export async function UserProfileDropdown() {
-  const session = await getServerSession(authOptions);
+interface UserAccountNavProps extends React.HTMLAttributes<HTMLDivElement> {
+  user: Pick<User, "name" | "image" | "email">;
+}
 
+export function UserAccountNav({ user }: UserAccountNavProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -34,22 +34,22 @@ export async function UserProfileDropdown() {
         className="flex cursor-pointer items-center justify-start ring-slate-400 duration-200 hover:ring-2 focus:ring-4"
       >
         <Avatar className="">
-          <AvatarImage src={session?.user.image as string} alt={session?.user.name as string} />
+          <AvatarImage src={user.image as string} alt={user.name as string} />
           <AvatarFallback className="bg-slate-200 text-base font-medium">
-            {generateInitialFromName(session?.user.name as string)}
+            {generateInitialFromName(user.name as string)}
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>
           <div className="flex items-center justify-start gap-2">
-            <UserAvatar />
+            <UserAvatar user={user} />
             <div>
               <span className="block text-xs text-gray-900 dark:text-white">
-                {session?.user.name}
+                {user.name}
               </span>
               <span className="block truncate text-sm font-medium text-gray-500 dark:text-gray-400">
-                {session?.user.email}
+                {user.email}
               </span>
             </div>
           </div>

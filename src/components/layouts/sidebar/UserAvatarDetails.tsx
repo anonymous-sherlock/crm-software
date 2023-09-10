@@ -1,12 +1,3 @@
-"use server";
-import SignOutButton from "@/components/ui/SignOutButton";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
-import Link from "next/link";
 import {
   Activity,
   CiCreditCard1,
@@ -15,14 +6,21 @@ import {
   LifeBuoy,
   Settings,
 } from "@/components/Icons";
+import SignOutButton from "@/components/ui/SignOutButton";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 import { Separator } from "@/components/ui/separator";
 import { UserAvatar } from "@/components/user/UserAvatar";
+import { getAuthSession } from "@/lib/authOption";
 import { generateInitialFromName } from "@/lib/utils";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/authOption";
+import Link from "next/link";
 
-const UserAvatarDetails = async () => {
-  const session = await getServerSession(authOptions);
+export const UserProfileHover = async () => {
+  const session = await getAuthSession();
 
   return (
     <HoverCard>
@@ -51,13 +49,13 @@ const UserAvatarDetails = async () => {
       <HoverCardContent className="m-0 w-fit p-0" side="right">
         <div className="">
           <div className="flex items-center justify-start gap-2 border-y p-4">
-            <UserAvatar />
+            {session?.user && <UserAvatar user={session.user} />}
             <div>
               <span className="block text-sm text-gray-900 dark:text-white">
-              {session?.user.name}
+                {session?.user.name}
               </span>
               <span className="block truncate  text-sm text-gray-500 dark:text-gray-400">
-              {session?.user.email}
+                {session?.user.email}
               </span>
             </div>
           </div>
@@ -130,4 +128,4 @@ const UserAvatarDetails = async () => {
   );
 };
 
-export default UserAvatarDetails;
+export default UserProfileHover;

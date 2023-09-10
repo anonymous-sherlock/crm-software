@@ -1,12 +1,10 @@
 import "server-only";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/authOption";
-import { Session } from "next-auth";
+import { getAuthSession } from "@/lib/authOption";
 import { getAllProductsForUser } from "@/lib/dbAction";
 import { Product } from "@prisma/client";
-import { DataTable } from "./data-table";
 import { columns } from "./columns";
+import { DataTable } from "./data-table";
 
 type ProductData = {
   productId: string;
@@ -17,7 +15,7 @@ type ProductData = {
   ownerId: string;
 };
 async function getData() {
-  const session = await getServerSession(authOptions);
+  const session = await getAuthSession()
   if (!session) {
     return [];
   }

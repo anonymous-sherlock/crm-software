@@ -1,10 +1,9 @@
 {
   "name": "crm-software",
   "version": "0.1.0",
-  "type": "module",
   "private": true,
   "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"esnext\"} prisma/seed.ts"
+    "seed": "node --loader ts-node/esm prisma/seed.ts"
   },
   "scripts": {
     "dev": "next dev",

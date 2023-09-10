@@ -5,13 +5,14 @@ import { useEffect, useRef } from "react";
 import SubMenu from "./SubMenu";
 // * React icons
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Menus, subMenusList } from "@/constants/MenuItems";
+import { Menus, singleMenu, subMenusList } from "@/constants/MenuItems";
 import useNavbarStore from "@/store/index";
 import { ArrowLeftToLine } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { SlSettings } from "react-icons/sl";
 import { useMediaQuery } from "react-responsive";
+import { cn } from "@/lib/utils";
 
 interface props {
   children: React.ReactNode;
@@ -112,19 +113,24 @@ const Sidebar = ({ children }: props) => {
                   <small className="mb-2 inline-block pl-3 text-slate-500">
                     Products
                   </small>
-                  {subMenusList?.map((menu) => (
-                    <div key={menu.name} className="flex flex-col gap-1">
+                  {subMenusList?.map((menu, index) => (
+                    <div key={index} className="flex flex-col gap-1">
                       <SubMenu data={menu} />
                     </div>
                   ))}
                 </div>
               )}
-              <li className="hover:bg-gray-100 text-primary rounded-lg">
-                <Link href={"/settings"} className="link">
-                  <SlSettings size={23} className="min-w-max" />
-                  Settings
-                </Link>
-              </li>
+              {singleMenu.map((menu, index) => (
+                <li
+                  key={index}
+                  className={`${cn("hover:bg-gray-100 text-primary rounded-lg ")} ${menu.gap && "mt-2"  }`}
+                >
+                  <Link href={menu.url} className="link">
+                    <menu.icon size={23} className="min-w-max" />
+                    {menu.label}
+                  </Link>
+                </li>
+              ))}
             </ScrollArea>
           </ul>
           <div className="relative z-50 mb-14 mt-auto flex w-full flex-col	justify-end whitespace-pre text-sm font-medium">
