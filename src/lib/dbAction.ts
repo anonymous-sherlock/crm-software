@@ -1,14 +1,16 @@
 import "server-only";
 import { db } from "./db";
-import { productWithImages } from "@/types/db";
+
 
 export const getAllProductsForUser = async (userId: string) => {
   try {
-    const userProducts = await db.user.findFirst({
+    const userProducts = await db.product.findUnique({
       where: {
-        id: { equals: userId.toLowerCase() },
+        productId: userId,
       },
-      ...productWithImages,
+      include: {
+        images: true,
+      },
     });
 
     return userProducts;

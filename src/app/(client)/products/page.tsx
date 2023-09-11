@@ -2,6 +2,7 @@ import { ProductCard } from "@/components/products/ProductCard";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { getAuthSession } from "@/lib/authOption";
 import { getAllProductsForUser } from "@/lib/dbAction";
+import { ProductWithImagesPayload } from "@/types/db";
 import "server-only";
 
 async function getData() {
@@ -10,9 +11,10 @@ async function getData() {
     return [];
   }
   // Retrieve the 'products' array property from the result
-  const result = await getAllProductsForUser(session.user.id);
-  const products = result?.products || null;
-
+  const productsData = await getAllProductsForUser(session.user.id);
+  const products: ProductWithImagesPayload[] | null = productsData as
+    | ProductWithImagesPayload[]
+    | null;
   return products || []; // Return an empty array if products is null
 }
 
