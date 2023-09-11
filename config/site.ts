@@ -41,3 +41,11 @@ export const siteConfig = {
   },
   API_URL: "https://localhost/api/v1",
 };
+
+export const ftpServerConfig = {
+  host: "ftp.adscrush.com",
+  user: "u286033143.adscrushcrm",
+  password: "Myiphone@90",
+  port: 21,
+  secure: false,
+};

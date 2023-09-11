@@ -1,5 +1,6 @@
 import "server-only";
 import { db } from "./db";
+import { productWithImages } from "@/types/db";
 
 export const getAllProductsForUser = async (userId: string) => {
   try {
@@ -7,9 +8,7 @@ export const getAllProductsForUser = async (userId: string) => {
       where: {
         id: { equals: userId.toLowerCase() },
       },
-      select: {
-        products: true,
-      },
+      ...productWithImages,
     });
 
     return userProducts;

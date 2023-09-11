@@ -12,5 +12,10 @@ declare namespace NodeJS {
     EMAIL_SERVER_PORT: number;
     EMAIL_FROM: string;
     BASE_URL: string;
+    FTP_HOST: string;
+    FTP_PORT: number;
+    FTP_USER: string;
+    FTP_PASS: string;
+    CDN_Domain: string;
   }
 }

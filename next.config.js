@@ -9,7 +9,11 @@ const nextConfig = {
   // dev speed improvement
 
   images: {
-    domains: ["source.unsplash.com", "googleusercontent.com"],
+    domains: [
+      "source.unsplash.com",
+      "googleusercontent.com",
+      "cdn-crm.adscrush.com",
+    ],
     remotePatterns: [
       {
         protocol: "https",

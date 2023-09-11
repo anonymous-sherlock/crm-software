@@ -20,73 +20,60 @@ const DragAndDrop: React.ForwardRefRenderFunction<any, DragAndDropProps> = (
   const inputRef = useRef<any>(null);
   const { files, setFiles } = useImageFileStore();
 
-  const {
-    register,
-    setValue,
-    getValues,
-    clearErrors,
-    setError,
-    trigger,
-    getFieldState,
-    watch,
-  } = useFormContext();
+  const { setValue, clearErrors, setError, watch, getValues, register } =
+    useFormContext();
 
   useEffect(() => {
-    // When files change, clear errors for "productImages"
     clearErrors("productImages");
     setValue("productImages", files);
-    console.log(files);
-  }, [files, setError, setValue]);
+  }, [clearErrors, files, setValue]);
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    if (e.target.files && e.target.files[0]) {
-      for (let i = 0; i < e.target.files["length"]; i++) {
+    if (e.target.files && e.target.files.length > 0) {
+      const newFiles = [...files];
+      for (let i = 0; i < e.target.files.length; i++) {
         const file = e.target.files[i];
-        watch("productImages");
-        if (!file) {
-          return;
-        }
+        if (!file) continue;
         const fileExtension = getFileExtension(file.name).toLowerCase();
         if (ACCEPTED_IMAGE_EXTENSIONS.includes(fileExtension)) {
-          // Check if the file extension is in the accepted extensions array
-          setFiles([...files, file]);
+          newFiles.push(file);
         } else {
-          // Handle non-accepted file extensions (show an error, ignore, etc.)
-          // For now, we'll just log a message and set an error
           console.log(`Ignoring file with invalid extension: ${file.name}`);
           setError("productImages", {
             type: "validate",
-            message: `File ${file.name} are not allowed to upload! only .jpg, .jpeg, .png and .webp are acceptable.`,
+            message: `File ${file.name} is not allowed to upload. Only .jpg, .jpeg, .png, and .webp are acceptable.`,
           });
         }
       }
+      setFiles(newFiles);
     }
-  }
+  };
 
-  async function handleDrop(e: any) {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
 
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const newFiles = [...files];
       for (let i = 0; i < e.dataTransfer.files.length; i++) {
         const file = e.dataTransfer.files[i];
-        watch("productImages");
-        // Check if the file is an image before adding it
-        // clearErrors("productImages");
-        setValue("productImages", [...files, file]);
-        await trigger("productImages");
-        if (!getFieldState("productImages").invalid) {
-          setFiles([...files, file]);
+        if (!file) continue;
+        const fileExtension = getFileExtension(file.name).toLowerCase();
+        if (ACCEPTED_IMAGE_EXTENSIONS.includes(fileExtension)) {
+          newFiles.push(file);
         } else {
-          // Handle non-image files (show an error, ignore, etc.)
-          // For now, we'll just log a message
-          console.log(`Ignoring non-image file: ${file.name}`);
+          console.log(`Ignoring file with invalid extension: ${file.name}`);
+          setError("productImages", {
+            type: "validate",
+            message: `File ${file.name} is not allowed to upload. Only .jpg, .jpeg, .png, and .webp are acceptable.`,
+          });
         }
       }
+      setFiles(newFiles);
     }
-  }
+  };
 
   function handleDragLeave(e: any) {
     e.preventDefault();

@@ -1,8 +1,9 @@
 import { db } from "@/lib/db";
+import { disconnectFTP, uploadImageFile } from "@/lib/ftp";
 import { parsePrice } from "@/lib/helpers";
-import { uploadImage } from "@/lib/helpers/fileUpload";
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
+import { Readable } from "stream";
 
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
@@ -22,14 +23,22 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
     const uploadedImages: string[] = [];
 
-    console.log(formData);
-
     for (const image of productImages) {
-      const imgPath = await uploadImage(image, "user");
-      console.log(imgPath);
-      uploadedImages.push(imgPath as string);
+      const filename = `${image.name}`;
+      const imageBuffer = await image.arrayBuffer();
+      const bufferStream = new Readable();
+      bufferStream.push(Buffer.from(imageBuffer));
+      bufferStream.push(null);
+      const { imagePath, success } = await uploadImageFile(
+        bufferStream,
+        filename,
+        `${token.id}/products/${productName}`
+      );
+      console.log("path :", imagePath);
+      if (success) uploadedImages.push(imagePath as string);
     }
-
+    // When done with FTP operations, call disconnect() to close the connection
+    disconnectFTP();
     const price = parsePrice(productPrice);
     const newProduct = await db.product.create({
       data: {
@@ -40,6 +49,13 @@ export async function POST(req: NextRequest, res: NextResponse) {
         owner: {
           connect: {
             id: token.id,
+          },
+        },
+        images: {
+          createMany: {
+            data: uploadedImages.map((url) => ({
+              url: url,
+            })),
           },
         },
       },

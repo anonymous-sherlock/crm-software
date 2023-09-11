@@ -45,7 +45,7 @@ model Product {
   price       Float
   quantity    Int
   ownerId     String
-  owner       User           @relation(fields: [ownerId], references: [id])
+  owner       User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   images      ProductImage[]
 
   @@index([ownerId], map: "Product_ownerId_fkey")
@@ -55,7 +55,7 @@ model ProductImage {
   id             String  @id @default(cuid())
   url            String
   productImageId String
-  product        Product @relation(fields: [productImageId], references: [productId])
+  product        Product @relation(fields: [productImageId], references: [productId], onDelete: Cascade)
 
   @@index([productImageId], map: "ProductImage_productId_fkey")
 }
