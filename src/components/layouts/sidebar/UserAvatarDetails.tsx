@@ -36,11 +36,11 @@ export const UserProfileHover = async () => {
               {generateInitialFromName(session?.user.name as string)}
             </AvatarFallback>
           </Avatar>
-          <span>
+          <span className="truncate">
             <span className="block text-sm text-gray-900 dark:text-white">
               {session?.user.name}
             </span>
-            <span className="block truncate  text-sm text-gray-500 dark:text-gray-400">
+            <span className="block truncate text-sm text-gray-500 dark:text-gray-400">
               {session?.user.email}
             </span>
           </span>

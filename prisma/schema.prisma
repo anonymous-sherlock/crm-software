@@ -47,6 +47,7 @@ model Product {
   ownerId     String
   owner       User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   images      ProductImage[]
+  campaign    Campaign[]
 
   @@index([ownerId], map: "Product_ownerId_fkey")
 }
@@ -58,6 +59,27 @@ model ProductImage {
   product        Product @relation(fields: [productImageId], references: [productId], onDelete: Cascade)
 
   @@index([productImageId], map: "ProductImage_productId_fkey")
+}
+
+model Campaign {
+  id         String  @id @default(cuid())
+  name       String
+  campaignId String  @unique
+  product    Product @relation(fields: [campaignId], references: [productId])
+  lead       Leads?
+
+  @@index([campaignId], map: "Campaign_campaignId_fkey")
+}
+
+model Leads {
+  id       String    @id @default(cuid())
+  name     String
+  phone    String
+  ip       String
+  leadId   String    @unique
+  campaign Campaign? @relation(fields: [leadId], references: [campaignId])
+
+  @@index([leadId], map: "Leads_campaignId_fkey")
 }
 
 model User {
