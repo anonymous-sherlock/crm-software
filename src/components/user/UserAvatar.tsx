@@ -4,9 +4,10 @@ import { User } from "next-auth";
 
 interface UserAvatarProps extends React.HTMLAttributes<HTMLDivElement> {
   user: Pick<User, 'name' | 'image' | 'email'>
+  className? : string
 }
 
-export const UserAvatar = async ({ user }: UserAvatarProps) => {
+export const UserAvatar = async ({ user , className}: UserAvatarProps) => {
 
   return (
     <Avatar className="">

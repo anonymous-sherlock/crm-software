@@ -7,18 +7,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { productWithImages } from "@/types/db";
+import { ProductWithImagesPayload } from "@/types/db";
 import Image from "next/image";
 
-export function ProductCard({ product }) {
+interface ProductCardProps{
+  product:ProductWithImagesPayload
+}
+export function ProductCard({ product  }:ProductCardProps) {
+  const firstImage = product.images[0];
+
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>{product.name}</CardTitle>
-        <CardDescription>{product.description}</CardDescription>
+        <CardTitle className="capitalize text-xl">{product.name}</CardTitle>
+        <CardDescription className="truncate">{product.description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <Image src={product.images[0]} width={50} height={30} alt="" />
+        <Image src={firstImage?.url as string} width={250} height={100} alt={product.name} />
       </CardContent>
       <CardFooter className="flex justify-between">
         <Button variant="outline">Edit Product</Button>

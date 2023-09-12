@@ -9,6 +9,7 @@ const nextConfig = {
   // dev speed improvement
 
   images: {
+    minimumCacheTTL: 60,
     domains: [
       "source.unsplash.com",
       "googleusercontent.com",

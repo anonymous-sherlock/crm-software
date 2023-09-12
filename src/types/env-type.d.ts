@@ -17,5 +17,7 @@ declare namespace NodeJS {
     FTP_USER: string;
     FTP_PASS: string;
     CDN_Domain: string;
+    CDN_API_Key: string;
+    CDN_URL: string;
   }
 }

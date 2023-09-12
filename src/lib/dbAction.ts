@@ -1,15 +1,17 @@
 import "server-only";
 import { db } from "./db";
+import { ProductWithImagesPayload } from "@/types/db";
 
-
-export const getAllProductsForUser = async (userId: string) => {
+export const getAllProductsForUser = async (
+  userId: string
+): Promise<ProductWithImagesPayload[]> => {
   try {
-    const userProducts = await db.product.findUnique({
+    const userProducts = await db.product.findMany({
       where: {
-        productId: userId,
+        ownerId: userId, // Replace with the ownerId you're interested in
       },
       include: {
-        images: true,
+        images: true, // Include the 'images' relation
       },
     });
 

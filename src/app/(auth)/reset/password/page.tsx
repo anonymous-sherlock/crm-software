@@ -23,6 +23,7 @@ export default async function Page() {
         user={sesssion.user}
         className="relative z-50 bg-white min-w-[400px] mx-auto p-4  text-center"
       /> */}
+      <ChangePassword classname="overflow-y-scroll" user={sesssion.user} />
     </main>
   );
 }

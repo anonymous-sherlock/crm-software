@@ -1,5 +1,6 @@
 import AuthenticationForm from "@/components/auth/AuthenticationForm";
 import { Metadata } from "next";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Login Your Account",
@@ -11,10 +12,11 @@ export default function AuthenticationPage() {
     <>
       <section className="relative flex h-full min-h-screen items-center justify-center bg-secondary py-10 md:flex-row lg:h-full lg:py-0">
         {/* for mobile  */}
-        <img
+        <Image
           src="https://source.unsplash.com/random"
           alt=""
           className="absolute inset-0 z-0 h-full w-full object-cover lg:hidden"
+          fill
         />
         <div className="absolute inset-0 z-0 bg-black opacity-50 lg:hidden"></div>
         {/* for desktop */}
@@ -22,10 +24,11 @@ export default function AuthenticationPage() {
           id=""
           className="fixed inset-0 hidden h-screen w-full  items-stretch self-stretch bg-indigo-600 md:w-1/2 lg:flex xl:w-[50%]"
         >
-          <img
+          <Image
             src="https://source.unsplash.com/random"
             alt=""
             className="absolute inset-0 h-full w-full object-cover"
+            fill
           />
           <div className="absolute inset-0 z-0 bg-black opacity-50"></div>
           <p className="absolute left-4 top-4 text-3xl font-extrabold text-white">

@@ -19,7 +19,19 @@ export const registerFormSchema = z
 
 export const loginFormSchema = z.object({
   email: z.string().email("Invalid email address"),
-  password : z.string({
+  password: z.string({
     required_error: "Password is required",
-  })
+  }),
 });
+
+export const changePasswordSchema = z
+  .object({
+    password: passwordSchema,
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+export type changePasswordPayload = z.infer<typeof changePasswordSchema>;
