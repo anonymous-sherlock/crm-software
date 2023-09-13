@@ -19,6 +19,6 @@ declare namespace NodeJS {
     CDN_Domain: string;
     CDN_API_Key: string;
     CDN_URL: string;
-    RESEND_API: string;
+    RESEND_API_KEY: string;
   }
 }

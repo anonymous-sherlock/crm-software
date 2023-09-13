@@ -88,6 +88,9 @@ export const authOptions: NextAuthOptions = {
             false
           );
         }
+        if (!user.active) {
+          throw new AuthError('Account is not verified',false)
+        }
 
         const isValidPassword = await compare(
           credentials.password,

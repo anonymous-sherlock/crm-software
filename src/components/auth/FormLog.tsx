@@ -21,7 +21,7 @@ import Spinner from "@/ui/spinner";
 import { newUserResponse } from "@/types";
 import { toast } from "@/ui/use-toast";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 
 export function FormLog({ isRegister }: AuthFormProps) {
   const router = useRouter();
@@ -56,10 +56,7 @@ export function FormLog({ isRegister }: AuthFormProps) {
           title: "User Created",
           description: data.message,
         });
-        await signIn("credentials", {
-          email: values.email,
-          password: values.password,
-        });
+        router.push("/login");
       } else if (data.errors) {
         toast({
           variant: "destructive",

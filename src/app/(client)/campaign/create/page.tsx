@@ -1,3 +1,5 @@
+import EmailTemplate from "@/components/emails/email-template";
+
 export default function CampaignCreate() {
-  return <div> hello campaign</div>;
+  return <EmailTemplate name="joshn" verifyTokenUrl="fasdf/adfsd"/>;
 }
