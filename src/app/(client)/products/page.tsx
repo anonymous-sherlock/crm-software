@@ -21,8 +21,6 @@ export default async function Page() {
   console.log(data);
   return (
     <div className="">
-      <Breadcrumbs />
-
       <section className="grid grid-cols-3 gap-2 mt-4">
         {data.map((item) => (
           <ProductCard key={item.productId} product={item} />

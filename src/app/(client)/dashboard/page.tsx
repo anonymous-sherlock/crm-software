@@ -1,3 +1,5 @@
+import Leads from "@/components/dashboard/Leads";
+import OverviewCard from "@/components/dashboard/OverviewCard";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -6,5 +8,9 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
-  return <div className=" h-screen">heloo</div>;
+  return (
+    <div className="">
+      <OverviewCard />
+    </div>
+  );
 }
