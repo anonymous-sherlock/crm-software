@@ -1,7 +1,6 @@
+import logo from "@/assets/logo.png";
 import Image from "next/image";
 import * as React from "react";
-import logo from "@/assets/logo.png";
-import Link from "next/link";
 
 interface EmailTemplateProps {
   name: string;
@@ -14,10 +13,6 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
 }) => (
   <div>
     <>
-      <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>Please activate your account</title>
-      {/*[if mso]><style type="text/css">body, table, td, a { font-family: Arial, Helvetica, sans-serif !important; }</style><![endif]*/}
       <table
         role="presentation"
         style={{
@@ -72,7 +67,7 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
                         <div
                           style={{ color: "rgb(0, 0, 0)", textAlign: "left" }}
                         >
-                          <h1 style={{ margin: "1rem 0", fontSize: "20px" }}>
+                          <h1 style={{ margin: "1rem 0", fontSize: "22px", fontWeight: "600" }}>
                             Hi, {name}...
                           </h1>
                           <h1 style={{ margin: "1rem 0" }}>Final step...</h1>
@@ -80,7 +75,7 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
                             Follow this link to verify your email address.
                           </p>
                           <p style={{ paddingBottom: 16 }}>
-                            <Link
+                            <a
                               href={verifyTokenUrl}
                               target="_blank"
                               style={{
@@ -93,7 +88,7 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
                               }}
                             >
                               Verify Your Email
-                            </Link>
+                            </a>
                           </p>
                           <p style={{ paddingBottom: 16 }}>
                             If you didn&apos;t ask to verify this address, you
@@ -114,7 +109,7 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
                         }}
                       >
                         <p style={{ paddingBottom: 16 }}>
-                          Made with <span className="text-red-700">♥</span>{" "}
+                          Made with <span className="text-red-500">♥</span>{" "}
                           Adscrush Team
                         </p>
                       </div>
