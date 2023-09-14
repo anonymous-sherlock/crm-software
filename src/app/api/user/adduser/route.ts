@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { senActivationEmail } from "@/lib/emails/activation";
 import { userSchema } from "@/schema/userSchema";
 import { hash } from "bcryptjs";
 import { randomUUID } from "crypto";
@@ -37,6 +38,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
       }
     );
   }
+
   try {
     const hashPassword = await hash(body.password, 12);
     const newUser = await db.user.create({
@@ -50,11 +52,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
       },
     });
 
-    resend.emails.send({
-      from: "support@adscrush.com",
-      to: newUser.email as string,
-      subject: "🙌 Complete your sign up to Adscrush! ",
-      html: "<p>Congrats on sending your <strong>first email</strong>!</p>",
+    const sendMail = await senActivationEmail({
+      name: result.data.name,
+      email: result.data.email,
+      verifyTokenUrl: `${process.env.BASE_URL}/api/auth/activate/verify?token=${token.token}`,
     });
     return NextResponse.json(
       {

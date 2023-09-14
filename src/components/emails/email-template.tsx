@@ -1,5 +1,16 @@
-import logo from "@/assets/logo.png";
-import Image from "next/image";
+import {
+  Button,
+  Container,
+  Heading,
+  Hr,
+  Html,
+  Img,
+  Section,
+  Tailwind,
+  Text,
+  Body,
+  Head,
+} from "@react-email/components";
 import * as React from "react";
 
 interface EmailTemplateProps {
@@ -11,118 +22,69 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
   name,
   verifyTokenUrl,
 }) => (
-  <div>
-    <>
-      <table
-        role="presentation"
-        style={{
-          width: "100%",
-          borderCollapse: "collapse",
-          border: 0,
-          borderSpacing: 0,
-          fontFamily: "Arial, Helvetica, sans-serif",
-          backgroundColor: "rgb(239, 239, 239)",
-        }}
-      >
-        <tbody>
-          <tr>
-            <td
-              align="center"
-              style={{
-                padding: "1rem 2rem",
-                verticalAlign: "top",
-                width: "100%",
-              }}
-            >
-              <table
-                role="presentation"
-                style={{
-                  maxWidth: 600,
-                  borderCollapse: "collapse",
-                  border: 0,
-                  borderSpacing: 0,
-                  textAlign: "left",
-                }}
-              >
-                <tbody>
-                  <tr>
-                    <td style={{ padding: "40px 0px 0px" }}>
-                      <div style={{ textAlign: "left" }}>
-                        <div style={{ paddingBottom: 20 }}>
-                          <Image
-                            src={logo.src}
-                            alt="Company"
-                            width={56}
-                            height={56}
-                            style={{ width: 56 }}
-                          />
-                        </div>
-                      </div>
-                      <div
-                        style={{
-                          padding: 20,
-                          backgroundColor: "rgb(255, 255, 255)",
-                        }}
-                      >
-                        <div
-                          style={{ color: "rgb(0, 0, 0)", textAlign: "left" }}
-                        >
-                          <h1 style={{ margin: "1rem 0", fontSize: "22px", fontWeight: "600" }}>
-                            Hi, {name}...
-                          </h1>
-                          <h1 style={{ margin: "1rem 0" }}>Final step...</h1>
-                          <p style={{ paddingBottom: 16 }}>
-                            Follow this link to verify your email address.
-                          </p>
-                          <p style={{ paddingBottom: 16 }}>
-                            <a
-                              href={verifyTokenUrl}
-                              target="_blank"
-                              style={{
-                                padding: "12px 24px",
-                                borderRadius: 4,
-                                color: "#FFF",
-                                background: "#2B52F5",
-                                display: "inline-block",
-                                margin: "0.5rem 0",
-                              }}
-                            >
-                              Verify Your Email
-                            </a>
-                          </p>
-                          <p style={{ paddingBottom: 16 }}>
-                            If you didn&apos;t ask to verify this address, you
-                            can ignore this email.
-                          </p>
-                          <p style={{ paddingBottom: 16 }}>
-                            Thanks,
-                            <br />
-                            The Adscrush team
-                          </p>
-                        </div>
-                      </div>
-                      <div
-                        style={{
-                          paddingTop: 20,
-                          color: "rgb(153, 153, 153)",
-                          textAlign: "center",
-                        }}
-                      >
-                        <p style={{ paddingBottom: 16 }}>
-                          Made with <span className="text-red-500">♥</span>{" "}
-                          Adscrush Team
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </>
-  </div>
+  <Html className="">
+    <Head>
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <meta httpEquiv="Content-Type" content="text/html; charset=UTF-8" />
+    </Head>
+    <Body className="text-black">
+      <Tailwind>
+        <Section
+          role="presentation"
+          style={{
+            fontFamily: "Arial, Helvetica, sans-serif",
+            backgroundColor: "rgb(239, 239, 239)",
+          }}
+          className="w-full border-none border-collapse border-spacing-0 m-auto"
+        >
+          <Container role="presentation" className="max-w-[550px] ">
+            <Container className="rounded-lg shadow-lg bg-white p-5 px-10 w-full mt-20 mx-auto">
+              <div className="text-black text-left p-6">
+                <Img
+                  src="https://adscrush.com/wp-content/uploads/2023/08/favicon.png"
+                  className="w-16 my-6"
+                />
+                <Heading
+                  as="h1"
+                  className="my-3 text-xl font-semibold capitalize text-black"
+                >
+                  Hi, {name}...
+                </Heading>
+                <Heading as="h2" className="my-2 text-black text-base">
+                  Final step...
+                </Heading>
+                <Text>Follow this link to verify your email address.</Text>
+                <Text>
+                  <Button
+                    href={verifyTokenUrl}
+                    target="_blank"
+                    className="bg-[#2B52F5] text-white inline-block my-2 hover:bg-blue-900 px-6 py-3 selection:rounded-sm"
+                  >
+                    Verify Your Email
+                  </Button>
+                </Text>
+                <Hr className="my-4" />
+                <Text style={{ paddingBottom: 16 }}>
+                  If you didn&apos;t ask to verify this address, you can ignore
+                  this email.
+                </Text>
+                <Text style={{ paddingBottom: 16 }}>
+                  Thanks,
+                  <br />
+                  The Adscrush team
+                </Text>
+              </div>
+            </Container>
+            <Container className="text-center py-5 text-[#999999]">
+              <p className="pb-4">
+                Made with <span className="text-red-500">♥</span> Adscrush Team
+              </p>
+            </Container>
+          </Container>
+        </Section>
+      </Tailwind>
+    </Body>
+  </Html>
 );
 
 export default EmailTemplate;
