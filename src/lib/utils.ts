@@ -7,9 +7,8 @@ export function cn(...inputs: ClassValue[]) {
 
 // generate inticials from name
 export function generateInitialFromName(fullName: string) {
-  if(!fullName){
+  if (!fullName) {
     return "N/A";
-
   }
 
   // Check if the fullName is not empty and is a string
@@ -40,7 +39,8 @@ export function isMacOs() {
   return window.navigator.userAgent.includes("Mac");
 }
 
+export function getProductCategories() {}
 
-export function getProductCategories(){
-  
+export function formatPrice(price: number) {
+  return new Intl.NumberFormat("en-IN").format(price);
 }

@@ -1,9 +1,8 @@
+import "server-only";
 import { ProductCard } from "@/components/products/ProductCard";
-import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { getAuthSession } from "@/lib/authOption";
 import { getAllProductsForUser } from "@/lib/dbAction";
 import { ProductWithImagesPayload } from "@/types/db";
-import "server-only";
 
 async function getData() {
   const session = await getAuthSession();

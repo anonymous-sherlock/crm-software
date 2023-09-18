@@ -70,7 +70,7 @@ export function ProductForm() {
     files.forEach((image) => {
       formData.append("productImages", image as File);
     });
-
+    console.log(formData)
     axios
       .post("/api/products/add", formData, {})
       .then((response) => {

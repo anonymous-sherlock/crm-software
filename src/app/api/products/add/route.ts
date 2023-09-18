@@ -7,10 +7,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
-    const token = await getToken({ req });
-    if (!token) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    // const token = await getToken({ req });
+    // if (!token) {
+    //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // }
     const formData = await req.formData();
     const productName = String(formData.get("productName") || "");
     const productPrice = String(formData.get("productPrice") || "");
@@ -20,6 +20,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     const productImages = formData.getAll("productImages");
     const uploadedImages: string[] = [];
 
+    console.log(productImages)
     const remotePath = `/products/${productName}`; // Create the remotePath
     const cdnFormData = new FormData();
     cdnFormData.append("remotePath", remotePath);
@@ -28,6 +29,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
       const image = productImages[i] as unknown as File;
       cdnFormData.append("productImages[]", image, image.name); // Append image with name
     }
+
+    console.log(cdnFormData)
 
     const cdnData = await uploadImageToCdn(cdnFormData);
     if (cdnData.success) {
@@ -48,7 +51,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
         quantity: Number(productQuantity),
         owner: {
           connect: {
-            id: token.id,
+            id: "clmonrize0000xbq04e5u388s",
           },
         },
         images: {
