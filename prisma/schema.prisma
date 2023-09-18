@@ -45,9 +45,9 @@ model Product {
   price       Float
   quantity    Int
   ownerId     String
+  campaign    Campaign?
   owner       User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   images      ProductImage[]
-  campaign    Campaign[]
 
   @@index([ownerId], map: "Product_ownerId_fkey")
 }
@@ -72,12 +72,12 @@ model Campaign {
 }
 
 model Leads {
-  id       String    @id @default(cuid())
+  id       String   @id @default(cuid())
   name     String
   phone    String
   ip       String
-  leadId   String    @unique
-  campaign Campaign? @relation(fields: [leadId], references: [campaignId])
+  leadId   String   @unique
+  campaign Campaign @relation(fields: [leadId], references: [campaignId])
 
   @@index([leadId], map: "Leads_campaignId_fkey")
 }
@@ -88,13 +88,13 @@ model User {
   email          String?         @unique
   emailVerified  DateTime?
   image          String?
-  active         Boolean         @default(false)
   role           UserRole        @default(CUSTOMER)
   password       String?
+  active         Boolean         @default(false)
   accounts       Account[]
+  activateTokens ActivateToken[]
   products       Product[]
   sessions       Session[]
-  activateTokens ActivateToken[]
 }
 
 model ActivateToken {
@@ -102,16 +102,18 @@ model ActivateToken {
   token       String    @unique
   createdAt   DateTime  @default(now())
   activatedAt DateTime?
-  user        User      @relation(fields: [userId], references: [id])
   userId      String
+  user        User      @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "ActivateToken_userId_fkey")
 }
 
 model VerificationToken {
-  id         String   @id @default(cuid())
   identifier String
   token      String   @unique
   expires    DateTime
   createdAt  DateTime @default(now())
+  id         String   @id @default(cuid())
   updatedAt  DateTime @updatedAt
 
   @@unique([identifier, token])

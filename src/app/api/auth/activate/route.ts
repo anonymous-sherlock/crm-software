@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
                 },
               },
               {
-                searchParamToken  ,
+                token: searchParamToken,
               },
             ],
           },
@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
 
     await db.activateToken.update({
       where: {
-        token,
+        token: searchParamToken,
       },
       data: {
         activatedAt: new Date(),
