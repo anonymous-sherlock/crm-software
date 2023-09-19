@@ -5,5 +5,9 @@ export async function POST(
   { params }: { params: { id: string } },
   res: NextResponse
 ) {
-  return NextResponse.json({ id: params.id });
+  const requestHeaders = new Headers(req.headers);
+  const bearer = requestHeaders.get("authorization")
+  console.log(requestHeaders)
+
+  return NextResponse.json({ id: params.id, bearer });
 }
