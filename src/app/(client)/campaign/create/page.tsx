@@ -1,5 +1,7 @@
-import EmailTemplate from "@/components/emails/email-template";
+import CampaignForm from "@/components/campaign/CampaignForm";
 
 export default function CampaignCreate() {
-  return <EmailTemplate name="joshn" verifyTokenUrl="fasdf/adfsd"/>;
+  return <div>
+    <CampaignForm />
+  </div>;
 }

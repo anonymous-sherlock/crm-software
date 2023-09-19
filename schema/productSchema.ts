@@ -88,3 +88,26 @@ export const productFormSchema = z.object({
 });
 
 export const ACCEPTED_IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "webp", "svg"];
+
+// delete product payload
+
+export const deleteProduct = z.object({
+  productId: z.string({
+    required_error: "product id is required",
+  }),
+});
+export type DeleteProductPayload = z.infer<typeof deleteProduct>;
+
+// product searhc payload
+
+export const productSearch = z.object({
+  name: z
+    .string({
+      required_error: "Type a product name to search",
+    })
+    .min(2, {
+      message: "product name must be at least 2 characters to search",
+    }),
+});
+
+export type ProductSearchPayload = z.infer<typeof productSearch>;

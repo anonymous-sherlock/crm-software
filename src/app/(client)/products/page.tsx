@@ -17,7 +17,6 @@ async function getData() {
 
 export default async function Page() {
   const data = await getData(); // Use the Product type here
-  console.log(data);
   return (
     <div className="">
       <section className="grid grid-cols-3 gap-2 mt-4">

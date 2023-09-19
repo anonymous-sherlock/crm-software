@@ -48,6 +48,8 @@ model Product {
   campaign    Campaign?
   owner       User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   images      ProductImage[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
 
   @@index([ownerId], map: "Product_ownerId_fkey")
 }

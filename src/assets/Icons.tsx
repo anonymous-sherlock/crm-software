@@ -1,4 +1,4 @@
-import { LucideProps } from "lucide-react";
+import { ChevronLeft, LucideProps } from "lucide-react";
 
 export const Icons = {
   Leads: (props: LucideProps) => (
@@ -119,6 +119,7 @@ export const Icons = {
       ></path>
     </svg>
   ),
+  ChevronLeft: ChevronLeft,
 };
 
 export type Icon = keyof typeof Icons;

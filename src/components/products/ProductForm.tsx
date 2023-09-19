@@ -40,7 +40,7 @@ export function ProductForm() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { files } = useImageFileStore();
+  const { files,setFiles } = useImageFileStore();
   const form = useForm<z.infer<typeof productFormSchema>>({
     resolver: zodResolver(productFormSchema),
     defaultValues: {
@@ -70,9 +70,8 @@ export function ProductForm() {
     files.forEach((image) => {
       formData.append("productImages", image as File);
     });
-    console.log(formData)
     axios
-      .post("/api/products/add", formData, {})
+      .post("/api/product/add", formData, {})
       .then((response) => {
         toast({
           variant: "success",
@@ -81,6 +80,8 @@ export function ProductForm() {
         });
         if (response.data.success) {
           setLoading(false);
+          form.reset()
+          setFiles([])
         }
       })
       .catch((err) => console.error(err))
