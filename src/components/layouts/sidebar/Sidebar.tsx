@@ -64,7 +64,7 @@ const Sidebar = ({ children }: props) => {
       };
 
   return (
-    <aside className="sticky top-0 z-[99] h-screen">
+    <aside className="sticky top-0 z-50 h-screen">
       <div
         onClick={() => setOpen(false)}
         className={`fixed inset-0 z-[998] max-h-screen bg-black/50 md:hidden ${

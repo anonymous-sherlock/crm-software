@@ -6,9 +6,10 @@ import { UserAccountNav } from "@/components/UserAccountNav";
 import { getAuthSession } from "@/lib/authOption";
 import Search from "./Search";
 import ToggleSidebar from "./ToggleSidebar";
+import WalletBalance from "@/components/wallet/WalletBalance";
 
 export async function Header() {
-  const session = await getAuthSession()
+  const session = await getAuthSession();
 
   return (
     <React.Fragment>
@@ -18,6 +19,7 @@ export async function Header() {
           <Search />
 
           <div className="flex flex-1 items-center justify-end space-x-4 md:order-2 ">
+            <WalletBalance />
             <Notification />
             <ThemeToggle />
 

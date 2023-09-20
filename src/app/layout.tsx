@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/toaster";
 import favicon from "@/public/favicon.png";
 import Providers from "@/providers/index";
+import { SearchBox } from "@/components/SearchBox";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,6 +24,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <Providers>{children}</Providers>
         <Toaster />
+        <SearchBox />
       </body>
     </html>
   );

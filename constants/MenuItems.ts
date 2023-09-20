@@ -1,4 +1,5 @@
 import { SubMenuTypes } from "@/types";
+import { Wallet2 } from "lucide-react";
 import { BsPerson } from "react-icons/bs";
 import { MdDashboard, MdLeaderboard } from "react-icons/md";
 import { PiFilesDuotone } from "react-icons/pi";
@@ -23,7 +24,12 @@ export const singleMenu = [
     icon: SlSettings,
     url: "/user/settings",
   },
-];
+  {
+    label: "Balance",
+    icon: Wallet2,
+    url: "/user/wallet",
+  },
+  ];
 
 export const subMenusList: SubMenuTypes[] = [
   {

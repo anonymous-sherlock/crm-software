@@ -1,16 +1,10 @@
-import React from "react";
-import { LeadsDataTable } from "./data-table";
-import { columns } from "./columns";
-import { people } from "@/people";
+import { SearchBox } from "@/components/SearchBox";
+import { FC } from "react";
 
-type Props = {};
+interface pageProps {}
 
-const Page = (props: Props) => {
-  return (
-    <div className="container py-10 mx-auto bg-white rounded-md">
-      <LeadsDataTable columns={columns} data={people} />
-    </div>
-  );
+const page: FC<pageProps> = ({}) => {
+  return <div>leads</div>;
 };
 
-export default Page;
+export default page;
