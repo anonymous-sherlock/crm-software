@@ -108,6 +108,7 @@ export const productSearch = z.object({
     .min(2, {
       message: "product name must be at least 2 characters to search",
     }),
+    selectedId: z.string().optional()
 });
 
 export type ProductSearchPayload = z.infer<typeof productSearch>;

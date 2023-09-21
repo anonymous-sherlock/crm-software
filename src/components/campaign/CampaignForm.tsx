@@ -22,12 +22,23 @@ import Spinner from "../ui/spinner";
 import { cn } from "@/lib/utils";
 import {
   CampaignFormPayload,
+  TrafficSourceDefault,
   campaignFormSchema,
 } from "@/schema/campaignSchema";
 import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { toast } from "../ui/use-toast";
 import ProductDropdown from "./ProductDropdown";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { Separator } from "../ui/separator";
 
 interface CampaignFormProps {}
 
@@ -39,16 +50,19 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
       campaignName: "",
       campaignDescription: "",
       product: "",
+      leadsRequirements: "",
     },
   });
 
   const { mutate: createCampaign, isLoading } = useMutation({
     mutationFn: async (input: CampaignFormPayload) => {
-      const payload: CampaignFormPayload = {
-        campaignName: input.campaignName,
-        campaignDescription: input.campaignDescription || "",
-        product: input.product,
-      };
+      // const payload: CampaignFormPayload = {
+      //   campaignName: input.campaignName,
+      //   campaignDescription: input.campaignDescription || "",
+      //   product: input.product,
+      //   trafficSource: input.trafficSource,
+      //   callCenterTeamSize: input.callCenterTeamSize,
+      // };
 
       const { data } = await axios.post("/api/campaign/create", payload);
       return data as string;
@@ -89,7 +103,7 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
             className="grid grid-cols-5 items-start gap-6 space-y-4"
           >
             <div className="col-span-3 flex w-full flex-col gap-6">
-              <div className="grid grid-cols-1 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="campaignName"
@@ -99,6 +113,112 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
                       <FormControl>
                         <Input placeholder="Nutra Bay Campaign" {...field} />
                       </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Daily leads Requirements */}
+                <FormField
+                  control={form.control}
+                  name="leadsRequirements"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Daily Leads Requirements</FormLabel>
+                      <FormControl>
+                        <Input placeholder="250" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Call Center Team Size */}
+                <FormField
+                  control={form.control}
+                  name="callCenterTeamSize"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Call Center Team Size</FormLabel>
+                      <FormControl>
+                        <Input placeholder="65" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {/* traffic source */}
+                <FormField
+                  control={form.control}
+                  name="trafficSource"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Traffic Source</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select a Traffic Source" />
+                          </SelectTrigger>
+                        </FormControl>
+
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Select a Traffic Source</SelectLabel>
+                            <Separator className="my-2" />
+                            {Object.entries(TrafficSourceDefault).map(
+                              ([key, value]) => (
+                                <SelectItem key={key} value={value}>
+                                  {value}
+                                </SelectItem>
+                              )
+                            )}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* target gender */}
+                <FormField
+                  control={form.control}
+                  name="targetGender"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Target Gender</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl className="capitalize">
+                          <SelectTrigger className="w-full capitalize">
+                            <SelectValue
+                              placeholder="Select a target Gender"
+                              className="capitalize"
+                            />
+                          </SelectTrigger>
+                        </FormControl>
+
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Target Gender</SelectLabel>
+                            <Separator className="my-2" />
+                            {["male", "female"].map((value) => (
+                              <SelectItem
+                                key={value}
+                                value={value}
+                                className="capitalize"
+                              >
+                                {value}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -124,6 +244,7 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
                 )}
               />
             </div>
+
             <div className="col-span-2 mt-[0_!important]">
               <FormField
                 control={form.control}

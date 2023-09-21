@@ -89,7 +89,7 @@ export function ProductCard({ product }: ProductCardProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="w-60 h-60 flex relative">
+        <div className="w-60 h-60 flex relative ">
           <Image
             src={firstImage?.url as string}
             fill

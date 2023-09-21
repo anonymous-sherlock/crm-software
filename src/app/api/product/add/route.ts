@@ -1,16 +1,18 @@
+import { getAuthSession } from "@/lib/authOption";
 import { db } from "@/lib/db";
 import { parsePrice } from "@/lib/helpers";
 import { uploadImageToCdn } from "@/lib/helpers/ImageUpload";
 import { ImageUploadError, ImageUploadSuccess } from "@/types/api";
-import { getToken } from "next-auth/jwt";
+import { Session } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
-    // const token = await getToken({ req });
-    // if (!token) {
-    //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    // }
+    const session = await getAuthSession();
+    const {user} = session as Session;
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const formData = await req.formData();
     const productName = String(formData.get("productName") || "");
     const productPrice = String(formData.get("productPrice") || "");
@@ -51,7 +53,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
         quantity: Number(productQuantity),
         owner: {
           connect: {
-            id: "clmonrize0000xbq04e5u388s",
+            id: user.id,
           },
         },
         images: {
