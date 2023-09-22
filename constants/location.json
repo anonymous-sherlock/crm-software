@@ -1,0 +1,42 @@
+[
+  [
+    "Afghanistan",
+    "AF",
+    [
+      ["Badakhshan", "BDS"],
+      ["Badghis", "BDG"],
+      ["Baghlan", "BGL"],
+      ["Balkh", "BAL"],
+      ["Bamyan", "BAM"],
+      ["Daykundi", "DAY"],
+      ["Farah", "FRA"],
+      ["Faryab", "FYB"],
+      ["Ghazni", "GHA"],
+      ["Ghor", "GHO"],
+      ["Helmand", "HEL"],
+      ["Herat", "HER"],
+      ["Jowzjan", "JOW"],
+      ["Kabul", "KAB"],
+      ["Kandahar", "KAN"],
+      ["Kapisa", "KAP"],
+      ["Khost", "KHO"],
+      ["Kunar", "KNR"],
+      ["Kunduz", "KDZ"],
+      ["Laghman", "LAG"],
+      ["Logar", "LOW"],
+      ["Maidan Wardak", "WAR"],
+      ["Nangarhar", "NAN"],
+      ["Nimruz", "NIM"],
+      ["Nuristan", "NUR"],
+      ["Paktia", "PIA"],
+      ["Paktika", "PKA"],
+      ["Panjshir", "PAN"],
+      ["Parwan", "PAR"],
+      ["Samangan", "SAM"],
+      ["Sar-e Pol", "SAR"],
+      ["Takhar", "TAK"],
+      ["Urozgan", "ORU"],
+      ["Zabul", "ZAB"]
+    ]
+  ]
+]

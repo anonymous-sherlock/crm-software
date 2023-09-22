@@ -18,14 +18,19 @@ export const campaignFormSchema = z.object({
     .min(2, {
       message: "Campaign name must be at least 2 characters.",
     }),
+  campaignDescription: z.string().optional(),
+
   leadsRequirements: z
     .string({
-      required_error: "Daily Leads Requirements are Required",
+      required_error: "Daily leads requirements are required",
     })
     .nonempty({
-      message: "Daily Leads Requirements are Required.",
+      message: "Daily leads requirements are required.",
+    })
+    .refine((value) => /^\d+$/.test(value), {
+      message: "Daily leads requirements must be a valid number.",
     }),
-  campaignDescription: z.string().optional(),
+
   product: z
     .string({ required_error: "Product is required to create a campaign" })
     .nonempty({
@@ -33,23 +38,50 @@ export const campaignFormSchema = z.object({
     }),
 
   // New fields for Daily leads requirement
-  workingHours: z
-    .number()
-    .int()
-    .min(0, { message: "Working hours must be a positive integer." }),
+  workingHours: z.object({
+    startTime: z.string().nonempty({
+      message: "Start time is required.",
+    }),
+    endTime: z.string().nonempty({
+      message: "End time is required.",
+    }),
+  }),
   workingDays: z
     .number()
     .int()
-    .min(0, { message: "Working days must be a positive integer." }),
+    .min(0, { message: "Working days must be a positive integer." })
+    .optional(),
+
+  // Call Center Team size
   callCenterTeamSize: z
-    .number({
+    .string({
       required_error: "Call center team size is required",
     })
-    .int()
-    .min(0, { message: "Call center team size must be a positive integer." }),
+    .refine((value) => value !== "0", {
+      message: "Call center team size cannot be empty or 0.",
+    })
+    .refine((value) => /^\d+$/.test(value), {
+      message: "Call center team size must be a valid number.",
+    }),
 
-  targetCountry: z.string().optional(),
-  targetRegion: z.string().optional(),
+  // Country Region
+  targetCountry: z
+    .string({
+      required_error: "Target country is Required",
+    })
+    .nonempty({
+      message: "Target country is Required.",
+    }),
+  targetRegion: z
+    .string({
+      required_error: "Target region is required",
+    })
+    .array()
+    .nonempty({
+      message: "Target region is required.",
+    }),
+
+  // Target Age
   targetAge: z
     .object({
       min: z
@@ -63,12 +95,7 @@ export const campaignFormSchema = z.object({
     })
     .optional(),
   targetGender: z.enum(["male", "female"]),
-  trafficSource: z
-    .nativeEnum(TrafficSourceDefault)
-    .refine((value) => value !== undefined, {
-      message: "Traffic source is required.",
-      params: { required_error: "Traffic source is required." },
-    }),
+  trafficSource: z.nativeEnum(TrafficSourceDefault),
 });
 
 export type CampaignFormPayload = z.infer<typeof campaignFormSchema>;

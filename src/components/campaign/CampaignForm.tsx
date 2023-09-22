@@ -1,6 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Card, CardContent, CardTitle } from "../ui/card";
 import {
@@ -39,7 +39,9 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Separator } from "../ui/separator";
-
+import { allCountries } from "country-region-data";
+import CountryRegion from "./CountryRegion";
+import WorkingHours from "./WorkingHours";
 interface CampaignFormProps {}
 
 const CampaignForm: FC<CampaignFormProps> = ({}) => {
@@ -49,8 +51,12 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
     defaultValues: {
       campaignName: "",
       campaignDescription: "",
+      trafficSource: TrafficSourceDefault.Social,
+      targetCountry: "",
       product: "",
       leadsRequirements: "",
+      callCenterTeamSize: "",
+      workingHours: {},
     },
   });
 
@@ -141,12 +147,17 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
                     <FormItem>
                       <FormLabel>Call Center Team Size</FormLabel>
                       <FormControl>
-                        <Input placeholder="65" {...field} />
+                        <Input
+                          placeholder="65"
+                          {...field}
+                          {...form.register("callCenterTeamSize")}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
                 {/* traffic source */}
                 <FormField
                   control={form.control}
@@ -183,6 +194,12 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
                   )}
                 />
 
+                {/* target country  */}
+                <CountryRegion />
+
+                {/* Working Hours */}
+                <WorkingHours />
+
                 {/* target gender */}
                 <FormField
                   control={form.control}
@@ -196,10 +213,7 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
                       >
                         <FormControl className="capitalize">
                           <SelectTrigger className="w-full capitalize">
-                            <SelectValue
-                              placeholder="Select a target Gender"
-                              className="capitalize"
-                            />
+                            <SelectValue placeholder="Select a target Gender" className="lowercase" />
                           </SelectTrigger>
                         </FormControl>
 

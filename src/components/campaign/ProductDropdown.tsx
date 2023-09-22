@@ -119,7 +119,6 @@ const ProductDropdown: FC<ProductDropdownProps> = ({}) => {
                             product === currentProduct ? "" : product.productId;
                           setValue("product", newProduct);
                           setSelectedProduct(product.productId);
-                          console.log(newProduct); // Log the latest value
                           setOpen(false);
                         }}
                         value={product.name}
