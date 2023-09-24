@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -19,9 +20,9 @@ import { productFormSchema } from "@/schema/productSchema";
 import { useImageFileStore } from "@/store/index";
 import { Textarea } from "@/ui/textarea";
 import axios from "axios";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { Card, CardContent, CardTitle } from "@/ui/card";
 import {
   Command,
@@ -40,7 +41,7 @@ export function ProductForm() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { files,setFiles } = useImageFileStore();
+  const { files, setFiles } = useImageFileStore();
   const form = useForm<z.infer<typeof productFormSchema>>({
     resolver: zodResolver(productFormSchema),
     defaultValues: {
@@ -49,7 +50,13 @@ export function ProductForm() {
       productDescription: "",
       productQuantity: "",
       productImages: [],
+      mediaUrls: [{ value: "" }],
     },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    name: "mediaUrls",
+    control: form.control,
   });
 
   // 2. Define a submit handler.
@@ -80,8 +87,8 @@ export function ProductForm() {
         });
         if (response.data.success) {
           setLoading(false);
-          form.reset()
-          setFiles([])
+          form.reset();
+          setFiles([]);
         }
       })
       .catch((err) => console.error(err))
@@ -235,9 +242,46 @@ export function ProductForm() {
                   </FormItem>
                 )}
               />
+
+              {/* media urls */}
+              {fields.map((field, index) => (
+                <FormField
+                  control={form.control}
+                  key={field.id}
+                  name={`mediaUrls.${index}.value`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={cn(index !== 0 && "sr-only")}>
+                        Media URLs
+                      </FormLabel>
+                      <FormDescription className={cn(index !== 0 && "sr-only")}>
+                        Add links of your Video, youtube, vimeo or any other
+                        source.
+                      </FormDescription>
+                      <FormControl>
+                        <div className="flex gap-4">
+                          <Input {...field} className="flex-1" />
+                          <Button type="button" variant="destructive" onClick={() => remove(index)} className="w-10 p-[12px]">
+                            <Trash2 />
+                          </Button> 
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ))}
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="mt-2 w-1/4"
+                onClick={() => append({ value: "" })}
+              >
+                Add URL
+              </Button>
             </div>
             <div className="col-span-2 mt-[0_!important] ">
-              {/* <h3 className="mb-4 text-lg capitalize">Add Product Images</h3> */}
               <FormField
                 control={form.control}
                 name="productImages"

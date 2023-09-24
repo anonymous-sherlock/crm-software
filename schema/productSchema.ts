@@ -85,6 +85,14 @@ export const productFormSchema = z.object({
         message: "You can upload a maximum of 5 files.",
       }
     ),
+
+    mediaUrls: z
+    .array(
+      z.object({
+        value: z.string().url({ message: "Please enter a valid URL." }),
+      })
+    )
+    .optional(),
 });
 
 export const ACCEPTED_IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "webp", "svg"];

@@ -56,7 +56,10 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
       product: "",
       leadsRequirements: "",
       callCenterTeamSize: "",
-      workingHours: {},
+      workingHours: {
+        startTime: '',
+        endTime: '',
+      },
     },
   });
 

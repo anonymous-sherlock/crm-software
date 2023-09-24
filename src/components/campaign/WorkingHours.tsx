@@ -29,19 +29,18 @@ const WorkingHours: FC<WorkingHoursProps> = ({}) => {
 
   return (
     <>
-      <FormField
-        control={control}
-        name="workingHours"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Working Hours</FormLabel>
+      <div className="grid grid-cols-2 gap-2">
+        <FormField
+          control={control}
+          name="workingHours.startTime"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Working Hours</FormLabel>
 
-            <div className="grid grid-cols-2 gap-2">
               {/* start time */}
               <Select
-                onValueChange={() =>
-                  setValue("workingHours.startTime", field.value)
-                }
+                name=""
+                onValueChange={field.value}
                 defaultValue={field.value}
               >
                 <FormControl className="capitalize">
@@ -62,7 +61,18 @@ const WorkingHours: FC<WorkingHoursProps> = ({}) => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name="workingHours.endTime"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Working Hours</FormLabel>
 
+              {/* start time */}
               {/* end time */}
               <Select
                 onValueChange={() => {
@@ -89,11 +99,12 @@ const WorkingHours: FC<WorkingHoursProps> = ({}) => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-            </div>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
     </>
   );
 };
