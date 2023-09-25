@@ -8,11 +8,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
-    const session = await getAuthSession();
-    const {user} = session as Session;
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    // const session = await getAuthSession();
+    // const {user} = session as Session;
+    // if (!user) {
+    //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // }
     const formData = await req.formData();
     const productName = String(formData.get("productName") || "");
     const productPrice = String(formData.get("productPrice") || "");
@@ -22,7 +22,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
     const productImages = formData.getAll("productImages");
     const uploadedImages: string[] = [];
 
-    console.log(productImages)
     const remotePath = `/products/${productName}`; // Create the remotePath
     const cdnFormData = new FormData();
     cdnFormData.append("remotePath", remotePath);
@@ -31,10 +30,9 @@ export async function POST(req: NextRequest, res: NextResponse) {
       const image = productImages[i] as unknown as File;
       cdnFormData.append("productImages[]", image, image.name); // Append image with name
     }
-
-    console.log(cdnFormData)
-
+    console.log("start");
     const cdnData = await uploadImageToCdn(cdnFormData);
+    console.log(cdnData);
     if (cdnData.success) {
       const successData = cdnData as ImageUploadSuccess;
       uploadedImages.push(...successData.data.imageUrls);
@@ -51,9 +49,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
         description: productDescription,
         price,
         quantity: Number(productQuantity),
+        category: productCategory,
         owner: {
           connect: {
-            id: user.id,
+            id: "clmq2rpns0000tr98umbcmbyr",
           },
         },
         images: {

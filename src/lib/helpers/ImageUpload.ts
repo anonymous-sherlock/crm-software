@@ -14,6 +14,8 @@ export const uploadImageToCdn = async (cdnFormData: FormData) => {
     );
     return response.data;
   } catch (error) {
+    console.log("Error uploading to CDN:", error);
+
     if (error instanceof AxiosError) {
       return error.response?.data;
     } else {

@@ -21,7 +21,7 @@ export async function Header() {
           <div className="flex flex-1 items-center justify-end space-x-4 md:order-2 ">
             <WalletBalance />
             <Notification />
-            <ThemeToggle />
+            {/* <ThemeToggle /> */}
 
             {session?.user && <UserAccountNav user={session.user} />}
           </div>

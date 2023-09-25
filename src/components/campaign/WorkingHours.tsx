@@ -20,6 +20,9 @@ import {
 } from "../ui/select";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import { campaignFormSchema } from "@/schema/campaignSchema";
+import { Label } from "../ui/label";
+import { timeOptions } from "@/constants/time";
+import { ScrollArea } from "../ui/scroll-area";
 
 interface WorkingHoursProps {}
 
@@ -29,36 +32,29 @@ const WorkingHours: FC<WorkingHoursProps> = ({}) => {
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-2 items-end">
         <FormField
           control={control}
           name="workingHours.startTime"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Working Hours</FormLabel>
-
-              {/* start time */}
-              <Select
-                name=""
-                onValueChange={field.value}
-                defaultValue={field.value}
-              >
-                <FormControl className="capitalize">
-                  <SelectTrigger className="w-full capitalize">
-                    <SelectValue
-                      placeholder="Start Time"
-                      className="text-muted-foreground"
-                    />
-                  </SelectTrigger>
-                </FormControl>
-
+              <Select onValueChange={field.onChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Start Time" />
+                </SelectTrigger>
                 <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Start Time</SelectLabel>
-                    <Separator className="my-2" />
-                    <SelectItem value="5:30 PM">5:30 PM</SelectItem>
-                    <SelectItem value="6:00 PM">6:00 PM</SelectItem>
-                  </SelectGroup>
+                  <ScrollArea className="h-72 ">
+                    <SelectGroup>
+                      <SelectLabel>Start Time</SelectLabel>
+                      <Separator className="my-2" />
+                      {timeOptions.map((time, index) => (
+                        <SelectItem key={index} value={time}>
+                          {time}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </ScrollArea>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -70,17 +66,9 @@ const WorkingHours: FC<WorkingHoursProps> = ({}) => {
           name="workingHours.endTime"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Working Hours</FormLabel>
-
-              {/* start time */}
               {/* end time */}
-              <Select
-                onValueChange={() => {
-                  setValue("workingHours.endTime", field.onChange);
-                  console.log(getValues("workingHours"));
-                }}
-                defaultValue={field.value}
-              >
+
+              <Select onValueChange={field.onChange}>
                 <FormControl className="capitalize">
                   <SelectTrigger className="w-full capitalize">
                     <SelectValue
