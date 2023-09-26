@@ -8,11 +8,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
-    // const session = await getAuthSession();
-    // const {user} = session as Session;
-    // if (!user) {
-    //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    // }
+    const session = await getAuthSession();
+    const {user} = session as Session;
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const formData = await req.formData();
     const productName = String(formData.get("productName") || "");
     const productPrice = String(formData.get("productPrice") || "");
@@ -52,7 +52,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
         category: productCategory,
         owner: {
           connect: {
-            id: "clmq2rpns0000tr98umbcmbyr",
+            id: user.id,
           },
         },
         images: {

@@ -1,3 +1,4 @@
+import { workingDayOptions } from "@/constants/time";
 import { z } from "zod";
 export enum TrafficSourceDefault {
   Social = "Social",
@@ -19,7 +20,7 @@ export const campaignFormSchema = z.object({
       message: "Campaign name must be at least 2 characters.",
     }),
   campaignDescription: z.string().optional(),
-
+  // Leads Requirement
   leadsRequirements: z
     .string({
       required_error: "Daily leads requirements are required",
@@ -36,8 +37,7 @@ export const campaignFormSchema = z.object({
     .nonempty({
       message: "Product is required to create a campaign.",
     }),
-
-  // New fields for Daily leads requirement
+  // working Hours
   workingHours: z.object({
     startTime: z.string().nonempty({
       message: "Start time is required.",
@@ -46,11 +46,36 @@ export const campaignFormSchema = z.object({
       message: "End time is required.",
     }),
   }),
+
   workingDays: z
-    .number()
-    .int()
-    .min(0, { message: "Working days must be a positive integer." })
-    .optional(),
+    .object({
+      start: z
+        .string({
+          required_error: "Start day is required",
+        })
+        .nonempty({
+          message: "Start day is required.",
+        }),
+      end: z
+        .string({
+          required_error: "End day is required",
+        })
+        .nonempty({
+          message: "End day is required.",
+        }),
+    })
+    .refine(
+      (value) => {
+        // Check if 'value.start' and 'value.end' are both valid days
+        return (
+          workingDayOptions.includes(value.start) &&
+          workingDayOptions.includes(value.end)
+        );
+      },
+      {
+        message: "Invalid working days selected.",
+      }
+    ),
 
   // Call Center Team size
   callCenterTeamSize: z
@@ -72,6 +97,7 @@ export const campaignFormSchema = z.object({
     .nonempty({
       message: "Target country is Required.",
     }),
+  // target region
   targetRegion: z
     .string({
       required_error: "Target region is required",
@@ -82,18 +108,30 @@ export const campaignFormSchema = z.object({
     }),
 
   // Target Age
-  targetAge: z
-    .object({
-      min: z
-        .number()
-        .int()
-        .min(0, { message: "Minimum age must be a positive integer." }),
-      max: z
-        .number()
-        .int()
-        .min(0, { message: "Maximum age must be a positive integer." }),
-    })
-    .optional(),
+  targetAge: z.object({
+    min: z
+      .string({
+        required_error: "Minimum age is required",
+      })
+      .refine(
+        (value) => {
+          const parsedValue = parseInt(value, 10);
+          return !isNaN(parsedValue) && parsedValue >= 18 && parsedValue <= 65;
+        },
+        { message: "Minimum age must be between 18 and 65." }
+      ),
+    max: z
+      .string({
+        required_error: "Maximum age is required",
+      })
+      .refine(
+        (value) => {
+          const parsedValue = parseInt(value, 10);
+          return !isNaN(parsedValue) && parsedValue >= 18 && parsedValue <= 65;
+        },
+        { message: "Maximum age must be between 18 and 65." }
+      ),
+  }),
   targetGender: z.enum(["male", "female"]),
   trafficSource: z.nativeEnum(TrafficSourceDefault),
 });

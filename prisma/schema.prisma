@@ -45,10 +45,10 @@ model Product {
   price       Float
   quantity    Int
   ownerId     String
-  category    String?
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
-  campaign    Campaign?
+  category    String?
+  campaign    Campaign[]     @relation
   owner       User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   images      ProductImage[]
 
@@ -65,11 +65,20 @@ model ProductImage {
 }
 
 model Campaign {
-  id         String  @id @default(cuid())
-  name       String
-  campaignId String  @unique
-  product    Product @relation(fields: [campaignId], references: [productId])
-  lead       Leads?
+  id                 String               @id @default(cuid())
+  name               String
+  description        String?
+  leadsRequirements  String
+  callCenterTeamSize String
+  targetCountry      String
+  targetRegion       String
+  workingDays        Json
+  workingHours       Json
+  targetGender       Gender
+  trafficSource      TrafficSourceDefault
+  campaignId         String               @unique
+  product            Product              @relation(fields: [campaignId], references: [productId])
+  lead               Leads?
 
   @@index([campaignId], map: "Campaign_campaignId_fkey")
 }
@@ -126,4 +135,17 @@ enum UserRole {
   ADMIN
   CLIENT
   CUSTOMER
+}
+
+enum Gender {
+  Male
+  Female
+}
+
+enum TrafficSourceDefault {
+  Social
+  Adult
+  Native
+  Google
+  Facebook
 }

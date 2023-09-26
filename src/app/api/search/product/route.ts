@@ -8,7 +8,6 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
   const productName = searchParam.get("name");
   const selectedId = searchParam.get("selectedId");
-  console.log(selectedId, productName);
 
   try {
     let selectedProduct;
@@ -42,8 +41,6 @@ export async function GET(req: NextRequest, res: NextResponse) {
     if (selectedProduct) {
       productsArray = [selectedProduct, ...productsArray].slice(0, 4);
     }
-
-    console.log(productsArray);
     return NextResponse.json({ data: productsArray }, { status: 200 });
   } catch (error) {
     console.log(error);

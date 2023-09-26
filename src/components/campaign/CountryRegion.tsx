@@ -28,7 +28,7 @@ const CountryRegion: FC<CountryRegionProps> = ({}) => {
   const [countryOpen, setCountryOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState("");
   const [regionOpen, setRegionOpen] = useState(false);
-  const { control, getValues, setValue, clearErrors, register } =
+  const { control, getValues, setValue, clearErrors, register, setError } =
     useFormContext();
 
   const selectedRegionRef = useRef<Array<string>>([]);
@@ -38,6 +38,14 @@ const CountryRegion: FC<CountryRegionProps> = ({}) => {
       ? selectedRegionRef.current.filter((r) => r !== region)
       : [...selectedRegionRef.current, region];
     setValue("targetRegion", selectedRegionRef.current);
+    if (selectedRegionRef.current.length === 0) {
+      setError("targetRegion", {
+        type: "required",
+        message: "Please select at least one region.",
+      });
+    } else {
+      clearErrors("targetRegion"); // Remove the error
+    }
 
     console.log(getValues("targetRegion"));
   };
@@ -79,7 +87,7 @@ const CountryRegion: FC<CountryRegionProps> = ({}) => {
                           <CommandItem
                             key={index}
                             value={country[0]}
-                            className="capitalize my-2"
+                            className="capitalize my-2 cursor-pointer"
                             onSelect={() => {
                               setValue("targetCountry", country[0]);
                               clearErrors("targetCountry");

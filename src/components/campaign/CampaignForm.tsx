@@ -42,6 +42,7 @@ import { Separator } from "../ui/separator";
 import { allCountries } from "country-region-data";
 import CountryRegion from "./CountryRegion";
 import WorkingHours from "./WorkingHours";
+import AgeFields from "./AgeFields";
 interface CampaignFormProps {}
 
 const CampaignForm: FC<CampaignFormProps> = ({}) => {
@@ -56,29 +57,38 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
       product: "",
       leadsRequirements: "",
       callCenterTeamSize: "",
-      workingHours: {
-        startTime: '',
-        endTime: '',
+      workingDays: {
+        start: "",
+        end: "",
       },
+      workingHours: {
+        startTime: "",
+        endTime: "",
+      },
+      targetAge: {
+        min: "",
+        max: "",
+      },
+      targetRegion: [],
     },
   });
 
-  const { mutate: createCampaign, isLoading } = useMutation({
+  const { mutateAsync: createCampaign, isLoading } = useMutation({
     mutationFn: async (input: CampaignFormPayload) => {
-      // const payload: CampaignFormPayload = {
-      //   campaignName: input.campaignName,
-      //   campaignDescription: input.campaignDescription || "",
-      //   product: input.product,
-      //   trafficSource: input.trafficSource,
-      //   callCenterTeamSize: input.callCenterTeamSize,
-      // };
+      const payload: CampaignFormPayload = {
+        ...input,
+      };
 
-      const { data } = await axios.post("/api/campaign/create", payload);
-      return data as string;
+      const { data } = await axios.post(
+        "http://localhost:3000/api/campaign/create",
+        payload
+      );
+      console.log(data);
+      return data;
     },
     onError: (err) => {
       if (err instanceof AxiosError) {
-        if (err.response?.status === 409) {
+        if (err.response?.status === 500) {
           return toast({
             title: "Cannot Create Campaign.",
             description: "",
@@ -89,16 +99,17 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
     },
     onSuccess: (data) => {
       toast({
-        title: `Campaign created`,
+        title: `Campaign created succesfully`,
         description: "",
-        variant: "destructive",
+        variant: "success",
       });
-      router.push("/campaign");
+      // router.push("/campaign");
     },
   });
 
   async function onSubmit(values: z.infer<typeof campaignFormSchema>) {
     console.log(values);
+    createCampaign(values);
   }
 
   return (
@@ -109,7 +120,7 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             method="post"
-            className="grid grid-cols-5 items-start gap-6 space-y-4"
+            className="grid grid-cols-5 items-start gap-8 space-y-4"
           >
             <div className="col-span-3 flex w-full flex-col gap-6">
               <div className="grid grid-cols-2 gap-4">
@@ -200,9 +211,6 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
                 {/* target country  */}
                 <CountryRegion />
 
-                {/* Working Hours */}
-                <WorkingHours />
-
                 {/* target gender */}
                 <FormField
                   control={form.control}
@@ -216,7 +224,10 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
                       >
                         <FormControl className="capitalize">
                           <SelectTrigger className="w-full capitalize">
-                            <SelectValue placeholder="Select a target Gender" className="lowercase" />
+                            <SelectValue
+                              placeholder="Select a target Gender"
+                              className="lowercase"
+                            />
                           </SelectTrigger>
                         </FormControl>
 
@@ -240,6 +251,8 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
                     </FormItem>
                   )}
                 />
+                {/* target age field */}
+                <AgeFields />
               </div>
 
               {/* product description */}
@@ -262,7 +275,9 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
               />
             </div>
 
-            <div className="col-span-2 mt-[0_!important]">
+            <div className="col-span-2 !mt-0 flex flex-col gap-4 ">
+              {/* Working Hours */}
+              <WorkingHours />
               <FormField
                 control={form.control}
                 name="product"

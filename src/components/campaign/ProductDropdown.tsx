@@ -20,11 +20,24 @@ import { FormControl } from "../ui/form";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Check, ChevronsUpDown } from "lucide-react";
 import Image from "next/image";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 
 interface ProductDropdownProps {}
 
 const ProductDropdown: FC<ProductDropdownProps> = ({}) => {
-  const [open, setOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
   const [searchText, setSearchText] = useState<string | null>("");
   const debouncedValue = useDebounce(searchText, 500);
@@ -33,6 +46,7 @@ const ProductDropdown: FC<ProductDropdownProps> = ({}) => {
     isFetching,
     isFetched,
     refetch,
+    remove,
   } = useQuery<{ data: ProductWithImagesPayload[] }>({
     queryKey: ["product", debouncedValue],
     queryFn: async () => {
@@ -52,37 +66,82 @@ const ProductDropdown: FC<ProductDropdownProps> = ({}) => {
     enabled: !!debouncedValue,
   });
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedValue]);
-
   const { setValue, setError, watch, getValues, register, clearErrors } =
     useFormContext();
 
+  const [open, setOpen] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+  const handlePopupTrigger = () => {
+    refetch();
+    setIsPopupOpen(true);
+  };
+
+  useEffect(() => {
+    refetch();
+
+    return () => {
+      remove();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <section>
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild onClick={() => refetch()}>
-          <FormControl>
-            <Button
-              variant="outline"
-              role="combobox"
-              aria-expanded={open}
-              className={cn(
-                "w-full justify-between",
-                !getValues("product") && "text-muted-foreground"
-              )}
-            >
-              {getValues("product")
-                ? products?.data.find(
-                    (p) => p.productId === getValues("product")
-                  )?.name
-                : "Select a Product"}
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-          </FormControl>
+      {/* product dropdown */}
+
+      <Popover open={isPopupOpen} onOpenChange={setIsPopupOpen}>
+        <PopoverTrigger asChild onClick={handlePopupTrigger}>
+          <div className="mb-4 mt-2 flex w-full flex-col items-start justify-between rounded-md border px-4 py-3 sm:flex-row sm:items-center">
+            <p className="text-sm font-medium leading-none flex justify-start items-center">
+              <span className="mr-2 rounded-md bg-primary px-2 py-1 text-xs text-primary-foreground">
+                {getValues("product")
+                  ? products?.data.find(
+                      (p) => p.productId === getValues("product")
+                    )?.category?.length
+                    ? products?.data.find(
+                        (p) => p.productId === getValues("product")
+                      )?.category
+                    : "no category"
+                  : "category"}
+              </span>
+              <span className="text-muted-foreground">
+                {getValues("product")
+                  ? products?.data.find(
+                      (p) => p.productId === getValues("product")
+                    )?.name
+                  : "Select a Product"}
+              </span>
+            </p>
+
+            <DropdownMenu open={open} onOpenChange={setOpen}>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm">
+                  <DotsHorizontalIcon />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-[200px]">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuGroup>
+                  <DropdownMenuSeparator />
+
+                  <DropdownMenuItem
+                    className="text-red-600"
+                    onClick={() => {
+                      setSelectedProduct(null);
+                      setValue("product", "");
+                      setSearchText("");
+                    }}
+                  >
+                    Remove
+                    <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </PopoverTrigger>
-        <PopoverContent className="w-full p-0 max-w-[360px]">
+        <PopoverContent className="w-full p-0 max-w-[360px] min-w-[340px]">
           <Command className="m-0 h-full w-full p-0">
             <CommandInput
               placeholder="Search..."
@@ -119,7 +178,7 @@ const ProductDropdown: FC<ProductDropdownProps> = ({}) => {
                             product === currentProduct ? "" : product.productId;
                           setValue("product", newProduct);
                           setSelectedProduct(product.productId);
-                          setOpen(false);
+                          setIsPopupOpen(false);
                         }}
                         value={product.name}
                         className={cn("flex gap-2 cursor-pointer my-1")}
@@ -151,8 +210,9 @@ const ProductDropdown: FC<ProductDropdownProps> = ({}) => {
           </Command>
         </PopoverContent>
       </Popover>
+
       <div className="grid grid-cols-2 gap-4">
-        {(selectedProduct &&
+        {selectedProduct &&
           products?.data
             .find((p) => p.productId === selectedProduct)
             ?.images.map((img) => (
@@ -167,16 +227,7 @@ const ProductDropdown: FC<ProductDropdownProps> = ({}) => {
                   className="absolute object-contain mr-auto inset-0"
                 />
               </div>
-            ))) || (
-          <div className="relative w-full h-40 mt-4 rounded-md inline-block bg-gray-100 border-gray-300 border-2">
-            <Image
-              fill
-              src="https://images.pexels.com/photos/90946/pexels-photo-90946.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-              alt="Default Product Image"
-              className="absolute object-contain mr-auto inset-0"
-            />
-          </div>
-        )}
+            ))}
       </div>
     </section>
   );

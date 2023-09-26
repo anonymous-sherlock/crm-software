@@ -18,10 +18,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { Separator } from "@radix-ui/react-dropdown-menu";
+import { Separator } from "@/components/ui/separator";
 import { campaignFormSchema } from "@/schema/campaignSchema";
 import { Label } from "../ui/label";
-import { timeOptions } from "@/constants/time";
+import { timeOptions, workingDayOptions } from "@/constants/time";
 import { ScrollArea } from "../ui/scroll-area";
 
 interface WorkingHoursProps {}
@@ -32,6 +32,71 @@ const WorkingHours: FC<WorkingHoursProps> = ({}) => {
 
   return (
     <>
+      {/* Working Days */}
+      <div className="grid grid-cols-2 gap-2 items-end">
+        <FormField
+          control={control}
+          name="workingDays.start"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Working Days</FormLabel>
+              <Select onValueChange={field.onChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Start Day" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Start Day</SelectLabel>
+                    <Separator className="my-2" />
+                    {workingDayOptions.map((day, index) => (
+                      <SelectItem key={index} value={day}>
+                        {day}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name="workingDays.end"
+          render={({ field }) => (
+            <FormItem>
+              {/* end time */}
+
+              <Select onValueChange={field.onChange}>
+                <FormControl className="capitalize">
+                  <SelectTrigger className="w-full capitalize">
+                    <SelectValue
+                      placeholder="Last Day"
+                      className="text-muted-foreground"
+                    />
+                  </SelectTrigger>
+                </FormControl>
+
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>End Day</SelectLabel>
+                    <Separator className="my-2" />
+                    {workingDayOptions.map((day, index) => (
+                      <SelectItem key={index} value={day}>
+                        {day}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+
+      {/* working Hours */}
       <div className="grid grid-cols-2 gap-2 items-end">
         <FormField
           control={control}
@@ -79,12 +144,17 @@ const WorkingHours: FC<WorkingHoursProps> = ({}) => {
                 </FormControl>
 
                 <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>End Time</SelectLabel>
-                    <Separator className="my-2" />
-                    <SelectItem value="5:30 PM">5:30 PM</SelectItem>
-                    <SelectItem value="6:00 PM">6:00 PM</SelectItem>
-                  </SelectGroup>
+                  <ScrollArea className="h-72 ">
+                    <SelectGroup>
+                      <SelectLabel>End Time</SelectLabel>
+                      <Separator className="my-2" />
+                      {timeOptions.map((time, index) => (
+                        <SelectItem key={index} value={time}>
+                          {time}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </ScrollArea>
                 </SelectContent>
               </Select>
 
