@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { campaignFormSchema } from "@/schema/campaignSchema";
+import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -34,6 +35,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
         workingHours,
         description: campaignDescription,
         targetRegion: "",
+        campaignId: randomUUID(),
         product: {
           connect: {
             productId: product,
@@ -59,3 +61,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     );
   }
 }
+function uuid(): any {
+  throw new Error("Function not implemented.");
+}
+

@@ -120,7 +120,7 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             method="post"
-            className="grid grid-cols-5 items-start gap-8 space-y-4"
+            className="grid grid-cols-5 items-start gap-8 space-y-4 "
           >
             <div className="col-span-3 flex w-full flex-col gap-6">
               <div className="grid grid-cols-2 gap-4">

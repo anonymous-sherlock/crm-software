@@ -13,6 +13,9 @@ export const getAllProductsForUser = async (
       include: {
         images: true, // Include the 'images' relation
       },
+      orderBy: {
+        updatedAt: "desc",
+      },
     });
 
     return userProducts;

@@ -48,9 +48,9 @@ model Product {
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
   category    String?
-  campaign    Campaign[]     @relation
   owner       User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   images      ProductImage[]
+  campaign    Campaign[]
 
   @@index([ownerId], map: "Product_ownerId_fkey")
 }
@@ -67,18 +67,19 @@ model ProductImage {
 model Campaign {
   id                 String               @id @default(cuid())
   name               String
+  campaignId         String               @unique
+  callCenterTeamSize String
   description        String?
   leadsRequirements  String
-  callCenterTeamSize String
   targetCountry      String
+  targetGender       Gender
   targetRegion       String
+  trafficSource      TrafficSourceDefault
   workingDays        Json
   workingHours       Json
-  targetGender       Gender
-  trafficSource      TrafficSourceDefault
-  campaignId         String               @unique
-  product            Product              @relation(fields: [campaignId], references: [productId])
   lead               Leads?
+  product            Product?             @relation(fields: [productProductId], references: [productId])
+  productProductId   String?
 
   @@index([campaignId], map: "Campaign_campaignId_fkey")
 }
