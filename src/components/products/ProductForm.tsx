@@ -18,11 +18,6 @@ import { productCategories } from "@/constants/index";
 import { cn } from "@/lib/utils";
 import { productFormSchema } from "@/schema/productSchema";
 import { useImageFileStore } from "@/store/index";
-import { Textarea } from "@/ui/textarea";
-import axios from "axios";
-import { Check, ChevronsUpDown, Trash2 } from "lucide-react";
-import { useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
 import { Card, CardContent, CardTitle } from "@/ui/card";
 import {
   Command,
@@ -33,14 +28,18 @@ import {
   CommandList,
 } from "@/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/ui/popover";
-import { toast } from "@/ui/use-toast";
-import DragAndDrop from "./DragnDrop";
 import Spinner from "@/ui/spinner";
+import { Textarea } from "@/ui/textarea";
+import { useMutation } from "@tanstack/react-query";
+import axios, { AxiosError } from "axios";
+import { Check, ChevronsUpDown, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { toast } from "../ui/use-toast";
+import DragAndDrop from "./DragnDrop";
 
 export function ProductForm() {
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState<boolean>(false);
-
   const { files, setFiles } = useImageFileStore();
   const form = useForm<z.infer<typeof productFormSchema>>({
     resolver: zodResolver(productFormSchema),
@@ -54,6 +53,48 @@ export function ProductForm() {
     },
   });
 
+  const { mutateAsync: createProduct, isLoading } = useMutation({
+    mutationKey: ["createProduct"],
+    mutationFn: async (formData: FormData) => {
+      const { data } = await axios.post("/api/product/add", formData);
+      return data;
+    },
+    onError: (err) => {
+      if (err instanceof AxiosError) {
+        if (err.response?.status === 500) {
+          console.log(err);
+          return toast({
+            title: "Cannot Create Product.",
+            description: err.response.data.error,
+            variant: "destructive",
+          });
+        } else if (err.response?.status === 400) {
+          return toast({
+            title: "Uh oh! Something went wrong.",
+            description: "There was a problem with your request",
+            variant: "destructive",
+          });
+        }
+      }
+      return toast({
+        title: "Cannot Create Product.",
+        description: "Internal server error",
+        variant: "destructive",
+      });
+    },
+    onSuccess: (data) => {
+      if (data.success) {
+        form.reset();
+        setFiles([]);
+      }
+      return toast({
+        variant: "success",
+        title: "Product created",
+        description: data.message,
+      });
+    },
+  });
+
   const { fields, append, remove } = useFieldArray({
     name: "mediaUrls",
     control: form.control,
@@ -61,40 +102,25 @@ export function ProductForm() {
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof productFormSchema>) {
-    setLoading(true);
-    const data = values;
     const formData = new FormData();
     function appendIfDefined(key: string, value: any) {
       if (value !== undefined) {
         formData.append(key, value as string);
       }
     }
-    appendIfDefined("productName", data.productName);
-    appendIfDefined("productPrice", data.productPrice);
-    appendIfDefined("productCategory", data.productCategory);
-    appendIfDefined("productQuantity", data.productQuantity);
-    appendIfDefined("productDescription", data.productDescription);
-    files.forEach((image) => {
-      formData.append("productImages", image as File);
+
+    appendIfDefined("productName", values.productName);
+    appendIfDefined("productPrice", values.productPrice);
+    appendIfDefined("productCategory", values.productCategory);
+    appendIfDefined("productQuantity", values.productQuantity);
+    appendIfDefined("productDescription", values.productDescription);
+    appendIfDefined("mediaUrls", JSON.stringify(values.mediaUrls));
+
+    files.forEach((file) => {
+      formData.append("productImages", file);
     });
-    axios
-      .post("/api/product/add", formData, {})
-      .then((response) => {
-        toast({
-          variant: "success",
-          title: "Product created",
-          description: response.data.message,
-        });
-        if (response.data.success) {
-          setLoading(false);
-          form.reset();
-          setFiles([]);
-        }
-      })
-      .catch((err) => console.error(err))
-      .finally(() => {
-        setLoading(false);
-      });
+
+    createProduct(formData);
   }
 
   return (
@@ -105,7 +131,7 @@ export function ProductForm() {
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             method="post"
-            className="grid grid-cols-5 items-start gap-6 space-y-4"
+            className="flex flex-col lg:grid lg:grid-cols-5 items-start gap-6 space-y-4"
           >
             <div className="col-span-3 flex w-full flex-col gap-6">
               <div className="grid grid-cols-2 gap-4">
@@ -137,7 +163,7 @@ export function ProductForm() {
                   )}
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col md:grid grid-cols-2 gap-4">
                 {/* product category */}
                 <FormField
                   control={form.control}
@@ -259,11 +285,16 @@ export function ProductForm() {
                         source.
                       </FormDescription>
                       <FormControl>
-                        <div className="flex gap-4">
+                        <div className="flex gap-2">
                           <Input {...field} className="flex-1" />
-                          <Button type="button" variant="destructive" onClick={() => remove(index)} className="w-10 p-[12px]">
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            onClick={() => remove(index)}
+                            className="w-10 p-[12px]"
+                          >
                             <Trash2 />
-                          </Button> 
+                          </Button>
                         </div>
                       </FormControl>
                       <FormMessage />
@@ -275,7 +306,7 @@ export function ProductForm() {
                 type="button"
                 variant="outline"
                 size="sm"
-                className="mt-2 w-1/4"
+                className="mt-2 md:w-1/4"
                 onClick={() => append({ value: "" })}
               >
                 Add URL
@@ -298,10 +329,10 @@ export function ProductForm() {
             </div>
             <Button
               type="submit"
-              disabled={loading}
+              disabled={isLoading}
               className={cn("w-full col-span-1")}
             >
-              {loading ? (
+              {isLoading ? (
                 <>
                   <Spinner /> Adding Product...
                 </>

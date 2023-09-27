@@ -41,7 +41,7 @@ const WorkingHours: FC<WorkingHoursProps> = ({}) => {
             <FormItem>
               <FormLabel>Working Days</FormLabel>
               <Select onValueChange={field.onChange}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full capitalize h-11">
                   <SelectValue placeholder="Start Day" />
                 </SelectTrigger>
                 <SelectContent>
@@ -69,7 +69,7 @@ const WorkingHours: FC<WorkingHoursProps> = ({}) => {
 
               <Select onValueChange={field.onChange}>
                 <FormControl className="capitalize">
-                  <SelectTrigger className="w-full capitalize">
+                  <SelectTrigger className="w-full capitalize h-11">
                     <SelectValue
                       placeholder="Last Day"
                       className="text-muted-foreground"
@@ -105,7 +105,7 @@ const WorkingHours: FC<WorkingHoursProps> = ({}) => {
             <FormItem>
               <FormLabel>Working Hours</FormLabel>
               <Select onValueChange={field.onChange}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full capitalize h-11">
                   <SelectValue placeholder="Start Time" />
                 </SelectTrigger>
                 <SelectContent>
@@ -135,7 +135,7 @@ const WorkingHours: FC<WorkingHoursProps> = ({}) => {
 
               <Select onValueChange={field.onChange}>
                 <FormControl className="capitalize">
-                  <SelectTrigger className="w-full capitalize">
+                  <SelectTrigger className="w-full capitalize h-11">
                     <SelectValue
                       placeholder="End Time"
                       className="text-muted-foreground"

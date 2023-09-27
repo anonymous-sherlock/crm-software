@@ -107,7 +107,6 @@ export const deleteProduct = z.object({
 export type DeleteProductPayload = z.infer<typeof deleteProduct>;
 
 // product searhc payload
-
 export const productSearch = z.object({
   name: z
     .string({
@@ -118,5 +117,6 @@ export const productSearch = z.object({
     }),
     selectedId: z.string().optional()
 });
+export type ProductFormPayload = z.infer<typeof productFormSchema>;
 
 export type ProductSearchPayload = z.infer<typeof productSearch>;

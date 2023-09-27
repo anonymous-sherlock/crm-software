@@ -38,7 +38,7 @@ const AgeFields: FC<AgeFieldsProps> = ({}) => {
               <FormLabel>Target Age</FormLabel>
               <Select onValueChange={field.onChange}>
                 <FormControl className="capitalize">
-                  <SelectTrigger className="w-full capitalize">
+                  <SelectTrigger className="w-full capitalize h-11">
                     <SelectValue
                       placeholder="Min Age"
                       className="text-muted-foreground"
@@ -72,7 +72,7 @@ const AgeFields: FC<AgeFieldsProps> = ({}) => {
 
               <Select onValueChange={field.onChange}>
                 <FormControl className="capitalize">
-                  <SelectTrigger className="w-full capitalize">
+                  <SelectTrigger className="w-full capitalize h-11">
                     <SelectValue
                       placeholder="Max Age"
                       className="text-muted-foreground"

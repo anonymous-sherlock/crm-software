@@ -123,7 +123,7 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
             className="grid grid-cols-5 items-start gap-8 space-y-4 "
           >
             <div className="col-span-3 flex w-full flex-col gap-6">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4 gap-y-6">
                 <FormField
                   control={form.control}
                   name="campaignName"
@@ -131,7 +131,11 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
                     <FormItem>
                       <FormLabel>Campaign Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Nutra Bay Campaign" {...field} />
+                        <Input
+                          placeholder="Nutra Bay Campaign"
+                          {...field}
+                          className="h-11"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -146,7 +150,7 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
                     <FormItem>
                       <FormLabel>Daily Leads Requirements</FormLabel>
                       <FormControl>
-                        <Input placeholder="250" {...field} />
+                        <Input placeholder="250" {...field} className="h-11" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -161,11 +165,7 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
                     <FormItem>
                       <FormLabel>Call Center Team Size</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="65"
-                          {...field}
-                          {...form.register("callCenterTeamSize")}
-                        />
+                        <Input placeholder="24" {...field} className="h-11" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -184,7 +184,7 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
                         defaultValue={field.value}
                       >
                         <FormControl>
-                          <SelectTrigger className="w-full">
+                          <SelectTrigger className="w-full h-11">
                             <SelectValue placeholder="Select a Traffic Source" />
                           </SelectTrigger>
                         </FormControl>
@@ -223,7 +223,7 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
                         defaultValue={field.value}
                       >
                         <FormControl className="capitalize">
-                          <SelectTrigger className="w-full capitalize">
+                          <SelectTrigger className="w-full capitalize h-11">
                             <SelectValue
                               placeholder="Select a target Gender"
                               className="lowercase"
@@ -275,7 +275,7 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
               />
             </div>
 
-            <div className="col-span-2 !mt-0 flex flex-col gap-4 ">
+            <div className="col-span-2 !mt-0 flex flex-col gap-4 gap-y-6">
               {/* Working Hours */}
               <WorkingHours />
               <FormField

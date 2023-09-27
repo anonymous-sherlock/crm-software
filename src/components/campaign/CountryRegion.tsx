@@ -68,7 +68,7 @@ const CountryRegion: FC<CountryRegionProps> = ({}) => {
                       role="combobox"
                       aria-expanded={countryOpen}
                       className={cn(
-                        "w-full justify-between",
+                        "w-full justify-between h-11",
                         !field.value && "text-muted-foreground"
                       )}
                     >
@@ -134,7 +134,7 @@ const CountryRegion: FC<CountryRegionProps> = ({}) => {
                       role="combobox"
                       aria-expanded={regionOpen}
                       className={cn(
-                        "w-full justify-between",
+                        "w-full justify-between h-11",
                         !field.value && "text-muted-foreground"
                       )}
                     >
