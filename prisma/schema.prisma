@@ -81,16 +81,25 @@ model Campaign {
   leadsRequirements  String
   targetCountry      String
   targetGender       Gender
-  targetRegion       String
+  targetRegion       TargetRegion[]
   trafficSource      TrafficSourceDefault
   workingDays        Json
   workingHours       Json
   productProductId   String?
   product            Product?             @relation(fields: [productProductId], references: [productId])
   lead               Leads?
+  user               User                 @relation(fields: [userId], references: [id])
+  userId             String
 
   @@index([campaignId], map: "Campaign_campaignId_fkey")
   @@index([productProductId], map: "Campaign_productProductId_fkey")
+}
+
+model TargetRegion {
+  id         String   @id @default(cuid())
+  regionName String
+  campaign   Campaign @relation(fields: [campaignId], references: [id])
+  campaignId String
 }
 
 model Leads {
@@ -117,6 +126,7 @@ model User {
   activateTokens ActivateToken[]
   products       Product[]
   sessions       Session[]
+  campaigns      Campaign[]
 }
 
 model ActivateToken {

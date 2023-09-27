@@ -1,13 +1,17 @@
+import { getAuthSession } from "@/lib/authOption";
 import { db } from "@/lib/db";
 import { campaignFormSchema } from "@/schema/campaignSchema";
 import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { Session } from "next-auth";
 
 export async function POST(req: NextRequest, res: NextResponse) {
   const body = await req.json();
 
   try {
+    const session = await getAuthSession();
+    const { user } = session as Session;
     const {
       campaignName,
       campaignDescription,
@@ -23,6 +27,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
       workingHours,
     } = campaignFormSchema.parse(body);
 
+    console.log(targetRegion.toString());
+
     const newCampaign = await db.campaign.create({
       data: {
         name: campaignName,
@@ -34,8 +40,19 @@ export async function POST(req: NextRequest, res: NextResponse) {
         workingDays,
         workingHours,
         description: campaignDescription,
-        targetRegion: "",
+        targetRegion: {
+          createMany: {
+            data: (targetRegion || []).map((region) => ({
+              regionName: region.toString(),
+            })),
+          },
+        },
         campaignId: randomUUID(),
+        user: {
+          connect: {
+            id: user.id,
+          },
+        },
         product: {
           connect: {
             productId: product,
@@ -64,4 +81,3 @@ export async function POST(req: NextRequest, res: NextResponse) {
 function uuid(): any {
   throw new Error("Function not implemented.");
 }
-
