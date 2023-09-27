@@ -1,8 +1,9 @@
 import { getAuthSession } from "@/lib/authOption";
 import { db } from "@/lib/db";
-import { Campaign } from "@prisma/client";
+import { DataTable } from "./data-table";
+import { Campaign, columns } from "./columns";
 
-async function getData() {
+async function getData(): Promise<Campaign[]> {
   const session = await getAuthSession();
   if (!session) {
     return [];
@@ -11,18 +12,24 @@ async function getData() {
   const campaignsData = await db.campaign.findMany({
     where: {},
   });
-  interface CampaignProps {
-    campaignsData: Pick<
-      Campaign,
-      "campaignId" | "name" | "targetCountry" | "leadsRequirements"
-    >;
-  }
-  const campaigns = campaignsData;
-  return campaigns || []; // Return an empty array if products is null
+
+  const campaigns = campaignsData.map((campaign) => ({
+    id: campaign.id,
+    name: campaign.name,
+    status: "pending",
+    leadsRequirements: campaign.leadsRequirements,
+    targetCountry: campaign.targetCountry,
+  }));
+
+  return campaigns;
 }
 
 export default async function CampaignPage() {
   const data = await getData(); // Use the Product type here
 
-  return <div>{JSON.stringify(data)}</div>;
+  return (
+    <div>
+      <DataTable columns={columns} data={data} />
+    </div>
+  );
 }
