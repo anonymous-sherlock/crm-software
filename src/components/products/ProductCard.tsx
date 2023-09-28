@@ -100,8 +100,8 @@ export function ProductCard({ product }: ProductCardProps) {
       </CardContent>
       <CardFooter className="flex justify-between">
         <Button variant="outline">Edit Product</Button>
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
+        <AlertDialog >
+          <AlertDialogTrigger asChild >
             <Button variant="destructive" disabled={isLoading}>
               {isLoading ? "Deleting product..." : "Delete Product"}
             </Button>

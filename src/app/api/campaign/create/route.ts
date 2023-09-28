@@ -26,6 +26,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
       workingDays,
       workingHours,
     } = campaignFormSchema.parse(body);
+    const campaignID = generateCampaignID();
 
     console.log(targetRegion.toString());
 
@@ -47,7 +48,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
             })),
           },
         },
-        campaignId: randomUUID(),
+        campaignId: campaignID,
         user: {
           connect: {
             id: user.id,
@@ -64,7 +65,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     console.log(newCampaign);
     return NextResponse.json(
       { success: true, ...newCampaign },
-      { status: 200 }
+      { status: 201 }
     );
   } catch (error) {
     console.log(error);
@@ -78,6 +79,9 @@ export async function POST(req: NextRequest, res: NextResponse) {
     );
   }
 }
-function uuid(): any {
-  throw new Error("Function not implemented.");
+function generateCampaignID() {
+  // Generate a UUID and use the first 8 characters as the alias
+  const uuid = randomUUID();
+  const alias = uuid.substring(0, 8);
+  return alias;
 }

@@ -76,6 +76,7 @@ model Campaign {
   id                 String               @id @default(cuid())
   name               String
   campaignId         String               @unique
+  status             CampaignStatus       @default(OnHold)
   callCenterTeamSize String
   description        String?
   leadsRequirements  String
@@ -90,15 +91,23 @@ model Campaign {
   lead               Leads?
   user               User                 @relation(fields: [userId], references: [id])
   userId             String
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @default(now()) @updatedAt
 
-  @@index([campaignId], map: "Campaign_campaignId_fkey")
   @@index([productProductId], map: "Campaign_productProductId_fkey")
+}
+
+enum CampaignStatus {
+  OnHold
+  InProgress
+  Canceled
+  Done
 }
 
 model TargetRegion {
   id         String   @id @default(cuid())
   regionName String
-  campaign   Campaign @relation(fields: [campaignId], references: [id])
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   campaignId String
 }
 
@@ -108,7 +117,7 @@ model Leads {
   phone    String
   ip       String
   leadId   String   @unique
-  campaign Campaign @relation(fields: [leadId], references: [campaignId])
+  campaign Campaign @relation(fields: [leadId], references: [campaignId], onDelete: NoAction)
 
   @@index([leadId], map: "Leads_campaignId_fkey")
 }
@@ -144,8 +153,8 @@ model VerificationToken {
   identifier String
   token      String   @unique
   expires    DateTime
-  createdAt  DateTime @default(now())
   id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
   @@unique([identifier, token])

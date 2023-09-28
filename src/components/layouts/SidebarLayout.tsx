@@ -9,14 +9,14 @@ type Props = {
 
 export const SidebarLayout = ({ children }: Props) => {
   return (
-    <div className="flex bg-secondary dark:bg-primary">
+    <div className="flex flex-1 w-full bg-secondary dark:bg-primary">
       <Sidebar>
         <UserAvatarDetails />
       </Sidebar>
-      <main className="relative mx-auto w-full flex-1">
+      <section className="relative mx-auto w-full flex-1 bg-secondary">
         <Header />
-        <main className="mt-0 p-4">{children}</main>
-      </main>
+        <main className="mt-0 p-4 w-full">{children}</main>
+      </section>
     </div>
   );
 };

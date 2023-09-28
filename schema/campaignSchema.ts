@@ -47,36 +47,28 @@ export const campaignFormSchema = z.object({
     }),
   }),
 
-  workingDays: z
-    .object({
-      start: z
-        .string({
-          required_error: "Start day is required",
-        })
-        .nonempty({
-          message: "Start day is required.",
-        }),
-      end: z
-        .string({
-          required_error: "End day is required",
-        })
-        .nonempty({
-          message: "End day is required.",
-        }),
-    })
-    .refine(
-      (value) => {
-        // Check if 'value.start' and 'value.end' are both valid days
-        return (
-          workingDayOptions.includes(value.start) &&
-          workingDayOptions.includes(value.end)
-        );
-      },
-      {
-        message: "Invalid working days selected.",
-      }
-    ),
-
+  workingDays: z.object({
+    start: z
+      .string({
+        required_error: "Start day is required",
+      })
+      .nonempty({
+        message: "Start day is required.",
+      })
+      .refine((value) => workingDayOptions.includes(value), {
+        message: "Start day must be a valid working day option.",
+      }),
+    end: z
+      .string({
+        required_error: "End day is required",
+      })
+      .nonempty({
+        message: "End day is required.",
+      })
+      .refine((value) => workingDayOptions.includes(value), {
+        message: "End day must be a valid working day option.",
+      }),
+  }),
   // Call Center Team size
   callCenterTeamSize: z
     .string({

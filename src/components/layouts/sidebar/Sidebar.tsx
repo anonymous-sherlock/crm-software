@@ -140,7 +140,7 @@ const Sidebar = ({ children }: props) => {
                 setOpen(!open);
               }}
               transition={{ duration: 0 }}
-              className="m-2 flex h-fit w-fit cursor-pointer justify-end self-end rounded-md border-2 border-gray-50 bg-secondary  p-2 ring-zinc-300 duration-300 hover:ring-2 focus:ring-2 md:block"
+              className="m-2 flex h-fit w-fit cursor-pointer justify-end self-end rounded-md border-2 border-gray-50 bg-secondary flex-1 p-2 ring-zinc-300 duration-300 hover:ring-2 focus:ring-2 md:block"
             >
               <ArrowLeftToLine
                 size={25}
