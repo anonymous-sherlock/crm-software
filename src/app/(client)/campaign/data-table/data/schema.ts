@@ -5,7 +5,7 @@ import { z } from "zod";
 // IRL, you will have a schema for your data models.
 export const taskSchema = z.object({
   campaignId: z.string(),
-  name: z.string(),
+  campaignName: z.string(),
   status: z.nativeEnum(CampaignStatus),
   targetCountry: z.string(),
 });

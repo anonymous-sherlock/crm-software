@@ -14,7 +14,7 @@ async function seedProducts() {
     }
 
     // Define the number of products you want to create
-    const numberOfProducts = 40; // Adjust this as needed
+    const numberOfProducts = 10; // Adjust this as needed
 
     for (let i = 0; i < numberOfProducts; i++) {
       const product = await prisma.product.create({

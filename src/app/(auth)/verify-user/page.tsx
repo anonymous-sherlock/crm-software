@@ -19,10 +19,10 @@ export default async function Page() {
       />
       <div className="fixed top-0 left-0 inset-0 z-0 bg-black opacity-50"></div>
 
-      {/* <VerifyUser
+      <VerifyUser
         user={sesssion.user}
         className="relative z-50 bg-white min-w-[400px] mx-auto p-4  text-center"
-      /> */}
+      />
     </main>
   );
 }

@@ -13,7 +13,7 @@ import { ProductInfoHover } from "./product-info-hover";
 import DescriptionHover from "./description-hover";
 export type Campaign = {
   campaignId: string;
-  name: string;
+  campaignName: string;
   description: string;
   status: CampaignStatus;
   targetCountry: string;
@@ -21,7 +21,13 @@ export type Campaign = {
     Product & {
       images: ProductImage[];
     },
-    "name" | "price" | "images" | "category" | "productId" | "description"
+    | "name"
+    | "price"
+    | "images"
+    | "category"
+    | "productId"
+    | "description"
+    | "createdAt"
   >;
 };
 export const columns: ColumnDef<Campaign>[] = [
@@ -58,7 +64,7 @@ export const columns: ColumnDef<Campaign>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "name",
+    accessorKey: "campaignName",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Campaign Name" />
     ),
@@ -69,7 +75,7 @@ export const columns: ColumnDef<Campaign>[] = [
         <div className="flex space-x-2 max-w-[220px] ">
           {/* {label && <Badge variant="outline">{label.label}</Badge>} */}
           <span className="w-full truncate font-medium ">
-            {row.getValue("name")}{" "}
+            {row.getValue("campaignName")}{" "}
           </span>
           {cell.description && (
             <DescriptionHover description={cell.description} />
@@ -105,10 +111,11 @@ export const columns: ColumnDef<Campaign>[] = [
       const cell = row.original;
 
       return (
-        <div className="flex items-center">
-          <span>
-            {cell.product.name} <ProductInfoHover product={cell.product} />
+        <div className="flex items-center max-w-[180px] ">
+          <span className="line-clamp-1 leading-7 whitespace-pre-line mr-1 ">
+            {cell.product.name}
           </span>
+          <ProductInfoHover product={cell.product} />
         </div>
       );
     },

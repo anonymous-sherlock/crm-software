@@ -7,9 +7,9 @@ import { Button } from "@/ui/button";
 import { Input } from "@/ui/input";
 import { DataTableViewOptions } from "./data-table-view-options";
 
-import { priorities, statuses } from "../data/data";
+import { statuses } from "../data/data";
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
-import { productCategories } from "@/constants/index";
+import { DeleteCampaign } from "./delete-campaign";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -25,9 +25,11 @@ export function DataTableToolbar<TData>({
       <div className="flex flex-1 items-center space-x-2">
         <Input
           placeholder="Filter campaigns..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          value={
+            (table.getColumn("campaignName")?.getFilterValue() as string) ?? ""
+          }
           onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
+            table.getColumn("campaignName")?.setFilterValue(event.target.value)
           }
           className="h-8 w-[150px] lg:w-[250px]"
         />
@@ -50,6 +52,7 @@ export function DataTableToolbar<TData>({
           </Button>
         )}
       </div>
+      <DeleteCampaign table={table} />
       <DataTableViewOptions table={table} />
     </div>
   );

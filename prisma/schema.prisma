@@ -72,6 +72,14 @@ model ProductImage {
   @@index([productImageId], map: "ProductImage_productId_fkey")
 }
 
+enum TrafficSourceDefault {
+  Social
+  Adult
+  Native
+  Google
+  Facebook
+}
+
 model Campaign {
   id                 String               @id @default(cuid())
   name               String
@@ -92,7 +100,7 @@ model Campaign {
   user               User                 @relation(fields: [userId], references: [id])
   userId             String
   createdAt          DateTime             @default(now())
-  updatedAt          DateTime             @default(now()) @updatedAt
+  updatedAt          DateTime             @updatedAt
 
   @@index([productProductId], map: "Campaign_productProductId_fkey")
 }
@@ -136,6 +144,16 @@ model User {
   products       Product[]
   sessions       Session[]
   campaigns      Campaign[]
+  apiKeys        ApiKey[]
+  BearerToken    BearerToken[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+enum UserRole {
+  ADMIN
+  CLIENT
+  CUSTOMER
 }
 
 model ActivateToken {
@@ -160,21 +178,26 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-enum UserRole {
-  ADMIN
-  CLIENT
-  CUSTOMER
+model ApiKey {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BearerToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  expiresAt DateTime
 }
 
 enum Gender {
   Male
   Female
-}
-
-enum TrafficSourceDefault {
-  Social
-  Adult
-  Native
-  Google
-  Facebook
 }

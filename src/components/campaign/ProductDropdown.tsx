@@ -94,7 +94,7 @@ const ProductDropdown: FC<ProductDropdownProps> = ({}) => {
         <PopoverTrigger asChild onClick={handlePopupTrigger}>
           <div className="mb-4 mt-2 flex w-full flex-col items-start justify-between rounded-md border px-4 py-3 sm:flex-row sm:items-center">
             <p className="text-sm font-medium leading-none flex justify-start items-center">
-              <span className="mr-2 rounded-md bg-primary px-2 py-1 text-xs text-primary-foreground">
+              <span className="mr-2 rounded-md bg-primary px-2 py-1 text-xs text-primary-foreground flex-grow flex-shrink-0">
                 {getValues("product")
                   ? products?.data.find(
                       (p) => p.productId === getValues("product")
@@ -105,7 +105,7 @@ const ProductDropdown: FC<ProductDropdownProps> = ({}) => {
                     : "no category"
                   : "category"}
               </span>
-              <span className="text-muted-foreground">
+              <span className="text-muted-foreground line-clamp-1 leading-7 whitespace-pre-line">
                 {getValues("product")
                   ? products?.data.find(
                       (p) => p.productId === getValues("product")
@@ -215,7 +215,7 @@ const ProductDropdown: FC<ProductDropdownProps> = ({}) => {
         {selectedProduct &&
           products?.data
             .find((p) => p.productId === selectedProduct)
-            ?.images.map((img) => (
+            ?.images.slice(0, 2).map((img) => (
               <div
                 key={img.id}
                 className="relative w-full h-40 mt-4 rounded-md inline-block bg-gray-100 border-gray-300 border-2"

@@ -1,4 +1,3 @@
-import Leads from "@/components/dashboard/Leads";
 import OverviewCard from "@/components/dashboard/OverviewCard";
 import { Metadata } from "next";
 

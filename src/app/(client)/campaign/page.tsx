@@ -1,12 +1,9 @@
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { getAuthSession } from "@/lib/authOption";
 import { db } from "@/lib/db";
-import { z } from "zod";
+import { redirect } from "next/navigation";
 import { Campaign, columns } from "./data-table/components/columns";
 import { DataTable } from "./data-table/components/data-table";
-import { taskSchema } from "./data-table/data/schema";
-import tasklist from "./data-table/data/tasks.json";
-import { redirect } from "next/navigation";
 
 async function getData(): Promise<Campaign[]> {
   const session = await getAuthSession();
@@ -37,6 +34,7 @@ async function getData(): Promise<Campaign[]> {
           description: true,
           price: true,
           images: true,
+          createdAt: true,
         },
       },
     },
@@ -45,7 +43,7 @@ async function getData(): Promise<Campaign[]> {
 
   const campaigns = campaignsData.map((campaign) => ({
     campaignId: campaign.campaignId,
-    name: campaign.name,
+    campaignName: campaign.name,
     description: campaign.description,
     status: campaign.status,
     leadsRequirements: campaign.leadsRequirements,
@@ -57,15 +55,11 @@ async function getData(): Promise<Campaign[]> {
       description: campaign.product?.description ?? "",
       price: campaign.product?.price,
       images: campaign.product?.images ?? [],
+      createdAt: campaign.product?.createdAt ?? "",
     },
   }));
 
   return campaigns as Campaign[];
-}
-async function getTasks() {
-  const data = tasklist;
-
-  return z.array(taskSchema).parse(data);
 }
 
 export default async function CampaignPage() {

@@ -79,10 +79,7 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
         ...input,
       };
 
-      const { data } = await axios.post(
-        "http://localhost:3000/api/campaign/create",
-        payload
-      );
+      const { data } = await axios.post("/api/campaign/create", payload);
       console.log(data);
       return data;
     },
