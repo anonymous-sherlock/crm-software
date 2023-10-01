@@ -1,24 +1,19 @@
 "use client";
 import Logo from "@/assets/logo.png";
 import { motion } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { PropsWithChildren, useEffect, useRef } from "react";
 import SubMenu from "./SubMenu";
 // * React icons
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Menus, singleMenu, subMenusList } from "@/constants/MenuItems";
+import { cn } from "@/lib/utils";
 import useNavbarStore from "@/store/index";
 import { ArrowLeftToLine } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { SlSettings } from "react-icons/sl";
 import { useMediaQuery } from "react-responsive";
-import { cn } from "@/lib/utils";
 
-interface props {
-  children: React.ReactNode;
-}
-
-const Sidebar = ({ children }: props) => {
+const Sidebar = ({ children }: PropsWithChildren) => {
   const isTabletMid = useMediaQuery({ query: "(max-width: 768px)" });
   const { open, setOpen, setIsTabletMid } = useNavbarStore();
 
@@ -123,7 +118,9 @@ const Sidebar = ({ children }: props) => {
               {singleMenu.map((menu, index) => (
                 <li
                   key={index}
-                  className={`${cn("hover:bg-gray-100 text-primary rounded-lg ")} ${menu.gap && "mt-2"  }`}
+                  className={`${cn(
+                    "hover:bg-gray-100 text-primary rounded-lg "
+                  )} ${menu.gap && "mt-2"}`}
                 >
                   <Link href={menu.url} className="link">
                     <menu.icon size={23} className="min-w-max" />

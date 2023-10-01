@@ -39,7 +39,6 @@ async function getData(): Promise<Campaign[]> {
       },
     },
   });
-  console.log();
 
   const campaigns = campaignsData.map((campaign) => ({
     campaignId: campaign.campaignId,

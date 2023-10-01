@@ -1,13 +1,9 @@
-import React from "react";
+import React, { PropsWithChildren } from "react";
 import { Header } from "./header/Header";
 import Sidebar from "./sidebar/Sidebar";
 import UserAvatarDetails from "./sidebar/UserAvatarDetails";
 
-type Props = {
-  children: React.ReactNode;
-};
-
-export const SidebarLayout = ({ children }: Props) => {
+export const SidebarLayout = ({ children }: PropsWithChildren) => {
   return (
     <div className="flex flex-1 w-full bg-secondary dark:bg-primary">
       <Sidebar>

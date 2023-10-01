@@ -1,3 +1,4 @@
+"use client"
 import { Icons } from "@/assets/Icons";
 import { buttonVariants } from "@/components/ui/button";
 import LargeHeading from "@/components/ui/large-heading";

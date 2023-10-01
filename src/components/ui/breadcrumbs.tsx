@@ -3,9 +3,7 @@ import React from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
-type Props = {};
-
-export const Breadcrumbs = (props: Props) => {
+export const Breadcrumbs = () => {
   const pathname = usePathname().substring(1);
 
   return (

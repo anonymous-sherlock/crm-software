@@ -61,6 +61,8 @@ model ProductMedia {
   url            String
   productMediaId String
   product        Product @relation(fields: [productMediaId], references: [productId], onDelete: Cascade)
+
+  @@index([productMediaId], map: "ProductMedia_productMediaId_fkey")
 }
 
 model ProductImage {
@@ -70,14 +72,6 @@ model ProductImage {
   product        Product @relation(fields: [productImageId], references: [productId], onDelete: Cascade)
 
   @@index([productImageId], map: "ProductImage_productId_fkey")
-}
-
-enum TrafficSourceDefault {
-  Social
-  Adult
-  Native
-  Google
-  Facebook
 }
 
 model Campaign {
@@ -90,33 +84,29 @@ model Campaign {
   leadsRequirements  String
   targetCountry      String
   targetGender       Gender
-  targetRegion       TargetRegion[]
   trafficSource      TrafficSourceDefault
-  workingDays        Json
-  workingHours       Json
+  workingDays        String               @db.LongText
+  workingHours       String               @db.LongText
   productProductId   String?
-  product            Product?             @relation(fields: [productProductId], references: [productId])
-  lead               Leads?
-  user               User                 @relation(fields: [userId], references: [id])
   userId             String
   createdAt          DateTime             @default(now())
-  updatedAt          DateTime             @updatedAt
+  updatedAt          DateTime             @default(now()) @updatedAt
+  product            Product?             @relation(fields: [productProductId], references: [productId])
+  user               User                 @relation(fields: [userId], references: [id])
+  lead               Leads?
+  targetRegion       TargetRegion[]
 
   @@index([productProductId], map: "Campaign_productProductId_fkey")
-}
-
-enum CampaignStatus {
-  OnHold
-  InProgress
-  Canceled
-  Done
+  @@index([userId], map: "Campaign_userId_fkey")
 }
 
 model TargetRegion {
   id         String   @id @default(cuid())
   regionName String
-  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   campaignId String
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId], map: "TargetRegion_campaignId_fkey")
 }
 
 model Leads {
@@ -139,21 +129,15 @@ model User {
   role           UserRole        @default(CUSTOMER)
   password       String?
   active         Boolean         @default(false)
-  accounts       Account[]
-  activateTokens ActivateToken[]
-  products       Product[]
-  sessions       Session[]
-  campaigns      Campaign[]
-  apiKeys        ApiKey[]
-  BearerToken    BearerToken[]
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
-}
-
-enum UserRole {
-  ADMIN
-  CLIENT
-  CUSTOMER
+  accounts       Account[]
+  activateTokens ActivateToken[]
+  apiKeys        ApiKey[]
+  BearerToken    BearerToken[]
+  campaigns      Campaign[]
+  products       Product[]
+  sessions       Session[]
 }
 
 model ActivateToken {
@@ -181,20 +165,45 @@ model VerificationToken {
 model ApiKey {
   id        String   @id @default(cuid())
   key       String   @unique
-  user      User     @relation(fields: [userId], references: [id])
   userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "ApiKey_userId_fkey")
 }
 
 model BearerToken {
   id        String   @id @default(cuid())
   token     String   @unique
-  user      User     @relation(fields: [userId], references: [id])
   userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "BearerToken_userId_fkey")
+}
+
+enum TrafficSourceDefault {
+  Social
+  Adult
+  Native
+  Google
+  Facebook
+}
+
+enum CampaignStatus {
+  OnHold
+  InProgress
+  Canceled
+  Done
+}
+
+enum UserRole {
+  ADMIN
+  CLIENT
+  CUSTOMER
 }
 
 enum Gender {
