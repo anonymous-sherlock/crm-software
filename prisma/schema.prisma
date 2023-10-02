@@ -91,7 +91,7 @@ model Campaign {
   userId             String
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @default(now()) @updatedAt
-  product            Product?             @relation(fields: [productProductId], references: [productId])
+  product            Product?             @relation(fields: [productProductId], references: [productId], onDelete: Cascade)
   user               User                 @relation(fields: [userId], references: [id])
   lead               Leads?
   targetRegion       TargetRegion[]

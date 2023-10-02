@@ -49,7 +49,7 @@ const page = () => {
                   </div>
                 </Link>
 
-                <div className="px-6 mt-4 grid grid-cols-3 place-items-center py-2 gap-2 text-xs text-zinc-500">
+                <div className="px-6 mt-4 grid grid-cols-2 place-items-center py-2 gap-2 text-xs text-zinc-500">
                   <div className="flex items-center gap-2">
                     <Plus className="h-4 w-4" />
                     {moment(campaign.createdAt)
@@ -59,16 +59,8 @@ const page = () => {
 
                   <div className="flex items-center gap-2">
                     <MessageSquare className="h-4 w-4" />
+                    New Leads
                   </div>
-
-                  <Button
-                    onClick={() => console.log("heelo")}
-                    size="sm"
-                    className="w-full"
-                    variant="destructive"
-                  >
-                    <Trash className="h-4 w-4" />
-                  </Button>
                 </div>
               </li>
             ))}

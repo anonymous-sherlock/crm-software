@@ -71,6 +71,77 @@ export const appRouter = router({
 
     return campaignsData;
   }),
+  getProduct: privateProcedure
+    .input(
+      z.object({
+        productId: z.string({
+          required_error: "product Id is required to delete a product",
+        }),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { userId } = ctx;
+      const { productId } = input;
+      const product = await db.product.findMany({
+        where: {
+          ownerId: userId,
+          productId: productId,
+        },
+      });
+      if (!product)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Product not found",
+        });
+
+      return {
+        success: "true",
+        product,
+      };
+    }),
+    
+  deleteProduct: privateProcedure
+    .input(
+      z.object({
+        productIds: z
+          .string({
+            required_error: "product Id is required to delete a product",
+          })
+          .array(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx;
+      const { productIds } = input;
+      const products = await db.product.findMany({
+        where: {
+          ownerId: userId,
+          productId: {
+            in: productIds,
+          },
+        },
+      });
+      if (!products)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Product not found",
+        });
+
+      const deletedProduct = await db.product.deleteMany({
+        where: {
+          ownerId: userId,
+          productId: {
+            in: productIds,
+          },
+        },
+      });
+      const deletedCount = deletedProduct.count;
+      return {
+        success: "true",
+        deletedProduct,
+        deletedCount,
+      };
+    }),
 });
 
 export type AppRouter = typeof appRouter;

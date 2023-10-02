@@ -6,14 +6,12 @@ import { FC } from "react";
 interface OverviewCardProps {}
 
 const OverviewCard: FC<OverviewCardProps> = ({}) => {
-  const { data, isFetching } = trpc.test.useQuery();
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
       <div className="widget-item bg-white p-6 flex justify-between rounded-md">
         <div>
           <h4 className="text-lg font-semibold text-slate-700 mb-2 leading-none">
             356
-            {isFetching ? "loadin..." : data}
           </h4>
           <p className="text-sm leading-4 space-y-2">Leads Received</p>
           <div className="badge flex items-center justify-center max-w-[70px] text-xs p-1 my-2 rounded-md text-green-900  bg-opacity-50 bg-green-200  space-x-1">
