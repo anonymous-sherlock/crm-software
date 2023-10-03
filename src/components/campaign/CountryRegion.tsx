@@ -22,13 +22,15 @@ import { allCountries } from "country-region-data";
 import { cn } from "@/lib/utils";
 import { useFormContext } from "react-hook-form";
 
-interface CountryRegionProps {}
+interface CountryRegionProps {
+  formSubmitted: boolean;
+}
 
-const CountryRegion: FC<CountryRegionProps> = ({}) => {
+const CountryRegion: FC<CountryRegionProps> = ({ formSubmitted }) => {
   const [countryOpen, setCountryOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState("");
   const [regionOpen, setRegionOpen] = useState(false);
-  const { control, getValues, setValue, clearErrors, register, setError } =
+  const { control, setValue, clearErrors, formState, setError } =
     useFormContext();
 
   const selectedRegionRef = useRef<Array<string>>([]);
@@ -46,9 +48,8 @@ const CountryRegion: FC<CountryRegionProps> = ({}) => {
     } else {
       clearErrors("targetRegion"); // Remove the error
     }
-
-    console.log(getValues("targetRegion"));
   };
+
 
   return (
     <>

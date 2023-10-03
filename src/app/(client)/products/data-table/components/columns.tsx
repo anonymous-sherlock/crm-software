@@ -86,6 +86,7 @@ export const columns: ColumnDef<ProductList>[] = [
             width={50}
             height={50}
             className="rounded-md"
+            style={{ width: "auto" }}
           />
         ) : null}
       </div>
@@ -132,6 +133,6 @@ export const columns: ColumnDef<ProductList>[] = [
 
   {
     id: "actions",
-    cell: ({ row }) => <DataTableRowActions row={row} />,
+    cell: ({ row, cell }) => <DataTableRowActions row={row} />,
   },
 ];

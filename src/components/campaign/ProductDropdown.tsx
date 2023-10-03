@@ -3,9 +3,12 @@ import { useDebounce } from "@/hooks/use-debounce";
 import { cn } from "@/lib/utils";
 import { ProductSearchPayload } from "@/schema/productSchema";
 import { ProductWithImagesPayload } from "@/types/db";
+import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import React, { FC, useEffect, useState } from "react";
+import { Check } from "lucide-react";
+import Image from "next/image";
+import { FC, useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { Button } from "../ui/button";
 import {
@@ -16,10 +19,6 @@ import {
   CommandItem,
   CommandList,
 } from "../ui/command";
-import { FormControl } from "../ui/form";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Check, ChevronsUpDown } from "lucide-react";
-import Image from "next/image";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,16 +27,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
-interface ProductDropdownProps {}
+interface ProductDropdownProps {
+  formSubmitted: boolean;
+}
 
-const ProductDropdown: FC<ProductDropdownProps> = ({}) => {
+const ProductDropdown: FC<ProductDropdownProps> = ({ formSubmitted }) => {
   const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
   const [searchText, setSearchText] = useState<string | null>("");
   const debouncedValue = useDebounce(searchText, 500);
@@ -79,12 +77,16 @@ const ProductDropdown: FC<ProductDropdownProps> = ({}) => {
 
   useEffect(() => {
     refetch();
+    if (formSubmitted === true) {
+      setSelectedProduct(null);
+      setValue("product", "");
+    }
 
     return () => {
       remove();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [formSubmitted]);
 
   return (
     <section>
@@ -215,7 +217,8 @@ const ProductDropdown: FC<ProductDropdownProps> = ({}) => {
         {selectedProduct &&
           products?.data
             .find((p) => p.productId === selectedProduct)
-            ?.images.slice(0, 2).map((img) => (
+            ?.images.slice(0, 2)
+            .map((img) => (
               <div
                 key={img.id}
                 className="relative w-full h-40 mt-4 rounded-md inline-block bg-gray-100 border-gray-300 border-2"
@@ -224,6 +227,7 @@ const ProductDropdown: FC<ProductDropdownProps> = ({}) => {
                   fill
                   src={encodeURI(img.url)}
                   alt="Selected Product"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 40vw, 10vw"
                   className="absolute object-contain mr-auto inset-0"
                 />
               </div>

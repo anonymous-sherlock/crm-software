@@ -37,8 +37,11 @@ import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "../ui/use-toast";
 import DragAndDrop from "./DragnDrop";
+import { useRouter } from "next/navigation";
+import { trpc } from "@/app/_trpc/client";
 
 export function ProductForm() {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const { files, setFiles } = useImageFileStore();
   const form = useForm<z.infer<typeof productFormSchema>>({
@@ -52,6 +55,7 @@ export function ProductForm() {
       mediaUrls: [{ value: "" }],
     },
   });
+  const utils = trpc.useContext();
 
   const { mutateAsync: createProduct, isLoading } = useMutation({
     mutationKey: ["createProduct"],
@@ -83,6 +87,7 @@ export function ProductForm() {
       });
     },
     onSuccess: (data) => {
+      utils.getProducts.refetch();
       if (data.success) {
         form.reset();
         setFiles([]);
@@ -286,7 +291,11 @@ export function ProductForm() {
                       </FormDescription>
                       <FormControl>
                         <div className="flex gap-2">
-                          <Input {...field} className="flex-1" />
+                          <Input
+                            {...field}
+                            className="flex-1"
+                            placeholder="https://youtu.be/cZ25wf..."
+                          />
                           <Button
                             type="button"
                             variant="destructive"

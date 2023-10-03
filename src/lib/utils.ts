@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
+import { randomUUID } from "crypto";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -39,7 +40,7 @@ export function isMacOs() {
   return window.navigator.userAgent.includes("Mac");
 }
 
-export function getProductCategories() {}
+export function getProductCategories() { }
 
 export function formatPrice(price: number) {
   return new Intl.NumberFormat("en-IN").format(price);
@@ -49,4 +50,11 @@ export function absoluteUrl(path: string) {
   if (typeof window !== "undefined") return path;
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}${path}`;
   return `http://localhost:${process.env.PORT ?? 3000}${path}`;
+}
+
+export function generateCampaignID() {
+  // Generate a UUID and use the first 8 characters as the alias
+  const uuid = randomUUID();
+  const alias = uuid.substring(0, 8);
+  return alias;
 }

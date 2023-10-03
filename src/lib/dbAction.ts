@@ -8,7 +8,7 @@ export const getAllProductsForUser = async (
   try {
     const userProducts = await db.product.findMany({
       where: {
-        ownerId: userId, // Replace with the ownerId you're interested in
+        ownerId: userId,
       },
       include: {
         images: true, // Include the 'images' relation
@@ -20,7 +20,6 @@ export const getAllProductsForUser = async (
 
     return userProducts;
   } catch (error) {
-    console.error("Error fetching products for user:", error);
-    throw error; // You can handle or log the error further if needed
+    throw error;
   }
 };

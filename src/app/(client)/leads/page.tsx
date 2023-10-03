@@ -1,13 +1,11 @@
-"use client";
-import { trpc } from "@/app/_trpc/client";
+import { serverClient } from "@/app/_trpc/serverClient";
 import { Button } from "@/components/ui/button";
-import { Ghost, MessageSquare, Plus, Trash } from "lucide-react";
+import { Ghost, MessageSquare, Plus } from "lucide-react";
 import moment from "moment";
 import Link from "next/link";
-import { ReactNode } from "react";
 
-const page = () => {
-  const { data, isLoading } = trpc.getCampaign.useQuery();
+const page = async () => {
+  const data = await serverClient.getCampaignForLeads();
 
   return (
     <main className="mx-auto max-w-7xl md:p-10">
@@ -34,7 +32,7 @@ const page = () => {
                 className="col-span-1 divide-y divide-gray-200 rounded-lg bg-white shadow transition hover:shadow-lg"
               >
                 <Link
-                  href={`/dashboard/${campaign.campaignId}`}
+                  href={`/leads/${campaign.campaignId}`}
                   className="flex flex-col gap-2"
                 >
                   <div className="pt-6 px-6 flex w-full items-center justify-between space-x-6">
@@ -65,15 +63,7 @@ const page = () => {
               </li>
             ))}
         </ul>
-      ) : isLoading ? (
-        "loading"
-      ) : (
-        <div className="mt-16 flex flex-col items-center gap-2">
-          <Ghost className="h-8 w-8 text-zinc-800" />
-          <h3 className="font-semibold text-xl">Pretty empty around here</h3>
-          <p>Let&apos;s upload your first PDF.</p>
-        </div>
-      )}
+      ) : null}
     </main>
   );
 };

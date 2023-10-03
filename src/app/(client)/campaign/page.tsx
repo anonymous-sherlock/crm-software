@@ -4,6 +4,10 @@ import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { Campaign, columns } from "./data-table/components/columns";
 import { DataTable } from "./data-table/components/data-table";
+import { serverClient } from "@/app/_trpc/serverClient";
+import { Button, buttonVariants } from "@/components/ui/button";
+import Link from "next/link";
+import { Ghost } from "lucide-react";
 
 async function getData(): Promise<Campaign[]> {
   const session = await getAuthSession();
@@ -11,58 +15,13 @@ async function getData(): Promise<Campaign[]> {
     redirect("/login");
   }
 
-  // Retrieve the 'products' array property from the result
-  const campaignsData = await db.campaign.findMany({
-    where: {
-      userId: session.user.id,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    select: {
-      campaignId: true,
-      description: true,
-      name: true,
-      status: true,
-      leadsRequirements: true,
-      targetCountry: true,
-      product: {
-        select: {
-          productId: true,
-          name: true,
-          category: true,
-          description: true,
-          price: true,
-          images: true,
-          createdAt: true,
-        },
-      },
-    },
-  });
-
-  const campaigns = campaignsData.map((campaign) => ({
-    campaignId: campaign.campaignId,
-    campaignName: campaign.name,
-    description: campaign.description,
-    status: campaign.status,
-    leadsRequirements: campaign.leadsRequirements,
-    targetCountry: campaign.targetCountry,
-    product: {
-      productId: campaign.product?.productId ?? "",
-      name: campaign.product?.name ?? "", // Add the nullish coalescing operator here
-      category: campaign.product?.category,
-      description: campaign.product?.description ?? "",
-      price: campaign.product?.price,
-      images: campaign.product?.images ?? [],
-      createdAt: campaign.product?.createdAt ?? "",
-    },
-  }));
+  const campaigns = await serverClient.getCampaigns();
 
   return campaigns as Campaign[];
 }
 
 export default async function CampaignPage() {
-  const campaignData = await getData(); // Use the Product type here
+  const campaignsData = await getData();
 
   return (
     <>
@@ -77,8 +36,24 @@ export default async function CampaignPage() {
                 Here&apos;s a list of your Campaign!
               </p>
             </div>
+            <Link
+              href="/campaign/create"
+              className={buttonVariants({ size: "sm", variant: "outline" })}
+            >
+              Add Campaign
+            </Link>
           </div>
-          <DataTable data={campaignData} columns={columns} />
+          {campaignsData.length === 0 ? (
+            <div className="!mt-20 !mb-20 flex flex-col items-center gap-2">
+              <Ghost className="h-8 w-8 text-zinc-800" />
+              <h3 className="font-semibold text-xl">
+                Pretty empty around here
+              </h3>
+              <p>Let&apos;s create your first campaign.</p>
+            </div>
+          ) : (
+            <DataTable data={campaignsData} columns={columns} />
+          )}
         </div>
         <ScrollBar orientation="horizontal" className="w-full" />
       </ScrollArea>

@@ -1,6 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FC, useState } from "react";
+import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { Card, CardContent, CardTitle } from "../ui/card";
 import {
@@ -16,9 +16,7 @@ import { z } from "zod";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 
-import { useRouter } from "next/navigation";
-import { Button } from "../ui/button";
-import Spinner from "../ui/spinner";
+import { trpc } from "@/app/_trpc/client";
 import { cn } from "@/lib/utils";
 import {
   CampaignFormPayload,
@@ -27,8 +25,8 @@ import {
 } from "@/schema/campaignSchema";
 import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
-import { toast } from "../ui/use-toast";
-import ProductDropdown from "./ProductDropdown";
+import { useRouter } from "next/navigation";
+import { Button } from "../ui/button";
 import {
   Select,
   SelectContent,
@@ -39,10 +37,13 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Separator } from "../ui/separator";
-import { allCountries } from "country-region-data";
-import CountryRegion from "./CountryRegion";
-import WorkingHours from "./WorkingHours";
+import Spinner from "../ui/spinner";
+import { toast } from "../ui/use-toast";
 import AgeFields from "./AgeFields";
+import CountryRegion from "./CountryRegion";
+import ProductDropdown from "./ProductDropdown";
+import WorkingHours from "./WorkingHours";
+import { serverClient } from "@/app/_trpc/serverClient";
 interface CampaignFormProps {}
 
 const CampaignForm: FC<CampaignFormProps> = ({}) => {
@@ -72,17 +73,12 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
       targetRegion: [],
     },
   });
-
-  const { mutateAsync: createCampaign, isLoading } = useMutation({
-    mutationFn: async (input: CampaignFormPayload) => {
-      const payload: CampaignFormPayload = {
-        ...input,
-      };
-
-      const { data } = await axios.post("/api/campaign/create", payload);
-      console.log(data);
-      return data;
-    },
+  const utils = trpc.useContext();
+  const {
+    mutateAsync: createCampaign,
+    isLoading,
+    isSuccess,
+  } = trpc.createCampaign.useMutation({
     onError: (err) => {
       if (err instanceof AxiosError) {
         if (err.response?.status === 500) {
@@ -95,18 +91,17 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
       }
     },
     onSuccess: (data) => {
+      utils.getCampaigns.invalidate();
       toast({
-        title: `Campaign created succesfully`,
-        description: "",
+        title: `Campaign created`,
+        description: `${data.campaign.name} campaign created succesfully`,
         variant: "success",
       });
-      // router.push("/campaign");
+      form.reset();
     },
   });
-
   async function onSubmit(values: z.infer<typeof campaignFormSchema>) {
-    console.log(values);
-    createCampaign(values);
+    createCampaign({ campaign: values });
   }
 
   return (
@@ -206,7 +201,7 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
                 />
 
                 {/* target country  */}
-                <CountryRegion />
+                <CountryRegion formSubmitted={isSuccess} />
 
                 {/* target gender */}
                 <FormField
@@ -282,7 +277,7 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
                   <FormItem>
                     <FormLabel>Select a Product</FormLabel>
                     <FormControl>
-                      <ProductDropdown />
+                      <ProductDropdown formSubmitted={isSuccess} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

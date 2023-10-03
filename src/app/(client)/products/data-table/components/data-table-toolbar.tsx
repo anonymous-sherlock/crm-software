@@ -48,6 +48,7 @@ export function DataTableToolbar<TData>({
         )}
       </div>
       <DeleteProduct table={table} />
+
       <DataTableViewOptions table={table} />
     </div>
   );

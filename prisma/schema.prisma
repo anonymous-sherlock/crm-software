@@ -76,27 +76,28 @@ model ProductImage {
 
 model Campaign {
   id                 String               @id @default(cuid())
-  name               String
   campaignId         String               @unique
-  status             CampaignStatus       @default(OnHold)
-  callCenterTeamSize String
+  name               String
   description        String?
+  callCenterTeamSize String
   leadsRequirements  String
   targetCountry      String
+  targetRegion       TargetRegion[]
   targetGender       Gender
   trafficSource      TrafficSourceDefault
-  workingDays        String               @db.LongText
-  workingHours       String               @db.LongText
-  productProductId   String?
-  userId             String
+  targetAge          Json
+  workingDays        Json
+  workingHours       Json
+  status             CampaignStatus       @default(OnHold)
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @default(now()) @updatedAt
-  product            Product?             @relation(fields: [productProductId], references: [productId], onDelete: Cascade)
+  productId          String?
+  product            Product?             @relation(fields: [productId], references: [productId], onDelete: Cascade)
+  userId             String
   user               User                 @relation(fields: [userId], references: [id])
-  lead               Leads?
-  targetRegion       TargetRegion[]
+  leads              Lead[]
 
-  @@index([productProductId], map: "Campaign_productProductId_fkey")
+  @@index([productId], map: "Campaign_productProductId_fkey")
   @@index([userId], map: "Campaign_userId_fkey")
 }
 
@@ -109,13 +110,22 @@ model TargetRegion {
   @@index([campaignId], map: "TargetRegion_campaignId_fkey")
 }
 
-model Leads {
-  id       String   @id @default(cuid())
-  name     String
-  phone    String
-  ip       String
-  leadId   String   @unique
-  campaign Campaign @relation(fields: [leadId], references: [campaignId], onDelete: NoAction)
+model Lead {
+  id        String     @id @default(cuid())
+  name      String
+  phone     String
+  ip        String
+  address   String
+  Country   String
+  state     String
+  region    String
+  status    LeadStatus @default(OnHold)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  leadId    String     @unique
+  campaign  Campaign   @relation(fields: [leadId], references: [campaignId], onDelete: NoAction)
+  user      User?      @relation(fields: [userId], references: [id])
+  userId    String?
 
   @@index([leadId], map: "Leads_campaignId_fkey")
 }
@@ -138,6 +148,7 @@ model User {
   campaigns      Campaign[]
   products       Product[]
   sessions       Session[]
+  leads          Lead[]
 }
 
 model ActivateToken {
@@ -198,6 +209,12 @@ enum CampaignStatus {
   InProgress
   Canceled
   Done
+}
+
+enum LeadStatus {
+  OnHold
+  Trashed
+  Paid
 }
 
 enum UserRole {
