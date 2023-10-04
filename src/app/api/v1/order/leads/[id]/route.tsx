@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import IpInfoSchema from "@/schema/ipInfoSchema";
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -12,24 +13,13 @@ export async function POST(
     const bearer = requestHeaders.get("authorization");
     const userIp =
       requestHeaders.get("x-forwarded-for") || requestHeaders.get("x-real-ip");
-    const ipInfoResponse = await axios.get(`https://ipinfo.io/${userIp}/json`);
-    const ipInfoData = ipInfoResponse.data
-    console.log(ipInfoData)
+    const ipInfoResponse = await axios.get(`https://ipapi.co/${"123.45.67.89"}/json`);
+    const { country_name, region, city, ip, version, country_capital, country_calling_code, postal, } = IpInfoSchema.parse(ipInfoResponse.data)
 
 
-    // const campaign = await db.campaign.findUnique({
-    //   where: {
-    //     campaignId: params.id,
-    //   },
-    // });
-    // if(campaign){
-    //   const newLead = db.leads.create({
-    //     data:{
-    //       name:
-    //     }
-    //   })
-    // }
-    return NextResponse.json({ id: params.id, userIp, bearer });
+
+
+    return NextResponse.json({ id: params.id, ip, country_name, country_capital, city, country_calling_code, bearer });
   } catch (error) {
     return NextResponse.json({ error: error }, { status: 500 });
   }

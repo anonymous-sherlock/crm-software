@@ -121,7 +121,7 @@ export const columns: ColumnDef<ProductList>[] = [
       return (
         <div className="flex items-center max-w-[180px] ">
           <span className="line-clamp-1 leading-7 whitespace-pre-line mr-1 ">
-            {moment(cell.createdAt).format("MMM d, yyyy - hh:mm A")}
+            {moment(cell.createdAt).format("MMM D, YYYY [-] hh:mm A")}
           </span>
         </div>
       );

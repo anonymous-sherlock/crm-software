@@ -21,9 +21,12 @@ import { User } from "next-auth";
 import SignOutButton from "./ui/SignOutButton";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { UserAvatar } from "./user/UserAvatar";
+import { ApiKey } from "@prisma/client";
 
 interface UserAccountNavProps extends React.HTMLAttributes<HTMLDivElement> {
-  user: Pick<User, "name" | "image" | "email">;
+  user: Pick<User & {
+    apiKeys: ApiKey[]
+  }, "name" | "image" | "email" | "apiKeys">;
 }
 
 export function UserAccountNav({ user }: UserAccountNavProps) {

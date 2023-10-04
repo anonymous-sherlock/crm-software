@@ -1,12 +1,12 @@
-import React, {FC, useState } from "react";
+import React, { FC, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
 interface PasswordProps {
-    passwordType :string
-    setPasswordType : Function
+  passwordType: "password" | "text"
+  setPasswordType: Function
 }
 
-const PasswordToggle : FC<PasswordProps>= ({passwordType,setPasswordType}) => {
+const PasswordToggle: FC<PasswordProps> = ({ passwordType, setPasswordType }) => {
   const togglePassword = () => {
     if (passwordType === "password") {
       setPasswordType("text");

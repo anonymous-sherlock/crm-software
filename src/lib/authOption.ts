@@ -73,7 +73,6 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.email || !credentials?.password) {
           throw new AuthError("Email and password required", false);
         }
-
         const user = await db.user.findUnique({
           where: { email: credentials.email },
         });
@@ -81,7 +80,6 @@ export const authOptions: NextAuthOptions = {
         if (!user) {
           throw new AuthError("User not found with this email", false);
         }
-
         if (!user.password) {
           throw new AuthError(
             "You have not signed up using your email. Please try social login.",
@@ -89,9 +87,8 @@ export const authOptions: NextAuthOptions = {
           );
         }
         if (!user.active) {
-          throw new AuthError('Account is not verified',false)
+          throw new AuthError('Account is not verified', false)
         }
-
         const isValidPassword = await compare(
           credentials.password,
           user.password
@@ -117,7 +114,7 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       const dbUser = await db.user.findFirst({
         where: {
-          email: token.email,
+          email: token.email!,
         },
       });
 

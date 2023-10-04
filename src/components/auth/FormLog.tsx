@@ -1,8 +1,5 @@
 "use client";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-
+import { trpc } from "@/app/_trpc/client";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -12,23 +9,24 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { AuthFormProps } from "@/types/authForm";
+import { loginFormSchema, registerFormSchema } from "@/schema/authFormSchema";
+import Spinner from "@/ui/spinner";
+import { toast } from "@/ui/use-toast";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { TRPCError } from "@trpc/server";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import * as z from "zod";
 import PasswordToggle from "./PasswordToggle";
-import { registerFormSchema, loginFormSchema } from "@/schema/authFormSchema";
-import Spinner from "@/ui/spinner";
-import { newUserResponse } from "@/types";
-import { toast } from "@/ui/use-toast";
-import { signIn } from "next-auth/react";
-import { redirect, useRouter } from "next/navigation";
 
-export function FormLog({ isRegister }: AuthFormProps) {
+export function FormLog({ isRegister }: { isRegister: boolean; }) {
   const router = useRouter();
-  const [passwordType, setPasswordType] = useState("password");
+  const [passwordType, setPasswordType] = useState<"text" | "password">("password");
+  const formSchema = isRegister === true ? registerFormSchema : loginFormSchema;
   const [loading, setLoading] = useState(false);
 
-  const formSchema = isRegister ? registerFormSchema : loginFormSchema;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -39,35 +37,57 @@ export function FormLog({ isRegister }: AuthFormProps) {
       confirmPassword: "",
     },
   });
-
-  // 2. Define a submit handler.
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (isRegister) {
-      setLoading(true);
-      const res = await fetch("/api/user/adduser", {
-        method: "POST",
-        body: JSON.stringify(values),
-      });
-      const data = (await res.json()) as newUserResponse;
-      setLoading(false);
-      if (data.success) {
+  const { mutateAsync: addUser, isLoading } = trpc.user.add.useMutation({
+    onSuccess(data) {
+      if (data.success)
         toast({
           variant: "success",
           title: "User Created",
           description: data.message,
         });
-        router.push("/login");
-      } else if (data.errors) {
+      router.push("/login");
+    },
+    onError(error) {
+      if (error instanceof TRPCError && error.code === 'CONFLICT') {
         toast({
           variant: "destructive",
           title: "Error",
-          description: data.errors,
+          description: "User with this email already exists",
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: error.message,
         });
       }
-    } else {
-      const loginResponse = await handleLogin(values, setLoading);
-      if (loginResponse) {
-        router.push("/dashboard");
+    },
+  })
+
+  // 2. Define a submit handler.
+  async function onSubmit(data: z.infer<typeof formSchema>) {
+    try {
+      if (isRegister === true) {
+        if ('name' in data && 'confirmPassword' in data) {
+          await addUser({ ...data });
+        }
+      } else {
+        // login logic here
+        await handleLogin(data, setLoading, router);
+
+      }
+    } catch (error) {
+      if (error instanceof TRPCError)
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: error.message,
+        }); else {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Something went wrong try again later.",
+        });
       }
     }
   }
@@ -81,7 +101,7 @@ export function FormLog({ isRegister }: AuthFormProps) {
           method="post"
         >
           {/* full name */}
-          {isRegister && (
+          {isRegister === true && (
             <FormField
               control={form.control}
               name="name"
@@ -109,6 +129,8 @@ export function FormLog({ isRegister }: AuthFormProps) {
                   <Input
                     placeholder="hello@example.com"
                     {...field}
+                    id=":R2e6qqpcq:-form-item-description"
+                    aria-describedby=":R2e6qqpcq:-form-item-description"
                     className="mt-2 h-12 w-full rounded-lg border bg-gray-50 px-4 py-3 ring-primary focus:outline-none focus:ring-1"
                   />
                 </FormControl>
@@ -126,6 +148,8 @@ export function FormLog({ isRegister }: AuthFormProps) {
                   <Input
                     placeholder="Password"
                     {...field}
+                    id=":R3e6qqpcq:-form-item"
+                    aria-describedby=":R3e6qqpcq:-form-item-description"
                     type={passwordType}
                     className="mt-2 h-12 w-full rounded-lg border bg-gray-50 px-4 py-3 ring-primary focus:outline-none focus:ring-1"
                   />
@@ -176,9 +200,9 @@ export function FormLog({ isRegister }: AuthFormProps) {
             size="xlg"
             className="text-md mt-8 flex w-full items-center justify-center rounded-lg bg-primary px-4 font-semibold
             text-white hover:bg-indigo-900 focus:bg-indigo-400"
-            disabled={loading}
+            disabled={isLoading || loading}
           >
-            {loading ? (
+            {isLoading || loading ? (
               <>
                 <Spinner />
                 {isRegister ? "Registering..." : "Logging in..."}
@@ -197,7 +221,8 @@ export function FormLog({ isRegister }: AuthFormProps) {
 
 async function handleLogin(
   values: z.infer<typeof loginFormSchema>,
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+  router: any
 ) {
   setLoading(true);
   try {
@@ -219,12 +244,13 @@ async function handleLogin(
         toast({
           variant: "success",
           title: "Login Successful",
-          description: "Loging into your account",
+          description: "Redirecting to dashboard...",
         });
-        return true;
+        router.push("/dashboard");
       }
     }
   } catch (error) {
+    console.log(error)
     toast({
       variant: "destructive",
       title: "Error",
@@ -235,3 +261,5 @@ async function handleLogin(
   }
   return false;
 }
+
+

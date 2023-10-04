@@ -8,64 +8,10 @@ import { z } from "zod";
 import { campaignFormSchema } from "@/schema/campaignSchema";
 import { generateCampaignID } from "@/lib/utils";
 import { getAllProductsForUser } from "@/lib/dbAction";
+import { userRouter } from "./user";
 
 export const appRouter = router({
-  authCallback: publicProcedure.query(async () => {
-    const session = await getAuthSession();
-    const { user } = session as Session;
-
-    if (!user.id || !user.email) throw new TRPCError({ code: "UNAUTHORIZED" });
-
-    // check if the user is in the database
-    const dbUser = await db.user.findFirst({
-      where: {
-        id: user.id,
-      },
-    });
-
-    if (!dbUser) {
-      // create user in db
-      await db.user.create({
-        data: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          image: user.image,
-          role: user.role,
-        },
-      });
-    }
-
-    return { success: true };
-  }),
-  getProduct: privateProcedure
-    .input(
-      z.object({
-        productId: z.string({
-          required_error: "product Id is required to delete a product",
-        }),
-      })
-    )
-    .query(async ({ ctx, input }) => {
-      const { userId } = ctx;
-      const { productId } = input;
-      const product = await db.product.findMany({
-        where: {
-          ownerId: userId,
-          productId: productId,
-        },
-      });
-      if (!product)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Product not found",
-        });
-
-      return {
-        success: "true",
-        product,
-      };
-    }),
+  user: userRouter,
   // products
   getProducts: privateProcedure.query(async ({ ctx }) => {
 
@@ -262,5 +208,6 @@ export const appRouter = router({
     return campaignsData;
   }),
 });
+
 
 export type AppRouter = typeof appRouter;

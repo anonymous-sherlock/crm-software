@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import "server-only";
 import { columns } from "./data-table/components/columns";
 import { DataTable } from "./data-table/components/data-table";
+import { Ghost } from "lucide-react";
 
 async function getData() {
   const session = await getAuthSession();
@@ -19,7 +20,8 @@ async function getData() {
 }
 
 export default async function Page() {
-  const products = await getData(); // Use the Product type here
+  const products = await getData();
+
   return (
     <div className="">
       <ScrollArea className="w-full rounded-md" type="always">
@@ -40,7 +42,17 @@ export default async function Page() {
               Add a Product
             </Link>
           </div>
-          <DataTable data={products} columns={columns} />
+          {products.length === 0 ? (
+            <div className="!mt-20 !mb-20 flex flex-col items-center gap-2">
+              <Ghost className="h-8 w-8 text-zinc-800" />
+              <h3 className="font-semibold text-xl">
+                Pretty empty around here
+              </h3>
+              <p>Let&apos;s upload your first product.</p>
+            </div>
+          ) : (
+            <DataTable data={products} columns={columns} />
+          )}
         </div>
         <ScrollBar orientation="horizontal" className="w-full" />
       </ScrollArea>

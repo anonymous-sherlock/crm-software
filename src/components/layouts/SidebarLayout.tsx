@@ -5,11 +5,11 @@ import UserAvatarDetails from "./sidebar/UserAvatarDetails";
 
 export const SidebarLayout = ({ children }: PropsWithChildren) => {
   return (
-    <div className="flex flex-1 w-full bg-secondary dark:bg-primary">
+    <div className="flex flex-1 w-full bg-[#F4F5F7] dark:bg-primary">
       <Sidebar>
         <UserAvatarDetails />
       </Sidebar>
-      <section className="relative mx-auto w-full flex-1 bg-secondary">
+      <section className="relative mx-auto w-full flex-1 bg-[#F4F5F7]">
         <Header />
         <main className="mt-0 p-4 w-full">{children}</main>
       </section>

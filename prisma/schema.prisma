@@ -90,7 +90,7 @@ model Campaign {
   workingHours       Json
   status             CampaignStatus       @default(OnHold)
   createdAt          DateTime             @default(now())
-  updatedAt          DateTime             @default(now()) @updatedAt
+  updatedAt          DateTime             @updatedAt
   productId          String?
   product            Product?             @relation(fields: [productId], references: [productId], onDelete: Cascade)
   userId             String
@@ -132,8 +132,8 @@ model Lead {
 
 model User {
   id             String          @id @default(cuid())
-  name           String?
-  email          String?         @unique
+  name           String
+  email          String          @unique
   emailVerified  DateTime?
   image          String?
   role           UserRole        @default(CUSTOMER)
@@ -177,6 +177,7 @@ model ApiKey {
   id        String   @id @default(cuid())
   key       String   @unique
   userId    String
+  enabled   Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id])
@@ -185,13 +186,14 @@ model ApiKey {
 }
 
 model BearerToken {
-  id        String   @id @default(cuid())
-  token     String   @unique
+  id        String    @id @default(cuid())
+  token     String    @unique
   userId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  expiresAt DateTime
-  user      User     @relation(fields: [userId], references: [id])
+  active    Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  expiresAt DateTime?
+  user      User      @relation(fields: [userId], references: [id])
 
   @@index([userId], map: "BearerToken_userId_fkey")
 }
@@ -218,6 +220,7 @@ enum LeadStatus {
 }
 
 enum UserRole {
+  SUPER_Admin
   ADMIN
   CLIENT
   CUSTOMER

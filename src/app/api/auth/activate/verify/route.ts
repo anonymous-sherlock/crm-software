@@ -8,8 +8,7 @@ interface ActivateTokenWhereInput {
 }
 export async function GET(req: NextRequest) {
   const url = new URL(req.url);
-
-  const searchParamToken = url.searchParams.get("verify");
+  const searchParamToken = url.searchParams.get("token");
   if (!searchParamToken) {
     return NextResponse.json(
       { error: "Token is invalid or expired" },
@@ -44,26 +43,34 @@ export async function GET(req: NextRequest) {
       throw new Error("Token is invalid or expired");
     }
 
-    await db.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        active: true,
-      },
-    });
+    await db.$transaction([
+      db.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          active: true,
+          emailVerified: new Date(),
+        },
+      }),
+      db.activateToken.update({
+        where: {
+          token: searchParamToken,
+        },
+        data: {
+          activatedAt: new Date(),
+        },
+      }),
+    ]);
 
-    await db.activateToken.update({
-      where: {
-        token: searchParamToken,
-      },
-      data: {
-        activatedAt: new Date(),
-      },
-    });
-
-    redirect("/login");
   } catch (error) {
-    return NextResponse.json({ error }, { status: 500 });
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+    return NextResponse.json(
+      { error: "Token is invalid or expired" },
+      { status: 500 }
+    );
   }
+  redirect("/login");
 }
