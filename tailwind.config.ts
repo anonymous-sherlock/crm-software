@@ -11,11 +11,15 @@ module.exports = {
     container: {
       center: true,
       padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
     },
     extend: {
+      screens: {
+        "xxl": "1400px",
+        'xs-mob': '480px',
+        'md-mob': '768px',
+        'lg-tab': '1024px',
+        'xl-lap': '1200px',
+      },
       fontFamily: {
         sans: ['var(--font-inter)'],
         mono: ['var(--font-roboto-mono)'],

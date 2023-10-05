@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import favicon from "@/public/favicon.png";
 import Providers from "@/providers/index";
 import { SearchBox } from "@/components/SearchBox";
-
+import 'react-loading-skeleton/dist/skeleton.css'
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {

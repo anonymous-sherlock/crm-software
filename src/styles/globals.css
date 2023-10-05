@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -57,11 +57,13 @@
     @apply bg-background text-foreground;
   }
 }
-
+.box {
+  @apply p-5 rounded-md bg-white shadow-md;
+}
 .link {
   @apply p-2.5 flex rounded-md gap-6 items-center md:cursor-pointer cursor-default duration-300 font-medium;
 }
 
 .active {
   @apply bg-blue-100 text-blue-600;
-} 
+}
