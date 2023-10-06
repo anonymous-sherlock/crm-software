@@ -40,10 +40,10 @@ const Profile = async () => {
             </div>
             <Separator />
             <div className="flex-1 space-y-4 p-8 pl-0 pt-6">
-              <Tabs defaultValue="integration" className="space-y-4">
+              <Tabs defaultValue="account" className="space-y-4">
                 <TabsList className="text-2xl capitalize font-medium space-x-4">
                   <TabsTrigger value="account">Account</TabsTrigger>
-                  {/* <TabsTrigger value="password">Password</TabsTrigger> */}
+                  <TabsTrigger value="password">Password</TabsTrigger>
                   <TabsTrigger value="notification">Notification</TabsTrigger>
                   <TabsTrigger value="integration">Integration</TabsTrigger>
                   <TabsTrigger value="billing">Billing</TabsTrigger>

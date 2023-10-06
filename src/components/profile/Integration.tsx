@@ -11,7 +11,7 @@ interface IntegrationProps {
 export const Integration: FC<IntegrationProps> = ({ }) => {
     return (
         <div className='px-4 py-6'>
-            <h3 className='text-2xl font-medium text-black/95 mb-5'>Apps Integrations</h3>
+            <h3 className='text-2xl font-medium text-black mb-5'>Apps Integrations</h3>
             <div className='grid grid-cols-3 gap-4 '>
                 {
                     [0, 1, 2, 3, 4, 5].map((item) => (
