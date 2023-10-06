@@ -25,7 +25,7 @@ export const UserProfileForm = ({ user }: UserProfileFormProps) => {
             user: {
                 ...session?.user,
                 accessToken: "dddd",
-                name: "john",
+                name: values.name,
             },
         });
     }

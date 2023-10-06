@@ -111,12 +111,15 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       const dbUser = await db.user.findFirst({
         where: {
           email: token.email!,
         },
       });
+      if (trigger === "update") {
+        return { ...token, ...session.user };
+      }
 
       if (!dbUser) {
         token.id = user!.id;
