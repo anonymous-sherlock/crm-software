@@ -30,10 +30,11 @@ import { DataTableToolbar } from "../components/data-table-toolbar";
 import { trpc } from "@/app/_trpc/client";
 import { serverClient } from "@/app/_trpc/serverClient";
 import { RouterOutputs } from "@/trpc";
+import { ProductList } from "./columns";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
-  data: RouterOutputs["product"]["getAll"];
+  data: TData[];
 }
 
 export function DataTable<TData, TValue>({
@@ -49,20 +50,16 @@ export function DataTable<TData, TValue>({
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = React.useState("");
 
-  const {} = trpc.product.test.useQuery(undefined, {
-    initialData: 7,
+  const { data: initialData } = trpc.product.getAll.useQuery<
+    RouterOutputs["product"]["getAll"]
+  >(undefined, {
+    initialData: data as RouterOutputs["product"]["getAll"],
     refetchOnMount: false,
     refetchOnReconnect: false,
-  });
-
-  const {} = trpc.product.getAll.useQuery(undefined, {
-    initialData: data,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-  });
+  }) as { data: TData[] };
 
   const table = useReactTable({
-    data,
+    data: initialData || [],
     columns,
     state: {
       sorting,

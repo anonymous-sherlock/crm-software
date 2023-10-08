@@ -9,23 +9,13 @@ import { columns } from "./data-table/components/columns";
 import { DataTable } from "./data-table/components/data-table";
 import { Ghost } from "lucide-react";
 
-async function getData() {
-  const session = await getAuthSession();
-  if (!session?.user || !session.user.id) {
-    redirect("/login");
-  }
-
-  const products = await serverClient.getProducts();
-  return products;
-}
-
 export default async function Page() {
-  const products = await getData();
+  const products = await serverClient.product.getAll();
 
   return (
     <div className="">
       <ScrollArea className="w-full rounded-md" type="always">
-        <div className=" h-full flex-1 flex-col space-y-8 p-8 md:flex bg-white rounded-lg border-1 border-gray-200">
+        <div className=" border-1 h-full flex-1 flex-col space-y-8 rounded-lg border-gray-200 bg-white p-8 md:flex">
           <div className="flex items-center justify-between space-y-2">
             <div>
               <h2 className="text-2xl font-bold tracking-tight">
@@ -43,9 +33,9 @@ export default async function Page() {
             </Link>
           </div>
           {products.length === 0 ? (
-            <div className="!mt-20 !mb-20 flex flex-col items-center gap-2">
+            <div className="!mb-20 !mt-20 flex flex-col items-center gap-2">
               <Ghost className="h-8 w-8 text-zinc-800" />
-              <h3 className="font-semibold text-xl">
+              <h3 className="text-xl font-semibold">
                 Pretty empty around here
               </h3>
               <p>Let&apos;s upload your first product.</p>

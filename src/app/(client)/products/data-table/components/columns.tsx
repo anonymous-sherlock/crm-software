@@ -12,9 +12,13 @@ import { ProductInfoHover } from "./product-info-hover";
 import moment from "moment";
 import Image from "next/image";
 import Link from "next/link";
+import { RouterOutputs } from "@/trpc";
 export type ProductList = Product & {
   images: ProductImage[];
 };
+
+
+
 export const columns: ColumnDef<ProductList>[] = [
   {
     id: "select",
@@ -43,7 +47,7 @@ export const columns: ColumnDef<ProductList>[] = [
       <DataTableColumnHeader column={column} title="Product Id" />
     ),
     cell: ({ row }) => {
-      const cell = row.original;
+      const cell = row.original
       return (
         <div className="w-[75px] truncate">
           <Link href={`/products/${cell.productId}`}>{cell.productId}</Link>
