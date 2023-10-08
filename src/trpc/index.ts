@@ -1,4 +1,4 @@
-import { TRPCError } from "@trpc/server";
+import { TRPCError, inferRouterOutputs } from "@trpc/server";
 import { privateProcedure, publicProcedure, router } from "./trpc";
 
 import { getAuthSession } from "@/lib/authOption";
@@ -9,16 +9,19 @@ import { campaignFormSchema } from "@/schema/campaignSchema";
 import { generateCampaignID } from "@/lib/utils";
 import { getAllProductsForUser } from "@/lib/dbAction";
 import { userRouter } from "./user";
+import { campaignRouter } from "./campaign";
+import { productRouter } from "./product";
 
 export const appRouter = router({
   user: userRouter,
+  campaign: campaignRouter,
+  product: productRouter,
   // products
   getProducts: privateProcedure.query(async ({ ctx }) => {
-
     const { userId } = ctx;
     const products = await getAllProductsForUser(userId);
 
-    return products
+    return products;
   }),
   deleteProduct: privateProcedure
     .input(
@@ -63,7 +66,7 @@ export const appRouter = router({
       };
     }),
 
-  // campaigns 
+  // campaigns
   getCampaigns: privateProcedure.query(async ({ ctx }) => {
     const { userId } = ctx;
     const campaignsData = await db.campaign.findMany({
@@ -98,7 +101,6 @@ export const appRouter = router({
       campaignName: campaign.name,
       description: campaign.description ?? "",
       status: campaign.status,
-      leadsRequirements: campaign.leadsRequirements,
       targetCountry: campaign.targetCountry,
       product: {
         productId: campaign.product?.productId ?? "",
@@ -110,9 +112,8 @@ export const appRouter = router({
         createdAt: campaign.product?.createdAt ?? "",
       },
     }));
-    return campaigns
-  })
-  ,
+    return campaigns;
+  }),
   createCampaign: privateProcedure
     .input(
       z.object({
@@ -121,7 +122,8 @@ export const appRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx;
-      const { campaignName,
+      const {
+        campaignName,
         campaignDescription,
         product,
         callCenterTeamSize,
@@ -132,9 +134,9 @@ export const appRouter = router({
         targetRegion,
         trafficSource,
         workingDays,
-        workingHours } = input.campaign
+        workingHours,
+      } = input.campaign;
       const campaignID = generateCampaignID();
-
 
       const newCampaign = await db.campaign.create({
         data: {
@@ -170,10 +172,9 @@ export const appRouter = router({
       });
       return {
         success: "true",
-        campaign: newCampaign
+        campaign: newCampaign,
       };
     }),
-
 
   getCampaignForLeads: privateProcedure.query(async ({ ctx }) => {
     const { userId } = ctx;
@@ -209,5 +210,5 @@ export const appRouter = router({
   }),
 });
 
-
 export type AppRouter = typeof appRouter;
+export type RouterOutputs = inferRouterOutputs<AppRouter>;

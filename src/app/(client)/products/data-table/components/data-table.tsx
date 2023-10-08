@@ -27,10 +27,13 @@ import {
 
 import { DataTablePagination } from "../components/data-table-pagination";
 import { DataTableToolbar } from "../components/data-table-toolbar";
+import { trpc } from "@/app/_trpc/client";
+import { serverClient } from "@/app/_trpc/serverClient";
+import { RouterOutputs } from "@/trpc";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+  data: RouterOutputs["product"]["getAll"];
 }
 
 export function DataTable<TData, TValue>({
@@ -45,6 +48,18 @@ export function DataTable<TData, TValue>({
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = React.useState("");
+
+  const {} = trpc.product.test.useQuery(undefined, {
+    initialData: 7,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+  });
+
+  const {} = trpc.product.getAll.useQuery(undefined, {
+    initialData: data,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+  });
 
   const table = useReactTable({
     data,

@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -15,6 +14,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import * as React from "react";
 
 import {
   Table,
@@ -25,12 +25,13 @@ import {
   TableRow,
 } from "@/ui/table";
 
+import { trpc } from "@/app/_trpc/client";
 import { DataTablePagination } from "../components/data-table-pagination";
 import { DataTableToolbar } from "../components/data-table-toolbar";
-
+import { RouterOutputs } from "@/trpc";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+  data: RouterOutputs["campaign"]["getAll"][];
 }
 
 export function DataTable<TData, TValue>({
@@ -46,8 +47,14 @@ export function DataTable<TData, TValue>({
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = React.useState("");
 
+  const { data: campaignsData } = trpc.campaign.getAll.useQuery(undefined, {
+    initialData: data,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+  });
+
   const table = useReactTable({
-    data,
+    data: campaignsData || [],
     columns,
     state: {
       sorting,

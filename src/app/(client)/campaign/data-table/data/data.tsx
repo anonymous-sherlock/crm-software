@@ -1,3 +1,4 @@
+import { CampaignStatus } from "@prisma/client";
 import {
   ArrowDownIcon,
   ArrowRightIcon,
@@ -24,12 +25,13 @@ export const labels = [
   },
 ];
 
-export const statuses = [
-  {
-    value: "backlog",
-    label: "Backlog",
-    icon: QuestionMarkCircledIcon,
-  },
+export type Status = {
+  value: CampaignStatus;
+  label: string;
+  icon?: React.ComponentType<{ className?: string }>;
+};
+
+export const statuses: Status[] = [
   {
     value: "OnHold",
     label: "On Hold",
@@ -52,20 +54,3 @@ export const statuses = [
   },
 ];
 
-export const priorities = [
-  {
-    label: "Low",
-    value: "low",
-    icon: ArrowDownIcon,
-  },
-  {
-    label: "Medium",
-    value: "medium",
-    icon: ArrowRightIcon,
-  },
-  {
-    label: "High",
-    value: "high",
-    icon: ArrowUpIcon,
-  },
-];

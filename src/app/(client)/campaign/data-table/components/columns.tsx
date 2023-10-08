@@ -5,18 +5,23 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/ui/checkbox";
 
 import { cn } from "@/lib/utils";
-import { CampaignStatus, Product, ProductImage } from "@prisma/client";
+import {
+  CampaignStatus,
+  Product,
+  ProductImage,
+  Campaign as CampaignPrisma,
+} from "@prisma/client";
 import { statuses } from "../data/data";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
-import { ProductInfoHover } from "./product-info-hover";
 import DescriptionHover from "./description-hover";
+import { ProductInfoHover } from "./product-info-hover";
 export type Campaign = {
-  campaignId: string;
-  campaignName: string;
-  description: string;
-  status: CampaignStatus;
-  targetCountry: string;
+  campaignId: CampaignPrisma["campaignId"];
+  campaignName: CampaignPrisma["name"];
+  description: CampaignPrisma["description"];
+  status: CampaignPrisma["status"];
+  targetCountry: CampaignPrisma["targetCountry"];
   product: Pick<
     Product & {
       images: ProductImage[];
@@ -30,6 +35,7 @@ export type Campaign = {
     | "createdAt"
   >;
 };
+
 export const columns: ColumnDef<Campaign>[] = [
   {
     id: "select",
@@ -72,7 +78,7 @@ export const columns: ColumnDef<Campaign>[] = [
       const cell = row.original;
 
       return (
-        <div className="flex space-x-2 max-w-[220px] ">
+        <div className="flex max-w-[220px] space-x-2 ">
           {/* {label && <Badge variant="outline">{label.label}</Badge>} */}
           <span className="w-full truncate font-medium ">
             {row.getValue("campaignName")}{" "}
@@ -93,7 +99,7 @@ export const columns: ColumnDef<Campaign>[] = [
       // const label = labels.find((label) => label.value === row.original.label);
 
       return (
-        <div className="flex space-x-2 max-w-[220px] ">
+        <div className="flex max-w-[220px] space-x-2 ">
           {/* {label && <Badge variant="outline">{label.label}</Badge>} */}
           <span className="w-full truncate font-medium ">
             {row.getValue("targetCountry")}
@@ -111,8 +117,8 @@ export const columns: ColumnDef<Campaign>[] = [
       const cell = row.original;
 
       return (
-        <div className="flex items-center max-w-[180px] ">
-          <span className="line-clamp-1 leading-7 whitespace-pre-line mr-1 ">
+        <div className="flex max-w-[180px] items-center ">
+          <span className="mr-1 line-clamp-1 whitespace-pre-line leading-7 ">
             {cell.product.name}
           </span>
           <ProductInfoHover product={cell.product} />
