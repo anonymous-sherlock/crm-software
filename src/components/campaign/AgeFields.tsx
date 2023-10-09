@@ -18,12 +18,16 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Separator } from "../ui/separator";
+import { z } from "zod";
+import { campaignFormSchema } from "@/schema/campaignSchema";
 
-interface AgeFieldsProps {}
+interface AgeFieldsProps { }
 
-const AgeFields: FC<AgeFieldsProps> = ({}) => {
-  const { control, getValues, setValue, formState, register } =
-    useFormContext();
+const AgeFields: FC<AgeFieldsProps> = ({ }) => {
+  const { control, getValues, setValue, watch } =
+    useFormContext<z.infer<typeof campaignFormSchema>>();
+  const minAge = watch("targetAge.min"); // watch the value of min age field
+
 
   const ageNumbers = Array.from({ length: 48 }, (_, index) => 18 + index);
 
@@ -85,9 +89,9 @@ const AgeFields: FC<AgeFieldsProps> = ({}) => {
                     <SelectGroup>
                       <SelectLabel>Max Age</SelectLabel>
                       <Separator className="my-1" />
-                      {ageNumbers.map((age, index) => (
+                      {ageNumbers.filter(age => age > Number(minAge)).map((age, index,self) => (
                         <SelectItem key={index} value={age.toString()}>
-                          {index === ageNumbers.length - 1 ? `${age}+` : age}
+                          {index === self.length - 1 ? `${age}+` : age}
                         </SelectItem>
                       ))}
                     </SelectGroup>

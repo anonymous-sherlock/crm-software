@@ -63,7 +63,7 @@ export const userRouter = router({
         },
         BearerToken: {
           create: {
-            token: nanoid(12),
+            key: nanoid(12),
           },
         },
       },
@@ -111,8 +111,113 @@ export const userRouter = router({
       },
     });
 
+    if (!user) {
+      throw new TRPCError({ code: "NOT_FOUND", message: "User not found" })
+    }
     return user;
   }),
+  generateApi: privateProcedure.mutation(async ({ ctx }) => {
+    const { userId } = ctx;
+    const user = db.user.findFirst({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "User not found",
+      });
+    }
+    const existingApiKey = await db.apiKey.findFirst({
+      where: { userId: userId, enabled: true },
+    })
+
+    if (existingApiKey) {
+      const data = await db.$transaction([
+        db.apiKey.update(
+          {
+            where: { id: existingApiKey.id },
+            data: {
+              enabled: false
+            }
+          }
+        ),
+
+        db.apiKey.create({
+          data: {
+            key: nanoid(32),
+            enabled: true,
+            userId: userId,
+          }
+        })
+      ])
+
+      return { ...data[1] }
+    }
+    const newApiKey = db.apiKey.create({
+      data: {
+        key: nanoid(32),
+        enabled: true,
+        userId: userId,
+      }
+    })
+
+    return newApiKey
+  }
+  ),
+  generateBearerToken: privateProcedure.mutation(async ({ ctx }) => {
+    const { userId } = ctx;
+    const user = db.user.findFirst({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "User not found",
+      });
+    }
+    const existingBearerToken = await db.bearerToken.findFirst({
+      where: { userId: userId, active: true },
+    })
+
+    if (existingBearerToken) {
+      const data = await db.$transaction([
+        db.bearerToken.update(
+          {
+            where: { id: existingBearerToken.id },
+            data: {
+              active: false
+            }
+          }
+        ),
+
+        db.bearerToken.create({
+          data: {
+            key: nanoid(32),
+            active: true,
+            userId: userId,
+          }
+        })
+      ])
+
+      return { ...data[1] }
+    }
+    const newBearerKey = db.bearerToken.create({
+      data: {
+        key: nanoid(32),
+        active: true,
+        userId: userId,
+      }
+    })
+
+    return newBearerKey
+  }
+  )
 });
 
 export type UserRouter = typeof userRouter;

@@ -123,7 +123,22 @@ export const campaignFormSchema = z.object({
         },
         { message: "Maximum age must be between 18 and 65." }
       ),
-  }),
+  }).refine(
+    (data) => {
+      const min = parseInt(data.min, 10);
+      const max = parseInt(data.max, 10);
+      return (
+        !isNaN(min) &&
+        !isNaN(max) &&
+        min >= 18 &&
+        max <= 65 &&
+        max >= min
+      );
+    },
+    { message: "Maximum age must be between 18 and 65 and not less than Minimum age." }
+  ),
+
+
   targetGender: z.enum(["male", "female"]),
   trafficSource: z.nativeEnum(TrafficSourceDefault),
 });

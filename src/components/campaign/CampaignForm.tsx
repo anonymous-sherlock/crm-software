@@ -91,7 +91,7 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
       }
     },
     onSuccess: (data) => {
-      utils.getCampaigns.invalidate();
+      utils.campaign.getAll.invalidate();
       toast({
         title: `Campaign created`,
         description: `${data.campaign.name} campaign created succesfully`,

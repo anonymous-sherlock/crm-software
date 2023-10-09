@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -15,6 +14,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import * as React from "react";
 
 import {
   Table,
@@ -25,12 +25,10 @@ import {
   TableRow,
 } from "@/ui/table";
 
+import { trpc } from "@/app/_trpc/client";
+import { RouterOutputs } from "@/trpc";
 import { DataTablePagination } from "../components/data-table-pagination";
 import { DataTableToolbar } from "../components/data-table-toolbar";
-import { trpc } from "@/app/_trpc/client";
-import { serverClient } from "@/app/_trpc/serverClient";
-import { RouterOutputs } from "@/trpc";
-import { ProductList } from "./columns";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

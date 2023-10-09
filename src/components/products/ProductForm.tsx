@@ -87,7 +87,7 @@ export function ProductForm() {
       });
     },
     onSuccess: (data) => {
-      utils.getProducts.refetch();
+      utils.product.invalidate();
       if (data.success) {
         form.reset();
         setFiles([]);

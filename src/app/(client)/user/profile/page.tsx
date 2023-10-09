@@ -1,3 +1,4 @@
+import { serverClient } from "@/app/_trpc/serverClient";
 import Account from "@/components/profile/Account";
 import { Integration } from "@/components/profile/Integration";
 import { NotificationsForm } from "@/components/profile/NotificationForm";
@@ -20,6 +21,8 @@ const Profile = async () => {
   }
   const { user } = session;
 
+  const userData = await serverClient.user.get()
+
   return (
     <main className="flex ">
 
@@ -27,10 +30,12 @@ const Profile = async () => {
         <div className="min-h-[200px] w-full relative">
           <Image src="/default-profile-cover.png" fill alt="" />
           <div className="absolute -bottom-1/2 -translate-y-1/2 border-white border-4 left-4 w-[120px] h-[120px] rounded-full bg-gray-200">
-            <Avatar className="w-full h-full cursor-pointer">
-              <AvatarImage src={user?.image || `https://github.com/shadcn.png`} alt="Profile image" />
-              <AvatarFallback className="text-2xl ">{generateInitialFromName(user?.name!)}</AvatarFallback>
-            </Avatar>
+            <Label htmlFor="profile-avatar" className="bg-transparent w-full h-full">
+              <Avatar className="w-full h-full cursor-pointer">
+                <AvatarImage src={user?.image || `https://github.com/shadcn.png`} alt="Profile image" />
+                <AvatarFallback className="text-2xl ">{generateInitialFromName(user?.name!)}</AvatarFallback>
+              </Avatar>
+            </Label>
           </div>
         </div>
         <CardContent className="mt-16 p-8 pt-0">
@@ -49,7 +54,7 @@ const Profile = async () => {
                   <TabsTrigger value="billing">Billing</TabsTrigger>
                 </TabsList>
                 <TabsContent value="account" className="w-full" >
-                  <Account />
+                  <Account user={userData} />
                 </TabsContent>
                 <TabsContent value="notification" className="w-full" >
                   <NotificationsForm />

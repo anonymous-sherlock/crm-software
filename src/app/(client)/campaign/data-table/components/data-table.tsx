@@ -31,7 +31,7 @@ import { DataTableToolbar } from "../components/data-table-toolbar";
 import { RouterOutputs } from "@/trpc";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
-  data: RouterOutputs["campaign"]["getAll"][];
+  data: TData[];
 }
 
 export function DataTable<TData, TValue>({
@@ -48,10 +48,10 @@ export function DataTable<TData, TValue>({
   const [globalFilter, setGlobalFilter] = React.useState("");
 
   const { data: campaignsData } = trpc.campaign.getAll.useQuery(undefined, {
-    initialData: data,
+    initialData: data as RouterOutputs["campaign"]["getAll"],
     refetchOnMount: false,
     refetchOnReconnect: false,
-  });
+  }) as { data: TData[] };
 
   const table = useReactTable({
     data: campaignsData || [],
