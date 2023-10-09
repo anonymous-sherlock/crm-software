@@ -18,7 +18,7 @@ export const campaignRouter = router({
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx;
       const { campaignId, campaignStatus } = input;
-      const campaign = await db.campaign.findMany({
+      const campaign = await db.campaign.findFirst({
         where: {
           userId: userId,
           campaignId: campaignId,
@@ -93,6 +93,53 @@ export const campaignRouter = router({
 
     return mappedCampaignsData;
   }),
+  copyCampaign: privateProcedure
+    .input(
+      z.object({
+        campaignId: z.string({
+          required_error: "product Id is required to delete a product",
+        }),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx;
+      const { campaignId } = input;
+      const campaign = await db.campaign.findFirst({
+        where: {
+          userId: userId,
+          campaignId: campaignId,
+        },
+      });
+      if (!campaign) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Campaign with this id not found",
+        });
+      }
+
+      const copiedCampaign = db.campaign.create({
+        data: {
+          campaignId: campaign.campaignId,
+          name: campaign.name,
+          description: campaign.description,
+          callCenterTeamSize: campaign.callCenterTeamSize,
+          leadsRequirements: campaign.leadsRequirements,
+          targetAge: JSON.stringify(campaign.targetAge),
+          targetCountry: campaign.targetCountry,
+          targetGender: campaign.targetGender,
+          trafficSource: campaign.trafficSource,
+          workingDays: JSON.stringify(campaign.workingDays),
+          workingHours: JSON.stringify(campaign.workingHours),
+          productId: campaign.productId,
+          userId: campaign.userId,
+        }
+      })
+
+      return {
+        success: "true",
+        copiedCampaign
+      };
+    }),
 });
 
 export type CampaignRouter = typeof campaignRouter;
