@@ -26,6 +26,7 @@ import * as z from "zod"
 import { trpc } from '@/app/_trpc/client'
 import Spinner from '../ui/spinner'
 import { ToastAction } from '../ui/toast'
+import UploadButton from './UploadAvatar'
 
 const formSchema = z.object({
   name: z.string(),
@@ -36,7 +37,7 @@ const formSchema = z.object({
 
 const Account: FC<AccountProps> = ({ user }: AccountProps) => {
   const [isEditing, setIsEditing] = useState<boolean>(true)
-  const [avatarImage, setAvatarImage] = useState<File>()
+  const [avatarImage, setAvatarImage] = useState<File | null>()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -116,7 +117,7 @@ const Account: FC<AccountProps> = ({ user }: AccountProps) => {
                 </div>
               </div>
             </div>
-            {/* user image */}
+            {/* user email */}
             <div className="grid md:grid-cols-3 gap-4 py-8 border-b border-gray-200 dark:border-gray-600 items-center">
               <div className="text-muted-foreground text-sm">Email</div>
               <div className="col-span-2">
@@ -142,23 +143,39 @@ const Account: FC<AccountProps> = ({ user }: AccountProps) => {
               <div className="col-span-2">
                 <div className="form-item vertical mb-0 max-w-[700px]">
                   <div className="flex items-center justify-between gap-2 ">
+
                     <Label htmlFor='profile-avatar' className='cursor-pointer'>
                       <Avatar className='w-14 h-14'>
-                        <AvatarImage src={avatarImage ? URL.createObjectURL(avatarImage) : user?.image as string} alt={user?.name} />
+                        <AvatarImage src={avatarImage ? URL.createObjectURL(avatarImage) : user?.image ?? ""} alt={user?.name} />
                         <AvatarFallback>{generateInitialFromName(user?.name || "")}</AvatarFallback>
                       </Avatar>
                     </Label>
-                    <Input type='file' id='profile-avatar' placeholder='Upload you profile picture here' className={cn(' hidden')} disabled={isEditing}
-                      onChange={(event) => {
-                        if (event.target.files) {
-                          const file = event.target.files[0];
-                          setAvatarImage(file)
-                        }
-                      }} />
+                    <UploadButton user={user!} />
+
                   </div>
                 </div>
               </div>
             </div>
+            {/* submit reset button */}
+            {!isEditing ?
+              <div className="py-8  border-gray-200">
+                <div className="mt-4 ltr:text-right">
+                  <Button
+                    className="button bg-white border border-gray-300 dark:bg-gray-700 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 active:bg-gray-100 dark:active:bg-gray-500 dark:active:border-gray-500 text-gray-600 dark:text-gray-100 radius-round h-11 px-8 py-2 ltr:mr-2 rtl:ml-2"
+                    type="button"
+                    onClick={() => form.reset()}
+                  >
+                    Reset
+                  </Button>
+                  <Button
+                    className="button bg-primary/90 hover:bg-primary active:bg-primary text-white radius-round h-11 px-8 py-2"
+                    type="submit"
+                  >
+                    Update
+                  </Button>
+                </div>
+              </div> : null}
+            {/* title */}
             <div className="mt-8">
               <h5 className='text-xl font-medium mb-2'>Preferences</h5>
               <p className='text-gray-500'>Your personalized preference displayed in your account</p>
@@ -265,26 +282,10 @@ const Account: FC<AccountProps> = ({ user }: AccountProps) => {
                 </div>
               </div>
             </div>
-            <div className="py-8  border-gray-200">
-              <div className="mt-4 ltr:text-right">
-                <Button
-                  className="button bg-white border border-gray-300 dark:bg-gray-700 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 active:bg-gray-100 dark:active:bg-gray-500 dark:active:border-gray-500 text-gray-600 dark:text-gray-100 radius-round h-11 px-8 py-2 ltr:mr-2 rtl:ml-2"
-                  type="button"
-                  onClick={() => form.reset()}
-                >
-                  Reset
-                </Button>
-                <Button
-                  className="button bg-primary/90 hover:bg-primary active:bg-primary text-white radius-round h-11 px-8 py-2"
-                  type="submit"
-                >
-                  Update
-                </Button>
-              </div>
-            </div>
+
           </div>
         </form>
-      </Form>
+      </Form >
     </div >
 
   )

@@ -102,6 +102,7 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async session({ token, session }) {
+
       if (token) {
         session.user.id = token.id;
         session.user.name = token.name;
@@ -111,7 +112,8 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
-    async jwt({ token, user, trigger, session }) {
+    async jwt({ token, user, trigger, session, profile, account }) {
+
       const dbUser = await db.user.findFirst({
         where: {
           email: token.email!,
