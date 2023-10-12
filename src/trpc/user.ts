@@ -198,7 +198,7 @@ export const userRouter = router({
 
         db.bearerToken.create({
           data: {
-            key: nanoid(32),
+            key: `${nanoid(32)}${randomUUID()}${randomUUID()}`.replace(/-/g, ""),
             active: true,
             userId: userId,
           }
@@ -209,7 +209,7 @@ export const userRouter = router({
     }
     const newBearerKey = db.bearerToken.create({
       data: {
-        key: nanoid(32),
+        key: `${nanoid(32)}${randomUUID()}${randomUUID()}`.replace(/-/g, ""),
         active: true,
         userId: userId,
       }

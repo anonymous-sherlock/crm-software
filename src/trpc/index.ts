@@ -1,21 +1,18 @@
-import { TRPCError, inferRouterOutputs } from "@trpc/server";
-import { privateProcedure, publicProcedure, router } from "./trpc";
+import { inferRouterOutputs } from "@trpc/server";
+import { privateProcedure, router } from "./trpc";
 
-import { getAuthSession } from "@/lib/authOption";
 import { db } from "@/lib/db";
-import { Session } from "next-auth";
-import { z } from "zod";
-import { campaignFormSchema } from "@/schema/campaignSchema";
-import { generateCampaignID } from "@/lib/utils";
 import { getAllProductsForUser } from "@/lib/dbAction";
-import { userRouter } from "./user";
 import { campaignRouter } from "./campaign";
+import { leadRouter } from "./lead";
 import { productRouter } from "./product";
+import { userRouter } from "./user";
 
 export const appRouter = router({
   user: userRouter,
   campaign: campaignRouter,
   product: productRouter,
+  lead: leadRouter,
   // products
   getProducts: privateProcedure.query(async ({ ctx }) => {
     const { userId } = ctx;
@@ -23,48 +20,6 @@ export const appRouter = router({
 
     return products;
   }),
-  deleteProduct: privateProcedure
-    .input(
-      z.object({
-        productIds: z
-          .string({
-            required_error: "product Id is required to delete a product",
-          })
-          .array(),
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      const { userId } = ctx;
-      const { productIds } = input;
-      const products = await db.product.findMany({
-        where: {
-          ownerId: userId,
-          productId: {
-            in: productIds,
-          },
-        },
-      });
-      if (!products)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Product not found",
-        });
-
-      const deletedProduct = await db.product.deleteMany({
-        where: {
-          ownerId: userId,
-          productId: {
-            in: productIds,
-          },
-        },
-      });
-      const deletedCount = deletedProduct.count;
-      return {
-        success: "true",
-        deletedProduct,
-        deletedCount,
-      };
-    }),
 
   // campaigns
   getCampaigns: privateProcedure.query(async ({ ctx }) => {
@@ -114,67 +69,7 @@ export const appRouter = router({
     }));
     return campaigns;
   }),
-  createCampaign: privateProcedure
-    .input(
-      z.object({
-        campaign: campaignFormSchema, // Use Campaign as the input type
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      const { userId } = ctx;
-      const {
-        campaignName,
-        campaignDescription,
-        product,
-        callCenterTeamSize,
-        leadsRequirements,
-        targetAge,
-        targetCountry,
-        targetGender,
-        targetRegion,
-        trafficSource,
-        workingDays,
-        workingHours,
-      } = input.campaign;
-      const campaignID = generateCampaignID();
 
-      const newCampaign = await db.campaign.create({
-        data: {
-          name: campaignName,
-          description: campaignDescription,
-          callCenterTeamSize,
-          leadsRequirements,
-          targetCountry,
-          targetGender: targetGender === "female" ? "Female" : "Male",
-          trafficSource: trafficSource,
-          workingDays,
-          workingHours,
-          targetAge: targetAge,
-          targetRegion: {
-            createMany: {
-              data: (targetRegion || []).map((region) => ({
-                regionName: region.toString(),
-              })),
-            },
-          },
-          campaignId: campaignID,
-          user: {
-            connect: {
-              id: userId,
-            },
-          },
-          product: {
-            connect: {
-              productId: product,
-            },
-          },
-        },
-      });
-      return {
-        success: "true",
-        campaign: newCampaign,
-      };
-    }),
 
   getCampaignForLeads: privateProcedure.query(async ({ ctx }) => {
     const { userId } = ctx;

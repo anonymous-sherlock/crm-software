@@ -4,13 +4,76 @@ import { CampaignStatus } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { privateProcedure, router } from "./trpc";
+import { generateCampaignID } from "@/lib/utils";
+import { campaignFormSchema } from "@/schema/campaignSchema";
 
 export const campaignRouter = router({
+  create: privateProcedure
+    .input(
+      z.object({
+        campaign: campaignFormSchema,
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx;
+      const {
+        campaignName,
+        campaignDescription,
+        product,
+        callCenterTeamSize,
+        leadsRequirements,
+        targetAge,
+        targetCountry,
+        targetGender,
+        targetRegion,
+        trafficSource,
+        workingDays,
+        workingHours,
+      } = input.campaign;
+      const campaignID = generateCampaignID();
+
+      const newCampaign = await db.campaign.create({
+        data: {
+          name: campaignName,
+          description: campaignDescription,
+          callCenterTeamSize,
+          leadsRequirements,
+          targetCountry,
+          targetGender: targetGender === "female" ? "Female" : "Male",
+          trafficSource: trafficSource,
+          workingDays,
+          workingHours,
+          targetAge: targetAge,
+          targetRegion: {
+            createMany: {
+              data: (targetRegion || []).map((region) => ({
+                regionName: region.toString(),
+              })),
+            },
+          },
+          campaignId: campaignID,
+          user: {
+            connect: {
+              id: userId,
+            },
+          },
+          product: {
+            connect: {
+              productId: product,
+            },
+          },
+        },
+      });
+      return {
+        success: "true",
+        campaign: newCampaign,
+      };
+    }),
   updateStatus: privateProcedure
     .input(
       z.object({
         campaignId: z.string({
-          required_error: "product Id is required to delete a product",
+          required_error: "Campaign Id is required to update a campaign status",
         }),
         campaignStatus: z.nativeEnum(CampaignStatus),
       })
@@ -97,7 +160,7 @@ export const campaignRouter = router({
     .input(
       z.object({
         campaignId: z.string({
-          required_error: "product Id is required to delete a product",
+          required_error: "Campaign Id is required to copy a campaign",
         }),
       })
     )
@@ -117,10 +180,10 @@ export const campaignRouter = router({
         });
       }
 
-      const copiedCampaign = db.campaign.create({
+      const copiedCampaign = await db.campaign.create({
         data: {
-          campaignId: campaign.campaignId,
-          name: campaign.name,
+          campaignId: generateCampaignID(),
+          name: `${campaign.name}`,
           description: campaign.description,
           callCenterTeamSize: campaign.callCenterTeamSize,
           leadsRequirements: campaign.leadsRequirements,
@@ -138,6 +201,48 @@ export const campaignRouter = router({
       return {
         success: "true",
         copiedCampaign
+      };
+    }),
+  deleteCampaign: privateProcedure
+    .input(
+      z.object({
+        campaignIds: z
+          .string({
+            required_error: "Campaign Id is required to delete a campaign",
+          })
+          .array(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx;
+      const { campaignIds } = input;
+      const campaigns = await db.campaign.findMany({
+        where: {
+          userId: userId,
+          campaignId: {
+            in: campaignIds,
+          },
+        },
+      });
+      if (!campaigns)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Campaign not found",
+        });
+
+      const deletedCampaign = await db.campaign.deleteMany({
+        where: {
+          userId: userId,
+          campaignId: {
+            in: campaignIds,
+          },
+        },
+      });
+      const deletedCount = deletedCampaign.count;
+      return {
+        success: "true",
+        deletedCampaign,
+        deletedCount,
       };
     }),
 });

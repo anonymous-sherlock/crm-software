@@ -41,7 +41,7 @@ export function DataTableRowActions<TData>({
   const utils = trpc.useContext();
 
   const product = productRowSchema.parse(row.original);
-  const { mutate: deleteProduct, isLoading } = trpc.deleteProduct.useMutation({
+  const { mutate: deleteProduct, isLoading } = trpc.product.deleteProduct.useMutation({
     onSuccess: (data) => {
       toast({
         title: `${data.deletedCount} Product Deleted succesfully`,
@@ -64,12 +64,14 @@ export function DataTableRowActions<TData>({
         }
       }
     },
+    onSettled: () => {
+      utils.product.getAll.invalidate()
+    }
   });
 
   function handleRowClick() {
     const currentRow = product;
     const payload = currentRow.productId;
-    console.log([payload]);
 
     deleteProduct({ productIds: [payload] });
   }

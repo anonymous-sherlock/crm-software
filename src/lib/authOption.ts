@@ -101,6 +101,11 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    async signIn({ user, }) {
+
+
+      return true
+    },
     async session({ token, session }) {
 
       if (token) {

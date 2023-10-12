@@ -26,13 +26,19 @@ import {
 } from "@/ui/table";
 
 import { trpc } from "@/app/_trpc/client";
+import { RouterOutputs } from "@/trpc";
 import { DataTablePagination } from "../components/data-table-pagination";
 import { DataTableToolbar } from "../components/data-table-toolbar";
-import { RouterOutputs } from "@/trpc";
+import { Lead } from "./columns";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
+type ColumnKeys = keyof Lead;
+const initialVisibilityState: Partial<Record<ColumnKeys, boolean>> = {
+  "ip": false,
+  "region": false
+};
 
 export function DataTable<TData, TValue>({
   columns,
@@ -40,15 +46,15 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+    React.useState<VisibilityState>(initialVisibilityState);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = React.useState("");
 
-  const { data: campaignsData } = trpc.campaign.getAll.useQuery(undefined, {
-    initialData: data as RouterOutputs["campaign"]["getAll"],
+  const { data: campaignsData } = trpc.lead.getAll.useQuery(undefined, {
+    initialData: data as RouterOutputs["lead"]["getAll"],
     refetchOnMount: false,
     refetchOnReconnect: false,
   }) as { data: TData[] };
@@ -62,8 +68,8 @@ export function DataTable<TData, TValue>({
       rowSelection,
       columnFilters,
       globalFilter,
-
     },
+
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -75,14 +81,13 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-    onGlobalFilterChange: setGlobalFilter,
   });
 
   return (
     <div className="space-y-4">
       <DataTableToolbar table={table} />
-      <div className="rounded-md border">
-        <Table>
+      <div className="rounded-md border overflow-x-auto w-full">
+        <Table className="min-w-max">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -108,6 +113,7 @@ export function DataTable<TData, TValue>({
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                 >
+
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(

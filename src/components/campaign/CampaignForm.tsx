@@ -78,7 +78,7 @@ const CampaignForm: FC<CampaignFormProps> = ({}) => {
     mutateAsync: createCampaign,
     isLoading,
     isSuccess,
-  } = trpc.createCampaign.useMutation({
+  } = trpc.campaign.create.useMutation({
     onError: (err) => {
       if (err instanceof AxiosError) {
         if (err.response?.status === 500) {

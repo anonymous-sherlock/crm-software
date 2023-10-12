@@ -16,17 +16,17 @@ import { toast } from "@/components/ui/use-toast";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { Table } from "@tanstack/react-table";
 import { AxiosError } from "axios";
-import { Campaign } from "./columns";
+import { Lead } from "./columns";
 
-interface DeleteCampaignProps<TData> {
+interface DeleteLeadProps<TData> {
   table: Table<TData>;
 }
 
-export function DeleteCampaign<TData>({ table }: DeleteCampaignProps<TData>) {
+export function DeleteLead<TData>({ table }: DeleteLeadProps<TData>) {
 
   const utils = trpc.useContext();
 
-  const { mutateAsync: deleteCampaign, isLoading } = trpc.campaign.deleteCampaign.useMutation({
+  const { mutateAsync: deleteLead, isLoading } = trpc.lead.deleteLead.useMutation({
     onError: (err) => {
       if (err instanceof AxiosError) {
         if (err.response?.status === 500) {
@@ -40,24 +40,24 @@ export function DeleteCampaign<TData>({ table }: DeleteCampaignProps<TData>) {
     },
     onSuccess: (data) => {
       toast({
-        title: `${data.deletedCampaign.count} Campaign Deleted succesfully`,
+        title: `${data.deletedLead.count} Lead Deleted succesfully`,
         description: "",
         variant: "success",
       });
 
     },
     onSettled: () => {
-      utils.campaign.getAll.invalidate()
+      utils.lead.getAll.invalidate()
     }
   })
 
   function handleCampaignDelete() {
     const rows = table.getFilteredSelectedRowModel().rows;
     const payload = rows.map((row) => {
-      const rowOriginal = row.original as Campaign;
-      return rowOriginal.campaignId;
+      const rowOriginal = row.original as Lead;
+      return rowOriginal.id;
     });
-    deleteCampaign({ campaignIds: payload });
+    deleteLead({ leadIds: payload });
   }
   return (
     <>
@@ -89,7 +89,7 @@ export function DeleteCampaign<TData>({ table }: DeleteCampaignProps<TData>) {
                 disabled={isLoading}
                 className={buttonVariants({ variant: "destructive" })}
               >
-                {isLoading ? "Deleting..." : "Delete Campaign"}
+                {isLoading ? "Deleting..." : "Delete Lead"}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

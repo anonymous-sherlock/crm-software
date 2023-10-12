@@ -29,8 +29,9 @@ export function DeleteProduct<TData>({
   children,
   table,
 }: DeleteProductProps<TData>) {
-  const router = useRouter();
-  const { mutate: deleteProducts, isLoading } = trpc.deleteProduct.useMutation({
+  const utils = trpc.useContext();
+
+  const { mutate: deleteProducts, isLoading } = trpc.product.deleteProduct.useMutation({
     onSuccess: (data) => {
       data.deletedCount;
       toast({
@@ -38,7 +39,6 @@ export function DeleteProduct<TData>({
         description: "",
         variant: "success",
       });
-      router.refresh();
     },
     onError: (err) => {
       if (err instanceof AxiosError) {
@@ -51,6 +51,9 @@ export function DeleteProduct<TData>({
         }
       }
     },
+    onSettled: () => {
+      utils.product.getAll.invalidate()
+    }
   });
 
   function handleCampaignDelete() {

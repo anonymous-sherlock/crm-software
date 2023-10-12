@@ -10,13 +10,50 @@ export const productRouter = router({
   getAll: privateProcedure.query(async ({ ctx }) => {
     const { userId } = ctx;
     const products = await getAllProductsForUser(userId);
-
     return products;
   }),
-  test: privateProcedure.query(async ({ ctx }) => {
-    const { userId } = ctx;
-    return 4;
-  }),
+  deleteProduct: privateProcedure
+    .input(
+      z.object({
+        productIds: z
+          .string({
+            required_error: "product Id is required to delete a product",
+          })
+          .array(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx;
+      const { productIds } = input;
+      const products = await db.product.findMany({
+        where: {
+          ownerId: userId,
+          productId: {
+            in: productIds,
+          },
+        },
+      });
+      if (!products)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Product not found",
+        });
+
+      const deletedProduct = await db.product.deleteMany({
+        where: {
+          ownerId: userId,
+          productId: {
+            in: productIds,
+          },
+        },
+      });
+      const deletedCount = deletedProduct.count;
+      return {
+        success: "true",
+        deletedProduct,
+        deletedCount,
+      };
+    }),
 });
 
 export type ProductRouter = typeof productRouter;

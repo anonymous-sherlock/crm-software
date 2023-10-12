@@ -111,23 +111,21 @@ model TargetRegion {
 }
 
 model Lead {
-  id        String     @id @default(cuid())
-  name      String
-  phone     String
-  ip        String
-  address   String
-  Country   String
-  state     String
-  region    String
-  status    LeadStatus @default(OnHold)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  leadId    String     @unique
-  campaign  Campaign   @relation(fields: [leadId], references: [campaignId], onDelete: Cascade)
-  user      User?      @relation(fields: [userId], references: [id])
-  userId    String?
-
-  @@index([leadId], map: "Leads_campaignId_fkey")
+  id             String     @id @default(cuid())
+  ip             String
+  name           String
+  phone          String
+  address        String
+  state          String
+  region         String
+  country        String
+  status         LeadStatus @default(OnHold)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  leadCampaingId String
+  campaign       Campaign   @relation(fields: [leadCampaingId], references: [id], onDelete: Cascade)
+  user           User?      @relation(fields: [userId], references: [id])
+  userId         String?
 }
 
 model User {
@@ -207,6 +205,7 @@ enum LeadStatus {
   OnHold
   Trashed
   Paid
+  Approved
 }
 
 enum UserRole {

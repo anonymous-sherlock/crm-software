@@ -18,16 +18,15 @@ import {
   DropdownMenuTrigger,
 } from "@/ui/dropdown-menu";
 
-import { labels, statuses } from "../data/data";
-import { taskSchema } from "../data/schema";
 import { trpc } from "@/app/_trpc/client";
-import { toast } from "@/components/ui/use-toast";
-import { useRouter } from "next/navigation";
-import { AxiosError } from "axios";
-import { CampaignStatus } from "@prisma/client";
-import React, { useState } from "react";
-import Spinner from "@/components/ui/spinner";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import Spinner from "@/components/ui/spinner";
+import { toast } from "@/components/ui/use-toast";
+import { LeadStatus } from "@prisma/client";
+import { AxiosError } from "axios";
+import { useState } from "react";
+import { statuses } from "../data/data";
+import { LeadsSchema } from "../data/schema";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -36,21 +35,22 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
-  const router = useRouter();
+
   const utils = trpc.useContext();
 
-  const campaign = taskSchema.parse(row.original);
-  const [campaignStatus, setCampaignStatus] = useState<CampaignStatus>(
-    campaign.status
+  const lead = LeadsSchema.parse(row.original);
+  const [leadStatus, setLeadStatus] = useState<LeadStatus>(
+    lead.status
   );
   const { mutate: updateStatus, isLoading: isUpdatingStatus } =
-    trpc.campaign.updateStatus.useMutation({
+    trpc.lead.updateStatus.useMutation({
       onSuccess: (data) => {
         toast({
-          title: `${data.updatedCampaign.name} status updated succesfully`,
+          title: `${data.updatedLead.id} status updated succesfully`,
           description: "",
           variant: "success",
         });
+        setLeadStatus(data.updatedLead.status)
       },
       onError: (err) => {
         if (err instanceof AxiosError) {
@@ -64,52 +64,26 @@ export function DataTableRowActions<TData>({
         }
       },
       onSettled() {
-        utils.campaign.getAll.invalidate();
+        utils.lead.getAll.invalidate();
       },
     });
-
-  const { mutate: copyCampaign, isLoading: isCopyingCampaign } =
-    trpc.campaign.copyCampaign.useMutation({
-      onSuccess: (data) => {
-        toast({
-          title: `${data.copiedCampaign.name}copied succesfully`,
-          description: "",
-          variant: "success",
-        });
-        setCampaignStatus(data.copiedCampaign.status)
-      },
-      onError: (err) => {
-        if (err instanceof AxiosError) {
-          if (err.response?.status === 500) {
-            return toast({
-              title: "Cannot copy campaign.",
-              description: "Something Went Wrong",
-              variant: "destructive",
-            });
-          }
-        }
-      },
-      onSettled() {
-        utils.campaign.getAll.invalidate();
-      },
-    });
-
-  const { mutate: deleteCampaign, isLoading: isDeletingCampaign } = trpc.campaign.deleteCampaign.useMutation({
+  const { mutate: deleteLead, isLoading: isDeletingLead } = trpc.lead.deleteLead.useMutation({
     onSuccess: (data) => {
       toast({
-        title: `${data.deletedCount} Campaign Deleted succesfully`,
+        title: `${data.deletedCount} Lead Deleted succesfully`,
         description: "",
         variant: "success",
       });
+     
     },
     onSettled() {
-      utils.campaign.getAll.invalidate();
+      utils.lead.getAll.invalidate();
     },
     onError: (err) => {
       if (err instanceof AxiosError) {
         if (err.response?.status === 500) {
           return toast({
-            title: "Cannot Delete Campaign.",
+            title: "Cannot Delete Lead.",
             description: "Something Went Wrong",
             variant: "destructive",
           });
@@ -118,32 +92,29 @@ export function DataTableRowActions<TData>({
     },
   });
 
-  function handleStatusChange(status: CampaignStatus) {
-    const payload = campaign;
+
+  function handleStatusChange(status: LeadStatus) {
+    const payload = lead;
     updateStatus({
-      campaignId: payload.campaignId,
-      campaignStatus: status,
+      leadId: payload.id,
+      leadStatus: status,
     });
 
     // Update the local state with the new status
-    setCampaignStatus(status);
+    setLeadStatus(status);
   }
-  function handleCopyCampaign() {
-    const payload = campaign;
-    copyCampaign({
-      campaignId: payload.campaignId,
-    });
-  }
-  function handleDeleteCampaign() {
-    const currentRow = campaign;
-    const payload = currentRow.campaignId;
 
-    deleteCampaign({ campaignIds: [payload] });
+  function handleDeleteLead() {
+    const currentRow = lead;
+    const payload = currentRow.id;
+
+    deleteLead({ leadIds: [payload] });
   }
+
 
   return (
     <>
-      {isUpdatingStatus || isCopyingCampaign || isDeletingCampaign ? (
+      {isUpdatingStatus || isDeletingLead ? (
         <div className="flex items-center justify-center">
           <Spinner />
         </div>
@@ -161,14 +132,13 @@ export function DataTableRowActions<TData>({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[160px]">
               <DropdownMenuItem>Edit</DropdownMenuItem>
-              <DropdownMenuItem onClick={handleCopyCampaign}>Make a copy</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>Status</DropdownMenuSubTrigger>
                 <DropdownMenuSubContent>
                   <DropdownMenuRadioGroup
-                    value={campaignStatus}
-                    onValueChange={(e) => handleStatusChange(e as CampaignStatus)}
+                    value={leadStatus}
+                    onValueChange={(e) => handleStatusChange(e as LeadStatus)}
                   >
                     {statuses.map((status) => (
                       <DropdownMenuRadioItem
@@ -187,7 +157,7 @@ export function DataTableRowActions<TData>({
               </DropdownMenuSub>
               <DropdownMenuSeparator />
               <AlertDialogTrigger asChild>
-                <DropdownMenuItem className="text-red-600" disabled={isDeletingCampaign}>
+                <DropdownMenuItem className="text-red-600" disabled={isDeletingLead}>
                   Delete
                   <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
                 </DropdownMenuItem>
@@ -199,18 +169,18 @@ export function DataTableRowActions<TData>({
             <AlertDialogHeader>
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
               <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete your
-                Campaign from our servers.
+                This action cannot be undone. This will permanently delete this
+                lead from our servers.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction
-                onClick={handleDeleteCampaign}
-                disabled={isDeletingCampaign}
+                onClick={handleDeleteLead}
+                disabled={isDeletingLead}
                 className={buttonVariants({ variant: "destructive" })}
               >
-                {isDeletingCampaign ? "Deleting..." : "Delete Campaign"}
+                {isDeletingLead ? "Deleting..." : "Delete Lead"}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
