@@ -7,7 +7,8 @@ import { z } from "zod";
 const LeadValidator = z.object({
   name: z.string(),
   phone: z.string(),
-  address: z.string().optional()
+  address: z.string().optional(),
+  userId: z.string().optional()
 })
 export async function POST(
   req: NextRequest,
@@ -16,7 +17,7 @@ export async function POST(
 ) {
   try {
     const body = await req.json()
-    const { name, phone, address } = LeadValidator.parse(body)
+    const { name, phone, address, userId } = LeadValidator.parse(body)
     const campaign = await db.campaign.findUnique({
       where: {
         campaignId: params.id
@@ -43,25 +44,44 @@ export async function POST(
       const { country_name, region, city, ip, version, country_capital, country_calling_code, postal, } = IpInfoSchema.parse(ipInfoResponse.data)
 
       const user = await db.user.findFirst({
-        where: {
-          campaigns: {
-            some: {
-              campaignId: campaign.campaignId
-            }
-          },
-          apiKeys: {
-            some: {
-              key: apiKey,
-              enabled: true,
-            }
-          },
-          BearerToken: {
-            some: {
-              key: bearerToken,
-              active: true
-            },
 
-          }
+        where: {
+          AND: [
+            {
+              OR: [
+                { id: userId },
+
+              ]
+            },
+            {
+              OR: [
+                {
+                  campaigns: {
+                    some: {
+                      campaignId: campaign.campaignId
+                    }
+                  }
+                },
+                {
+                  apiKeys: {
+                    some: {
+                      key: apiKey,
+                      enabled: true,
+                    }
+                  },
+                },
+                {
+                  BearerToken: {
+                    some: {
+                      key: bearerToken,
+                      active: true
+                    },
+
+                  }
+                }
+              ]
+            }
+          ],
 
         }
       })

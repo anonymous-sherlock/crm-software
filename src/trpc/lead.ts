@@ -5,6 +5,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { privateProcedure, router } from "./trpc";
 import { getAllProductsForUser } from "@/lib/dbAction";
+import { LeadsFormSchema } from "@/schema/LeadFormSchema";
 
 export const leadRouter = router({
     getAll: privateProcedure.query(async ({ ctx, input }) => {
@@ -99,6 +100,11 @@ export const leadRouter = router({
                 deletedCount,
             };
         }),
+
+    add: privateProcedure.input(LeadsFormSchema).mutation(async ({ ctx, input }) => {
+        const { userId } = ctx;
+        const { name, phone, address } = input;
+    })
 });
 
 export type LeadRouter = typeof leadRouter;

@@ -1,38 +1,19 @@
 "use client"
+import { trpc } from '@/app/_trpc/client'
+import { LeadsFormSchema } from '@/schema/LeadFormSchema'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { FC } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 import { Button } from '../ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog'
-import { Input } from '../ui/input'
-import { Label } from '../ui/label'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { trpc } from '@/app/_trpc/client'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form'
+import { Input } from '../ui/input'
 
 interface LeadsFormProps {
 
 }
 
-const LeadsFormSchema = z.object({
-    name: z.string().min(3, { message: "Name must be atleat 3 characters" }),
-    phone: z.string().optional().refine(value => {
-        // Enhance the phone number validation pattern
-        const phonePattern = /^[\d\+() -]*\d[\d\+() -]*$/;
-
-        // Ensure the phone number has a minimum length (adjust as needed)
-        const minLength = 9;
-        const maxLength = 13;
-        return (
-            phonePattern.test(value?.toString() ?? "") &&
-            (value?.toString().replace(/[\D]/g, '').length ?? 0) >= minLength &&
-            (value?.toString().replace(/[\D]/g, '').length ?? 0) <= maxLength
-        )
-    }, {
-        message: "Phone number is not valid"
-    }),
-    address: z.string().optional()
-})
 const LeadsForm: FC<LeadsFormProps> = ({ }) => {
     const form = useForm<z.infer<typeof LeadsFormSchema>>({
         resolver: zodResolver(LeadsFormSchema),
