@@ -52,7 +52,7 @@ export function absoluteUrl(path: string) {
   return `http://localhost:${process.env.PORT ?? 3000}${path}`;
 }
 
-export function generateCampaignID() {
+export function generateCampaignCodeID() {
   // Generate a UUID and use the first 8 characters as the alias
   const uuid = randomUUID();
   const alias = uuid.substring(0, 8);

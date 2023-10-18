@@ -1,18 +1,14 @@
 import { serverClient } from "@/app/_trpc/serverClient";
-import { buttonVariants } from "@/components/ui/button";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Ghost } from "lucide-react";
-import Link from "next/link";
-import { DataTable } from "./data-table/components/data-table";
-import { columns } from "./data-table/components/columns";
-import { db } from "@/lib/db";
-import { notFound } from "next/navigation";
 import LeadsForm from "@/components/leads/LeadsForm";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { db } from "@/lib/db";
+import { Ghost } from "lucide-react";
+import { notFound } from "next/navigation";
+import { columns } from "./data-table/components/columns";
+import { DataTable } from "./data-table/components/data-table";
 
 export default async function LeadsPage({
-  params,
-  searchParams,
-
+  params
 }: {
   params: { id: string };
   searchParams: { [key: string]: string | string[] | undefined }
@@ -20,17 +16,19 @@ export default async function LeadsPage({
 }) {
   const campaign = await db.campaign.findFirst({
     where: {
-      campaignId: params.id
+      code: params.id
     },
     select: {
       name: true,
-      id: true
+      id: true,
+      code: true,
     }
   })
   if (!campaign) {
     notFound()
   }
-  const LeadsData = await serverClient.lead.getAll();
+
+  const LeadsData = await serverClient.lead.getCampaignLeads({ campaignId: campaign.id });
 
 
   return (
@@ -49,7 +47,7 @@ export default async function LeadsPage({
             </p>
           </div>
 
-          <LeadsForm />
+          <LeadsForm campaignCode={campaign.code} />
         </div>
         {LeadsData.length === 0 ? (
           <div className="!mb-20 !mt-20 flex flex-col items-center gap-2">
@@ -61,7 +59,7 @@ export default async function LeadsPage({
           </div>
         ) : (
 
-          <DataTable data={LeadsData} columns={columns} />
+          <DataTable data={LeadsData} columns={columns} campaignId={campaign.id} />
         )}
       </div>
       <ScrollBar orientation="horizontal" className="w-full" />

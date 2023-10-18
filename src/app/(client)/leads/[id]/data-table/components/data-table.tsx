@@ -30,9 +30,12 @@ import { RouterOutputs } from "@/trpc";
 import { DataTablePagination } from "../components/data-table-pagination";
 import { DataTableToolbar } from "../components/data-table-toolbar";
 import { Lead } from "./columns";
+import { useParams } from 'next/navigation';
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  campaignId: string
 }
 type ColumnKeys = keyof Lead;
 const initialVisibilityState: Partial<Record<ColumnKeys, boolean>> = {
@@ -43,6 +46,7 @@ const initialVisibilityState: Partial<Record<ColumnKeys, boolean>> = {
 export function DataTable<TData, TValue>({
   columns,
   data,
+  campaignId
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -53,11 +57,13 @@ export function DataTable<TData, TValue>({
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = React.useState("");
 
-  const { data: campaignsData } = trpc.lead.getAll.useQuery(undefined, {
-    initialData: data as RouterOutputs["lead"]["getAll"],
+  const { data: campaignsData } = trpc.lead.getCampaignLeads.useQuery(
+    { campaignId: campaignId }, {
+    initialData: data as RouterOutputs["lead"]["getCampaignLeads"],
     refetchOnMount: false,
     refetchOnReconnect: false,
-  }) as { data: TData[] };
+  }
+  ) as { data: TData[] };
 
   const table = useReactTable({
     data: campaignsData || [],

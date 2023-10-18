@@ -17,7 +17,8 @@ import { DataTableRowActions } from "./data-table-row-actions";
 import DescriptionHover from "./description-hover";
 import { ProductInfoHover } from "./product-info-hover";
 export type Campaign = {
-  campaignId: CampaignPrisma["campaignId"];
+  campaignId: CampaignPrisma["id"];
+  campaignCode: CampaignPrisma["code"];
   campaignName: CampaignPrisma["name"];
   description: CampaignPrisma["description"];
   status: CampaignPrisma["status"];
@@ -59,12 +60,12 @@ export const columns: ColumnDef<Campaign>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "campaignId",
+    accessorKey: "campaignCode",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Campaign Id" />
+      <DataTableColumnHeader column={column} title="Campaign Code" />
     ),
     cell: ({ row }) => (
-      <div className="w-[75px]">{row.getValue("campaignId")}</div>
+      <div className="w-[75px]">{row.original.campaignCode}</div>
     ),
     enableSorting: false,
     enableHiding: false,

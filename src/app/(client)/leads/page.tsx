@@ -47,11 +47,11 @@ const page = async () => {
                   )
                   .map((campaign) => (
                     <li
-                      key={campaign.campaignId}
+                      key={campaign.id}
                       className="col-span-1 divide-y divide-gray-200 rounded-lg bg-white shadow transition hover:shadow-lg"
                     >
                       <Link
-                        href={`/leads/${campaign.campaignId}`}
+                        href={`/leads/${campaign.id}`}
                         className="flex flex-col gap-2"
                       >
                         <div className="pt-6 px-6 flex w-full items-center justify-between space-x-6">

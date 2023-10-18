@@ -7,7 +7,6 @@ import Providers from "@/providers/index";
 import { SearchBox } from "@/components/SearchBox";
 import 'react-loading-skeleton/dist/skeleton.css'
 const inter = Inter({ subsets: ["latin"] });
-import { Toaster as SonnerToaster } from 'sonner';
 
 export const metadata: Metadata = {
   title: "Adscrush Crm",
@@ -21,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <Providers>{children}</Providers>
         <Toaster />

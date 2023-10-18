@@ -1,3 +1,5 @@
+import { trpc } from "@/app/_trpc/client";
+import { serverClient } from "@/app/_trpc/serverClient";
 import { db } from "@/lib/db";
 import IpInfoSchema from "@/schema/ipInfoSchema";
 import axios from "axios";
@@ -20,7 +22,7 @@ export async function POST(
     const { name, phone, address, userId } = LeadValidator.parse(body)
     const campaign = await db.campaign.findUnique({
       where: {
-        campaignId: params.id
+        code: params.id
       }
     })
     if (!campaign) {
@@ -37,61 +39,49 @@ export async function POST(
     }
     if (authorizationHeader && authorizationHeader.startsWith("Bearer ")) {
       const bearerToken = authorizationHeader.slice(7); // Remove "Bearer " prefix
-
+      console.log(bearerToken)
       const userIp =
         requestHeaders.get("x-forwarded-for") || requestHeaders.get("x-real-ip");
-      const ipInfoResponse = await axios.get(`https://ipapi.co/${"123.45.67.89"}/json`);
-      const { country_name, region, city, ip, version, country_capital, country_calling_code, postal, } = IpInfoSchema.parse(ipInfoResponse.data)
+      const { country_name, region, city, ip, version, country_capital, country_calling_code, postal } = await getIpInfo(userIp ?? "176.1.4.5");
 
+      console.log("workled here")
       const user = await db.user.findFirst({
-
         where: {
-          AND: [
+          OR: [
             {
-              OR: [
-                { id: userId },
-
-              ]
+              campaigns: {
+                some: {
+                  id: campaign.id,
+                },
+              },
             },
             {
-              OR: [
-                {
-                  campaigns: {
-                    some: {
-                      campaignId: campaign.campaignId
-                    }
-                  }
+              apiKeys: {
+                some: {
+                  key: apiKey,
+                  enabled: true,
                 },
-                {
-                  apiKeys: {
-                    some: {
-                      key: apiKey,
-                      enabled: true,
-                    }
-                  },
+              },
+            },
+            {
+              BearerToken: {
+                some: {
+                  key: bearerToken,
+                  active: true,
                 },
-                {
-                  BearerToken: {
-                    some: {
-                      key: bearerToken,
-                      active: true
-                    },
-
-                  }
-                }
-              ]
-            }
+              },
+            },
           ],
+        },
+      });
 
-        }
-      })
       if (!user) {
         throw new Error("user Not Found");
       }
 
       const newLead = await db.lead.create({
         data: {
-          leadCampaingId: campaign.id,
+          campaingId: campaign.id,
           ip,
           country: country_name ?? "",
           name: name,
@@ -104,13 +94,19 @@ export async function POST(
         }
       })
 
-
       return NextResponse.json({ sucess: true, lead: newLead });
     }
   } catch (error) {
+    console.log(error)
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
     return NextResponse.json({ error: error }, { status: 500 });
   }
+}
+
+async function getIpInfo(ip: string) {
+  const ipInfoResponse = await axios.get(`https://ipapi.co/${ip}/json`);
+  console.log(ipInfoResponse.data);
+  return IpInfoSchema.parse(ipInfoResponse.data);
 }

@@ -32,7 +32,8 @@ export const appRouter = router({
         createdAt: "desc",
       },
       select: {
-        campaignId: true,
+        id: true,
+        code: true,
         description: true,
         name: true,
         status: true,
@@ -52,7 +53,8 @@ export const appRouter = router({
       },
     });
     const campaigns = campaignsData.map((campaign) => ({
-      campaignId: campaign.campaignId,
+      campaignId: campaign.id,
+      campaignCode: campaign.code,
       campaignName: campaign.name,
       description: campaign.description ?? "",
       status: campaign.status,
@@ -82,7 +84,8 @@ export const appRouter = router({
         createdAt: "desc",
       },
       select: {
-        campaignId: true,
+        id: true,
+        code: true,
         description: true,
         name: true,
         status: true,

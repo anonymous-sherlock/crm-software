@@ -1,6 +1,6 @@
 "use client"
 import { trpc } from '@/app/_trpc/client'
-import { LeadsFormSchema } from '@/schema/LeadFormSchema'
+import { LeadsFormSchema } from '@/schema/LeadSchema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FC } from 'react'
 import { useForm } from 'react-hook-form'
@@ -9,23 +9,51 @@ import { Button } from '../ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form'
 import { Input } from '../ui/input'
+import { toast } from '../ui/use-toast'
+import { AxiosError } from 'axios'
+import { TRPCError } from '@trpc/server'
 
 interface LeadsFormProps {
-
+    campaignCode: string
 }
 
-const LeadsForm: FC<LeadsFormProps> = ({ }) => {
+const LeadsForm: FC<LeadsFormProps> = ({ campaignCode }) => {
     const form = useForm<z.infer<typeof LeadsFormSchema>>({
         resolver: zodResolver(LeadsFormSchema),
         defaultValues: {
+            campaignCode: campaignCode,
             name: "",
             phone: "",
             address: "",
+
         },
     });
     const utils = trpc.useContext();
+
+    const { mutateAsync: addLead, isLoading } = trpc.lead.add.useMutation({
+        onSuccess: (data) => {
+            toast({
+                title: `Lead Added Successfully.`,
+                description: "",
+                variant: "success",
+            });
+        },
+        onError: (err) => {
+            if (err instanceof TRPCError) {
+                return toast({
+                    title: "Cannot Add Lead.",
+                    description: "",
+                    variant: "destructive",
+                });
+            }
+        },
+        onSettled() {
+            utils.lead.getCampaignLeads.invalidate();
+        },
+    })
     async function onSubmit(values: z.infer<typeof LeadsFormSchema>) {
         console.log(values)
+        addLead(values)
     }
     return (
 
@@ -46,6 +74,8 @@ const LeadsForm: FC<LeadsFormProps> = ({ }) => {
                         </DialogHeader>
                         <div className="grid gap-4 py-4">
 
+                            {/* campaign id */}
+                            {/* name */}
                             <FormField
                                 control={form.control}
                                 name="name"

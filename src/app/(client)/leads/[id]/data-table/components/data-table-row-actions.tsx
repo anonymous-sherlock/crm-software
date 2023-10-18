@@ -64,7 +64,7 @@ export function DataTableRowActions<TData>({
         }
       },
       onSettled() {
-        utils.lead.getAll.invalidate();
+        utils.lead.getCampaignLeads.invalidate();
       },
     });
   const { mutate: deleteLead, isLoading: isDeletingLead } = trpc.lead.deleteLead.useMutation({
@@ -77,7 +77,7 @@ export function DataTableRowActions<TData>({
      
     },
     onSettled() {
-      utils.lead.getAll.invalidate();
+      utils.lead.getCampaignLeads.invalidate();
     },
     onError: (err) => {
       if (err instanceof AxiosError) {

@@ -47,7 +47,7 @@ export function DeleteLead<TData>({ table }: DeleteLeadProps<TData>) {
 
     },
     onSettled: () => {
-      utils.lead.getAll.invalidate()
+      utils.lead.getCampaignLeads.invalidate()
     }
   })
 

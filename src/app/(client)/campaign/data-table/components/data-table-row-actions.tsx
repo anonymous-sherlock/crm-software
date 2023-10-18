@@ -28,6 +28,7 @@ import { CampaignStatus } from "@prisma/client";
 import React, { useState } from "react";
 import Spinner from "@/components/ui/spinner";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import Link from "next/link";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -72,7 +73,7 @@ export function DataTableRowActions<TData>({
     trpc.campaign.copyCampaign.useMutation({
       onSuccess: (data) => {
         toast({
-          title: `${data.copiedCampaign.name}copied succesfully`,
+          title: `${data.copiedCampaign.name} copied succesfully`,
           description: "",
           variant: "success",
         });
@@ -162,6 +163,7 @@ export function DataTableRowActions<TData>({
             <DropdownMenuContent align="end" className="w-[160px]">
               <DropdownMenuItem>Edit</DropdownMenuItem>
               <DropdownMenuItem onClick={handleCopyCampaign}>Make a copy</DropdownMenuItem>
+              <DropdownMenuItem><Link href={`leads/${campaign.campaignCode}`} >View Leads</Link></DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>Status</DropdownMenuSubTrigger>

@@ -4,7 +4,7 @@ import { CampaignStatus } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { privateProcedure, router } from "./trpc";
-import { generateCampaignID } from "@/lib/utils";
+import { generateCampaignCodeID } from "@/lib/utils";
 import { campaignFormSchema } from "@/schema/campaignSchema";
 
 export const campaignRouter = router({
@@ -30,7 +30,7 @@ export const campaignRouter = router({
         workingDays,
         workingHours,
       } = input.campaign;
-      const campaignID = generateCampaignID();
+      const campaignCode = generateCampaignCodeID();
 
       const newCampaign = await db.campaign.create({
         data: {
@@ -51,7 +51,7 @@ export const campaignRouter = router({
               })),
             },
           },
-          campaignId: campaignID,
+          code: campaignCode,
           user: {
             connect: {
               id: userId,
@@ -84,7 +84,7 @@ export const campaignRouter = router({
       const campaign = await db.campaign.findFirst({
         where: {
           userId: userId,
-          campaignId: campaignId,
+          id: campaignId,
         },
       });
       if (!campaign) {
@@ -96,7 +96,7 @@ export const campaignRouter = router({
       const updatedCampaign = await db.campaign.update({
         where: {
           userId: userId,
-          campaignId: campaignId,
+          id: campaignId,
         },
         data: {
           status: campaignStatus,
@@ -117,7 +117,8 @@ export const campaignRouter = router({
         createdAt: "desc",
       },
       select: {
-        campaignId: true,
+        id: true,
+        code: true,
         description: true,
         name: true,
         status: true,
@@ -137,7 +138,8 @@ export const campaignRouter = router({
     });
     const mappedCampaignsData: Campaign[] = campaignsData.map((campaign) => {
       return {
-        campaignId: campaign.campaignId,
+        campaignId: campaign.id,
+        campaignCode: campaign.code,
         campaignName: campaign.name,
         description: campaign.description,
         status: campaign.status,
@@ -170,7 +172,7 @@ export const campaignRouter = router({
       const campaign = await db.campaign.findFirst({
         where: {
           userId: userId,
-          campaignId: campaignId,
+          id: campaignId,
         },
       });
       if (!campaign) {
@@ -182,7 +184,7 @@ export const campaignRouter = router({
 
       const copiedCampaign = await db.campaign.create({
         data: {
-          campaignId: generateCampaignID(),
+          code: generateCampaignCodeID(),
           name: `${campaign.name}`,
           description: campaign.description,
           callCenterTeamSize: campaign.callCenterTeamSize,
@@ -219,7 +221,7 @@ export const campaignRouter = router({
       const campaigns = await db.campaign.findMany({
         where: {
           userId: userId,
-          campaignId: {
+          id: {
             in: campaignIds,
           },
         },
@@ -233,7 +235,7 @@ export const campaignRouter = router({
       const deletedCampaign = await db.campaign.deleteMany({
         where: {
           userId: userId,
-          campaignId: {
+          id: {
             in: campaignIds,
           },
         },

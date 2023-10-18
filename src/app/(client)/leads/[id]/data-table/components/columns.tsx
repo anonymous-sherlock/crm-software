@@ -25,7 +25,10 @@ export type Lead = {
   status: LeadStatus;
   createdAt: Date;
   updatedAt: Date;
-  leadCampaingId: string;
+  campaign: {
+    name: string;
+    id: string;
+  };
   userId: string | null;
 };
 
@@ -61,6 +64,15 @@ export const columns: ColumnDef<Lead>[] = [
     ),
     enableSorting: false,
     enableHiding: false,
+  },
+  {
+    accessorKey: "campaign",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Campaign name" />
+    ),
+    cell: ({ row }) => (
+      <div className="truncate">{row.original.campaign.name}</div>
+    ),
   },
   {
     accessorKey: "name",
