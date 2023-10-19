@@ -122,8 +122,8 @@ model Lead {
   status     LeadStatus @default(OnHold)
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
-  campaingId String
   userId     String?
+  campaingId String
   campaign   Campaign   @relation(fields: [campaingId], references: [id], onDelete: Cascade)
   user       User?      @relation(fields: [userId], references: [id])
 
@@ -137,7 +137,7 @@ model User {
   email          String          @unique
   emailVerified  DateTime?
   image          String?
-  role           UserRole        @default(CUSTOMER)
+  role           User_role       @default(CUSTOMER)
   password       String?
   active         Boolean         @default(false)
   createdAt      DateTime        @default(now())
@@ -211,14 +211,14 @@ enum LeadStatus {
   Approved
 }
 
-enum UserRole {
+enum Gender {
+  Male
+  Female
+}
+
+enum User_role {
   SUPER_Admin
   ADMIN
   CLIENT
   CUSTOMER
-}
-
-enum Gender {
-  Male
-  Female
 }
